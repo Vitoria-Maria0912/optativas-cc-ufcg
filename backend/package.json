@@ -1,0 +1,44 @@
+{
+  "devDependencies": {
+    "@babel/preset-env": "^7.25.8",
+    "@babel/preset-react": "^7.25.7",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.13",
+    "@types/node": "^22.7.5",
+    "@types/supertest": "^6.0.2",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-mock-req-res": "^1.0.2",
+    "prisma": "^5.22.0",
+    "rimraf": "^6.0.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@types/cors": "^2.8.17",
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "class-validator": "^0.14.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "name": "disciplines_cc_back",
+  "version": "1.0.0",
+  "description": "# Será possível visualizar quais as optativas existentes, seus pré-requisitos, o professor que a ministra (geralmente), a frequência que é ofertada (sempre ou as vezes) e os horários (é possível modificá-los)",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/express/server.ts",
+    "dev": "ts-node-dev src/express/server.ts",
+    "build": "npx tsc",
+    "clean": "rimraf ../backend/dist",
+    "test": "npm run clean && jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
