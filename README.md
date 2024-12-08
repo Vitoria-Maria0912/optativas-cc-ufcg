@@ -1,5 +1,7 @@
 # Interface para facilitar o planejamento de disciplinas optativas no curso de Ciência da Computação da UFCG
 
+Este projeto visa facilitar o planejamento de disciplinas do curso de Ciência da Computação da UFCG, permitindo a visualização de disciplinas obrigatórias e optativas, incluindo informações como disponibilidade de professores e requisitos. Administradores podem gerenciar o catálogo de disciplinas por meio de funcionalidades de CRUD.
+
 ## Tecnologias utilizadas:
 
 ### Backend
@@ -18,6 +20,9 @@
 - Swagger
 
 ### Padrões de commit
+
+Para manter um histórico claro e consistente, siga os padrões de commits abaixo baseados no Conventional Commits:
+
 - `feat`: adicionar funcionalidade
 - `wip`: funcionalidade em desenvolvimento
 - `fix`: corrigir bug
