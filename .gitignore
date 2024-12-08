@@ -1,0 +1,4 @@
+# dependencies
+/backend/prisma/migrations
+/backend/dist
+# /backend/node_modules
