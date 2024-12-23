@@ -12,6 +12,24 @@ model Discipline {
   id               Int        @id @default(autoincrement())
 }
 
+enum Role {
+  ADMINISTRATOR
+  COMMON
+}
+
 model Administrator {
-  id               Int        @id @default(autoincrement())
+  id              Int        @id @default(autoincrement())
+  role            Role
+  loginId         Int        @unique      
+  name            String
+  
+  login Login     @relation(fields: [loginId], references: [id])
+}
+
+model Login {
+  id              Int        @id @default(autoincrement())
+  email           String     @unique
+  password        String
+
+  Administrator Administrator?
 }
