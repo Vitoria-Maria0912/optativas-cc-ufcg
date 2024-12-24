@@ -17,13 +17,13 @@ enum Role {
   COMMON
 }
 
-model Administrator {
+model User {
   id              Int        @id @default(autoincrement())
   role            Role
-  loginId         Int        @unique      
+  loginId         Int?       @unique      
   name            String
   
-  login Login     @relation(fields: [loginId], references: [id])
+  login           Login?      @relation(fields: [loginId], references: [id])
 }
 
 model Login {
@@ -31,5 +31,5 @@ model Login {
   email           String     @unique
   password        String
 
-  Administrator Administrator?
+  User            User?
 }

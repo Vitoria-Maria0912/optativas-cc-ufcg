@@ -1,9 +1,9 @@
 import { IsAlphanumeric, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { UserInterface } from "../model/User";
 import { Role } from "@prisma/client";
 import { Login } from "../model/Login";
-import { AdministratorInterface } from "../model/Administrator";
 
-export class AdministratorDTO implements AdministratorInterface {
+export class UserDTO implements UserInterface {
 
     @IsNumber()
     public id: number;
@@ -21,7 +21,7 @@ export class AdministratorDTO implements AdministratorInterface {
     @IsInstance(Login)
     public login: Login;
     
-    constructor(id: number, role: Role, name: string, login: Login) {
+    constructor(role: Role, id: number, name: string, login: Login) {
         this.id = id;
         this.role = role;
         this.name = name;

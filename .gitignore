@@ -2,3 +2,7 @@
 /backend/prisma/migrations
 /backend/dist
 /backend/node_modules
+
+# ides
+.vscode
+.idea
