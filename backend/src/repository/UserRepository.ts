@@ -1,13 +1,16 @@
-import { Login, PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import { User } from "../model/User";
+import { Login } from "../model/Login";
 
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;
     registerUser(userId: number, login: Login): Promise<User>;
+    getUserById(userId: number): Promise<User>;
+    getUserByRole(userRole: Role): Promise<User[]>;
 }
 
 export class UserRepository implements UserRepositoryInterface {
-
+    
     private prisma: PrismaClient = new PrismaClient();
 
     async createUser(user: User): Promise<User> {
@@ -33,5 +36,13 @@ export class UserRepository implements UserRepositoryInterface {
                 }
             }
         });
+    }
+
+    async getUserById(userId: number): Promise<User> {
+        return await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    }
+
+    async getUserByRole(userRole: Role): Promise<User[]> {
+        return await this.prisma.user.findMany({ where: { role: userRole } });
     }
 }
