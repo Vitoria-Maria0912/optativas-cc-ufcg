@@ -10,6 +10,8 @@ datasource db {
 
 model Discipline {
   id               Int        @id @default(autoincrement())
+
+  User User[]
 }
 
 enum Role {
@@ -20,10 +22,12 @@ enum Role {
 model User {
   id              Int        @id @default(autoincrement())
   role            Role
-  loginId         Int?       @unique      
   name            String
+  email           String     @unique
+  loginId         Int?       @unique     
+  planning        Discipline[] 
   
-  login           Login?      @relation(fields: [loginId], references: [id])
+  login           Login?     @relation(fields: [loginId], references: [id])
 }
 
 model Login {

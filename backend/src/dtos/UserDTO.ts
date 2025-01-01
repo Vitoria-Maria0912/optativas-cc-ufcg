@@ -1,7 +1,8 @@
-import { IsAlphanumeric, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Contains, IsAlphanumeric, IsArray, IsEmail, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { UserInterface } from "../model/User";
 import { Role } from "@prisma/client";
 import { Login } from "../model/Login";
+import { Discipline } from "../model/Discipline";
 
 export class UserDTO implements UserInterface {
 
@@ -20,11 +21,25 @@ export class UserDTO implements UserInterface {
     @IsNotEmpty()
     @IsInstance(Login)
     public login: Login;
+
+    @IsString()
+    @IsNotEmpty()
+    @Contains('@')
+    @IsEmail()
+    public email: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsInstance(Discipline, { each: true })
+    @IsNotEmpty({ each: true })
+    public planning: Discipline[];
     
-    constructor(role: Role, id: number, name: string, login: Login) {
+    constructor(id: number, role: Role, name: string, email: string, login: Login) {
         this.id = id;
         this.role = role;
         this.name = name;
+        this.email = email;
         this.login = login;
+        this.planning = [];
     }
 }
