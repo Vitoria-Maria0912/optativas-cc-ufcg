@@ -14,7 +14,6 @@ export class UserController {
             responseBody = { message: "User created successfully!", user};
             codeResponse = 201;
         } catch (error: any) {
-// -- verify ternary to return the correct error message
             responseBody = { message: (!error.message) ? "Error trying to create an user!":  error.message};
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
@@ -25,13 +24,27 @@ export class UserController {
         var codeResponse: number;
         var responseBody: object;
         try {
-            const { userId, login } = request.body;
-            await this.userService.registerUser(userId, login);
+            const { id, login } = request.body;
+            await this.userService.registerUser(id, login);
             responseBody = { message: "User registered successfully!", login};
             codeResponse = 201;
         } catch (error: any) {
-// -- verify ternary to return the correct error message
             responseBody = { message: (!error.message) ? "Error trying to register an user!":  error.message};
+            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody);
+    }
+
+    async getUserByEmail(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { email } = request.params;
+            const user = await this.userService.getUserByEmail(email);
+            responseBody = { message: "User was found successfully!", user};
+            codeResponse = 201;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get an user by email!":  error.message};
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody);

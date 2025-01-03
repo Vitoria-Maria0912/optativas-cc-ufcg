@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { UserController } from '../controller/UserController';
 import { AuthController } from '../controller/AuthController';
+import { isAdministrator } from '../util/util';
 
 const app = express();
 
@@ -22,7 +23,12 @@ const server = app.listen(PORT, () => { console.log(`Server is running on port $
 
 export const closeServer = () => { server.close(); };
 
-app.post('/users', (req, res) => {userController.createUser(req,res)});
-app.post('auth/login', (req, res) => {authController.createLogin(req,res)});
+app.use('/protected', (req: Request, res: Response, next) => {
+    const authHeader = req.headers.authorization;
+    (!authHeader || !authHeader.startsWith('Bearer ')) && isAdministrator(authHeader) ? res.status(401).json({ error: 'Access denied, token is missing!' }) : next();
+});
+
+app.post('/users', (req: Request, res: Response) => {userController.createUser(req,res)});
+app.post('auth/login', (req: Request, res: Response) => {authController.createLogin(req,res)});
 
 export default app;
