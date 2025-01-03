@@ -20,21 +20,6 @@ export class UserController {
         return response.status(codeResponse).json(responseBody);
     }
 
-    async registerUser(request: Request, response: Response): Promise<Response>  {
-        var codeResponse: number;
-        var responseBody: object;
-        try {
-            const { id, login } = request.body;
-            await this.userService.registerUser(id, login);
-            responseBody = { message: "User registered successfully!", login};
-            codeResponse = 201;
-        } catch (error: any) {
-            responseBody = { message: (!error.message) ? "Error trying to register an user!":  error.message};
-            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
-        }
-        return response.status(codeResponse).json(responseBody);
-    }
-
     async getUserByEmail(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;

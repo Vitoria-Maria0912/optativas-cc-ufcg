@@ -4,7 +4,7 @@ import { Login } from "../model/Login";
 
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;
-    registerUser(userId: number, login: Login): Promise<User>;
+    registerUser(userId: number, email: string, password: string): Promise<User>;
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
@@ -25,15 +25,17 @@ export class UserRepository implements UserRepositoryInterface {
         });
     }
 
-    async registerUser(userId: number, login: Login): Promise<User> {
+    async registerUser(userId: number, email: string, password: string): Promise<User> {
+        const { id } = await this.prisma.login.create({
+            data: { password : password, email : email, }
+        });
+
         return await this.prisma.user.update({ 
             where: { id: userId },
             data: {
                 login : { 
-                    create: {
-                        id : login.id,
-                        email : login.email,
-                        password : login.password,
+                    connect: {
+                        id: id,
                     }
                 }
             }

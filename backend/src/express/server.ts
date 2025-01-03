@@ -1,6 +1,6 @@
-import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import { UserController } from '../controller/UserController';
 import { AuthController } from '../controller/AuthController';
@@ -23,12 +23,12 @@ const server = app.listen(PORT, () => { console.log(`Server is running on port $
 
 export const closeServer = () => { server.close(); };
 
-app.use('/protected', (req: Request, res: Response, next) => {
-    const authHeader = req.headers.authorization;
-    (!authHeader || !authHeader.startsWith('Bearer ')) && isAdministrator(authHeader) ? res.status(401).json({ error: 'Access denied, token is missing!' }) : next();
+app.use('/protected', (request: Request, response: Response, next) => {
+    const authHeader = request.headers.authorization;
+    (!authHeader || !authHeader.startsWith('Bearer ')) && isAdministrator(authHeader) ? response.status(401).json({ error: 'Access denied, token is missing!' }) : next();
 });
 
-app.post('/users', (req: Request, res: Response) => {userController.createUser(req,res)});
-app.post('auth/login', (req: Request, res: Response) => {authController.createLogin(req,res)});
+app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
+app.post('auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});
 
 export default app;
