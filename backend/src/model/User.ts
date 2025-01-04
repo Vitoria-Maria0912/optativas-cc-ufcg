@@ -1,6 +1,7 @@
-import { Discipline, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { Login } from "./Login";
 import { UserDTO } from "../dtos/UserDTO";
+import { Discipline } from "./Discipline";
 
 export interface UserInterface {
     id: number;

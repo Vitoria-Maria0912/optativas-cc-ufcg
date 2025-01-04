@@ -9,7 +9,6 @@ export class UserDTO implements UserInterface {
     @IsNumber()
     public id: number;
 
-    @IsNotEmpty()
     @IsEnum(Role)
     public role: Role;
 

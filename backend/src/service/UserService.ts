@@ -1,9 +1,9 @@
 import { Role } from "@prisma/client";
-import { Login } from "../model/Login";
 import { User } from "../model/User";
 import { UserDTO } from "../dtos/UserDTO";
 import { UserRepository } from "../repository/UserRepository";
-import { NotFoundError } from "../errorHandler/ErrorHandler";
+import { InvalidCredentialsError, NotFoundError } from "../errorHandler/ErrorHandler";
+import { validateCredentials } from "../util/util";
 
 export interface UserServiceInterface {
     createUser(user: UserDTO): Promise<User>;
@@ -18,8 +18,14 @@ export class UserService implements UserServiceInterface {
     private userRepository: UserRepository = new UserRepository();
     
     async createUser(user: UserDTO): Promise<User> {
-        try { return await this.userRepository.createUser(new User(user)); }
-        catch (error: any) { throw new Error("Error trying to create an user!"); }
+        try { 
+            const userToCreate = new User(user);
+            await validateCredentials(userToCreate);
+            return await this.userRepository.createUser(userToCreate); }
+        catch (error: any) { 
+            if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
+            else { throw new Error("Error trying to create an user!"); }
+        }
     }
 
     async registerUser(userId: number, email: string, password: string): Promise<User> {
