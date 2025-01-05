@@ -31,16 +31,16 @@ export const validateCredentials = async (user: User) => {
 
     if (!user.email) { throw new InvalidCredentialsError('Email is required!'); }
 
-    if (!user.email.includes('@')) { throw new InvalidCredentialsError(`This email ${ user.email } is invalid, should be like 'name@example.com'!`); }
+    if (!user.email.includes('@')) { throw new InvalidCredentialsError(`This email '${ user.email }' is invalid, should be like 'name@example.com'!`); }
 
     const userService = new UserService();
 
     try { 
         const existingUser = await userService.getUserByEmail(user.email); 
-        if (existingUser) { throw new InvalidCredentialsError(`Email ${ user.email } is already in use!`); }
+        if (existingUser) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
     } catch (error) {
         if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
     }
-    
-    if (user.role !== Role.ADMINISTRATOR && user.role !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
+
+    if (user.role && user.role !== Role.ADMINISTRATOR && user.role !== Role.COMMON ) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
 }
