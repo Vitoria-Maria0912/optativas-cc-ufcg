@@ -25,10 +25,13 @@ export const closeServer = () => { server.close(); };
 
 app.use('/protected', (request: Request, response: Response, next) => {
     const authHeader = request.headers.authorization;
-    (!authHeader || !authHeader.startsWith('Bearer ')) && isAdministrator(authHeader) ? response.status(401).json({ error: 'Access denied, token is missing!' }) : next();
+    try { 
+        if (isAdministrator(authHeader)) { next(); }
+    } catch (error: any) { response.status(error.statusCode).json({ error: error.message }); }
 });
 
 app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
-app.post('auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});
+app.post('/auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});
+app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
 
 export default app;

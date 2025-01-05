@@ -8,6 +8,7 @@ export interface UserRepositoryInterface {
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
+    getLoginByUserEmail(userEmail: string): Promise<Login>;
 }
 
 export class UserRepository implements UserRepositoryInterface {
@@ -52,5 +53,9 @@ export class UserRepository implements UserRepositoryInterface {
 
     async getUserByRole(userRole: Role): Promise<User[]> {
         return await this.prisma.user.findMany({ where: { role: userRole } });
+    }
+
+    async getLoginByUserEmail(userEmail: string): Promise<Login> {
+        return await this.prisma.login.findUniqueOrThrow({ where: { email: userEmail } });
     }
 }

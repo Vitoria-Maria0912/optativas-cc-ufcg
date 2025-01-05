@@ -29,7 +29,7 @@ export class UserController {
             responseBody = { message: "User was found successfully!", user};
             codeResponse = 201;
         } catch (error: any) {
-            responseBody = { message: (!error.message) ? "Error trying to get an user by email!":  error.message};
+            responseBody = { message: (!error.message) ? "Error trying to get a user by email!":  error.message};
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody);

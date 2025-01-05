@@ -12,7 +12,7 @@ export class AuthController {
         try {
             const { email, password } = request.body; 
             const token = await this.authService.createLogin(email, password);
-            responseBody = { message: "User registered successfully!", token: token };
+            responseBody = { message: `User '${ email }' registered successfully!`, token: token };
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to register an user!":  error.message};
