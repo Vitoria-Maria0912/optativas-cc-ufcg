@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from "../service/UserService";
+import { Role } from '@prisma/client';
 
 export class UserController {
 
@@ -10,11 +11,26 @@ export class UserController {
         var responseBody: object;
         try {
             const user = request.body;
-            await this.userService.createUser(user);
-            responseBody = { message: "User created successfully!", user};
+            const { name } = await this.userService.createUser(user);
+            responseBody = { message: `User ${ name } created successfully!`, user};
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to create an user!":  error.message};
+            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody);
+    }
+
+    async getUserById(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { id } = request.params
+            const user = await this.userService.getUserById(Number(id))
+            responseBody = { message: `User with ID ${ id } was found successfully!`, user};
+            codeResponse = 201;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to create a user by ID!":  error.message};
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody);
@@ -26,7 +42,7 @@ export class UserController {
         try {
             const { email } = request.params;
             const user = await this.userService.getUserByEmail(email);
-            responseBody = { message: "User was found successfully!", user};
+            responseBody = { message: `User with email '${ email }' was found successfully!`, user};
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to get a user by email!":  error.message};
@@ -34,4 +50,36 @@ export class UserController {
         }
         return response.status(codeResponse).json(responseBody);
     }
+
+    async getLoginByUserEmail(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { email } = request.params;
+            const login = await this.userService.getLoginByUserEmail(email)
+            responseBody = { message: `Login for user '${email}' was found successfully!`, login};
+            codeResponse = 201;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get a login by user email!":  error.message};
+            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody);
+    }
+
+
+    async getUserByRole(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { role } = request.params ;
+            const users = await this.userService.getUserByRole(role as Role)
+            responseBody = { message: `Users with '${ role }' role were found successfully!`, users};
+            codeResponse = 201;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get users by role!":  error.message};
+            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody);
+    }
+
 }
