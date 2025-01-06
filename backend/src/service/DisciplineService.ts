@@ -1,4 +1,4 @@
-import { DisciplineAlreadyRegisteredError, InvalidFieldError } from "../errorHandler/ErrorHandler";
+import { DisciplineAlreadyRegisteredError, InvalidFieldError, NotFoundError } from "../errorHandler/ErrorHandler";
 import { DisciplineRepository, DisciplineRepositoryInterface } from "../repository/DisciplineRepository";
 import { DisciplineDTO } from "../dtos/DisciplineDTO";
 import { Discipline } from "../model/Discipline";
@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
+    getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
 } 
 
 export class DisciplineService implements DisciplineServiceInterface {
@@ -22,6 +23,16 @@ export class DisciplineService implements DisciplineServiceInterface {
             if (error instanceof Prisma.PrismaClientKnownRequestError && 
                 error.code === 'P2002') { throw new DisciplineAlreadyRegisteredError('Discipline already exists!'); 
             } throw error;
+        }
+    }
+
+    async getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO> {
+        // if ((await this.getAllDisciplines()).length === 0) {
+        //     throw new NotFoundError('No disciplines found!');
+        // }
+        try { return await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
+        } catch (error) {
+            throw new NotFoundError('Discipline not found!');
         }
     }
 

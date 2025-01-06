@@ -19,3 +19,4 @@ export const closeServer = () => {
 const disciplineController = new DisciplineController();
 
 app.post('/protected/disciplines', (req, res) => {disciplineController.createDiscipline(req,res)});
+app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});

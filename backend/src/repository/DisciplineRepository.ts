@@ -4,6 +4,7 @@ import { DisciplineDTO } from "../dtos/DisciplineDTO";
 
 export interface DisciplineRepositoryInterface {
     createDiscipline(discipline:  Discipline): Promise<Discipline>;
+    getOneDisciplineByID(idDiscipline: number): Promise<Discipline>;
 } 
 
 export class DisciplineRepository implements DisciplineRepositoryInterface {
@@ -25,5 +26,9 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
                 schedule: discipline.schedule,
             },
         });
+    }
+
+    async getOneDisciplineByID(idDiscipline: number): Promise<Discipline> {
+        return await this.prisma.discipline.findUniqueOrThrow({ where: {id: idDiscipline }})
     }
 }
