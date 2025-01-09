@@ -6,14 +6,13 @@ import { UserRepository } from './../repository/UserRepository';
 import { UserService } from './UserService';
 import { User } from "../model/User";
 import { validateLoginCredentials } from '../util/util';
-import { AuthenticationError, NotFoundError } from '../errorHandler/ErrorHandler';
+import { AuthenticationError } from '../errorHandler/ErrorHandler';
 
 export interface AuthServiceInterface {
     createLogin(emailLogin: string, passwordLogin: string): Promise<string>;
     registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User>;
     getLoginByUserEmail(user: User): Promise<{ email: string; token: string }>
     generateToken(user: User): string;
-    comparePassword(password: string, hashPassword: string): Promise<boolean>;
     hashedPassword(password: string): Promise<string>;
 }
 
@@ -66,11 +65,7 @@ export class AuthService implements AuthServiceInterface {
         }
     }
     
-    public generateToken(user: User): string { return jwt.sign(user, JWT_SECRET) }
+    public generateToken(user: User): string { return jwt.sign(user, JWT_SECRET, { expiresIn: '1h' }); }
     
     async hashedPassword(password: string): Promise<string> { return await bcrypt.hash(password, 10); }
-
-    async comparePassword(password: string, hashPassword: string): Promise<boolean> {
-        return await bcrypt.compare(password, hashPassword);
-    }
 }

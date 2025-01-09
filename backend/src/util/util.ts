@@ -6,6 +6,10 @@ import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
 import { InvalidCredentialsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
 
+export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
+    return await bcrypt.compare(password, hashPassword);
+}
+
 export const isAdministrator = (authHeader: any): boolean => {
     
     try {

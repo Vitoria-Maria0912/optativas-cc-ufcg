@@ -1,8 +1,11 @@
 # dependencies
 /backend/prisma/migrations
-/backend/dist
 /backend/node_modules
+/backend/dist
 
 # ides
 .vscode
 .idea
+
+# build
+/backend/.env
