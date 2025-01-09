@@ -24,8 +24,7 @@ export const isAdministrator = (authHeader: any): boolean => {
         else { throw new UserNotAuthorizedError(`Access denied: Administrators only!`) }
 
     } catch (error: any) {
-        if (error instanceof UserNotAuthorizedError) { throw new UserNotAuthorizedError(error.message); }
-        else if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
+        if (error instanceof UserNotAuthorizedError || error instanceof InvalidCredentialsError) { throw error; }
         else if (error instanceof jwt.TokenExpiredError) { throw new InvalidCredentialsError('Access denied, token has expired!') }
         else { throw new UserNotAuthorizedError(`Access denied: invalid token!`); }
     }    
@@ -33,24 +32,32 @@ export const isAdministrator = (authHeader: any): boolean => {
 
 export const validateAllCredentials = async (user: User) => {
 
+    const userService = new UserService();
+
+    try { 
+        const existingUser = await userService.getUserByEmail(user.email); 
+        if (existingUser) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
+    } catch (error) { if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); } }
+
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }
 
     const notOnlyNumbers = new RegExp('^(?!\\d+$).+');
 
     if (!notOnlyNumbers.test(user.name)) { throw new InvalidCredentialsError('Name cannot contains only numbers!'); }
 
+    if (user.name.length < 3) { throw new InvalidCredentialsError('Name is too short, should be at least 3 characters!'); }
+
+    if (user.name.length > 50) { throw new InvalidCredentialsError('Name is too long, should be at most 50 characters!'); }
+
+    if (!notOnlyNumbers.test(user.email)) { throw new InvalidCredentialsError('Email cannot contains only numbers!'); }
+
     if (!user.email) { throw new InvalidCredentialsError('Email is required!'); }
 
     if (!user.email.includes('@')) { throw new InvalidCredentialsError(`This email '${ user.email }' is invalid, should be like 'name@example.com'!`); }
 
-    const userService = new UserService();
+    if (user.email.length < 15) { throw new InvalidCredentialsError('Email is too short, should be at least 15 characters!'); }
 
-    try { 
-        const existingUser = await userService.getUserByEmail(user.email); 
-        if (existingUser) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
-    } catch (error) {
-        if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
-    }
+    if (user.email.length > 50) { throw new InvalidCredentialsError('Email is too long, should be at most 50 characters!'); }
 
     if (user.role && user.role !== Role.ADMINISTRATOR && user.role !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
 }
@@ -63,9 +70,13 @@ export const validateLoginCredentials = async (user: User, email: string, passwo
 
     if (!password) { throw new InvalidCredentialsError('Password is required!'); }
 
-    const isValidPassword = await bcrypt.compare(password, passwordHash);
+    const passwordNumbersAndLetters = new RegExp('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$')
 
-    if (!isValidPassword) { throw new InvalidCredentialsError(`This password '${ password }' is invalid!`); }
+    if (passwordNumbersAndLetters.test(password)) { throw new InvalidCredentialsError(`This password '${ password }' is invalid, should contains letters and numbers!`); }
+
+    if (password.length < 8) { throw new InvalidCredentialsError('Password is too short, should be at least 8 characters!'); }
+
+    if (password.length > 20) { throw new InvalidCredentialsError('Password is too long, should be at most 20 characters!'); }    
 
     return true;
 }
