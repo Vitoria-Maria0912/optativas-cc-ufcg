@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../service/AuthService';
+import { UserService } from '../service/UserService';
 
 export class AuthController {
 
+    private userService = new UserService();
     private authService = new AuthService();
 
     async createLogin(request: Request, response: Response) {
@@ -19,5 +21,21 @@ export class AuthController {
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody)
+    }
+
+    async getLoginByUserEmail(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { email } = request.params;
+            const user = await this.userService.getUserByEmail(email);
+            const login = await this.authService.getLoginByUserEmail(user)
+            responseBody = { message: `Login for user '${ email }' was found successfully!`, login};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get a login by user email!":  error.message};
+            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody);
     }
 } 

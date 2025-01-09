@@ -12,7 +12,7 @@ export class UserController {
         try {
             const user = request.body;
             const { name } = await this.userService.createUser(user);
-            responseBody = { message: `User ${ name } created successfully!`, user};
+            responseBody = { message: `User '${ name }' was created successfully!`, user};
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to create an user!":  error.message};
@@ -27,7 +27,7 @@ export class UserController {
         try {
             const { id } = request.params
             const user = await this.userService.getUserById(Number(id))
-            responseBody = { message: `User with ID ${ id } was found successfully!`, user};
+            responseBody = { message: `User with ID '${ id }' was found successfully!`, user};
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to create a user by ID!":  error.message};
@@ -51,22 +51,7 @@ export class UserController {
         return response.status(codeResponse).json(responseBody);
     }
 
-    async getLoginByUserEmail(request: Request, response: Response): Promise<Response>  {
-        var codeResponse: number;
-        var responseBody: object;
-        try {
-            const { email } = request.params;
-            const login = await this.userService.getLoginByUserEmail(email)
-            responseBody = { message: `Login for user '${email}' was found successfully!`, login};
-            codeResponse = 201;
-        } catch (error: any) {
-            responseBody = { message: (!error.message) ? "Error trying to get a login by user email!":  error.message};
-            codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
-        }
-        return response.status(codeResponse).json(responseBody);
-    }
-
-
+    // Bug when the list of users is empty
     async getUserByRole(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;

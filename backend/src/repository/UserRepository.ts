@@ -44,15 +44,39 @@ export class UserRepository implements UserRepositoryInterface {
     }
 
     async getUserById(userId: number): Promise<User> {
-        return await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+        return await this.prisma.user.findUniqueOrThrow({ 
+            where: { id: userId },
+            select: {
+                id: true,
+                role: true,
+                name: true,
+                email: true,
+            },
+         });
     }
 
     async getUserByEmail(userEmail: string): Promise<User> {
-        return await this.prisma.user.findUniqueOrThrow({ where: { email: userEmail } });
+        return await this.prisma.user.findUniqueOrThrow({ 
+            where: { email: userEmail },
+            select: {
+                id: true,
+                role: true,
+                name: true,
+                email: true,
+            }, 
+        });
     }
 
     async getUserByRole(userRole: Role): Promise<User[]> {
-        return await this.prisma.user.findMany({ where: { role: userRole } });
+        return await this.prisma.user.findMany({ 
+            where: { role: userRole }, 
+            select: {
+                id: true,
+                role: true,
+                name: true,
+                email: true,
+            }, 
+        });
     }
 
     async getLoginByUserEmail(userEmail: string): Promise<Login> {

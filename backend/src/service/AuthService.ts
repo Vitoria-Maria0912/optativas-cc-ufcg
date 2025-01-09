@@ -6,11 +6,12 @@ import { UserRepository } from './../repository/UserRepository';
 import { UserService } from './UserService';
 import { User } from "../model/User";
 import { validateLoginCredentials } from '../util/util';
-import { AuthenticationError } from '../errorHandler/ErrorHandler';
+import { AuthenticationError, NotFoundError } from '../errorHandler/ErrorHandler';
 
 export interface AuthServiceInterface {
     createLogin(emailLogin: string, passwordLogin: string): Promise<string>;
     registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User>;
+    getLoginByUserEmail(user: User): Promise<{ email: string; token: string }>
     generateToken(user: User): string;
     comparePassword(password: string, hashPassword: string): Promise<boolean>;
     hashedPassword(password: string): Promise<string>;
@@ -25,31 +26,46 @@ export class AuthService implements AuthServiceInterface {
     private prismaClient = new PrismaClient();
 
     async createLogin(emailLogin: string, passwordLogin: string): Promise<string> {
-        try{
+        try {
             const user = await this.userService.getUserByEmail(emailLogin);
             const passwordHash = await this.hashedPassword(passwordLogin);
+            const token = this.generateToken(user);
 
             if (await validateLoginCredentials(user, emailLogin, passwordLogin, passwordHash)) {
                 await this.registerUser(user.id, emailLogin, passwordHash);
             }
 
-            return this.generateToken(user);
-            
+            return token;
+
         } catch (error) { throw error; }
     }
     
     async registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User> {
-    try { 
-        const login = await this.prismaClient.login.findUnique({ where: { email: emailLogin } });
+        try { 
+            const login = await this.prismaClient.login.findUnique({ where: { email: emailLogin } });
 
-        if (login) { throw new AuthenticationError(`A user with email '${ emailLogin }' is already registered!`); }
-        else { return await this.userRepository.registerUser(userId, emailLogin, passwordLogin); }
+            if (login) { throw new AuthenticationError(`A user with email '${ emailLogin }' is already registered!`); }
+            else { return await this.userRepository.registerUser(userId, emailLogin, passwordLogin); }
+        }
+        catch (error : any) { 
+            if (error instanceof AuthenticationError) { throw new AuthenticationError(error.message); }
+            else { throw new Error(`Error trying to register this user!`); }
+        }
     }
-    catch (error : any) { 
-        if (error instanceof AuthenticationError) { throw new AuthenticationError(error.message); }
-        else { throw new Error(`Error trying to register this user!`); }
+
+    async getLoginByUserEmail(user: User): Promise<{ email: string; token: string }> {
+        try { 
+            const login = await this.userRepository.getLoginByUserEmail(user.email); 
+            const token = this.generateToken(user);
+
+            return { email: login.email, token };
+        }
+        catch (error : any) { 
+            if (error.code === "P2025") { throw new AuthenticationError(`This user '${ user.email }' doesn't have a login!`); }
+            else { throw new Error(`Error trying to get this user '${ user.email }' login!`); }
+        }
     }
-}
+    
     public generateToken(user: User): string { return jwt.sign(user, JWT_SECRET) }
     
     async hashedPassword(password: string): Promise<string> { return await bcrypt.hash(password, 10); }
