@@ -4,6 +4,7 @@ import { DisciplineDTO } from "../dtos/DisciplineDTO";
 
 export interface DisciplineRepositoryInterface {
     createDiscipline(discipline:  Discipline): Promise<Discipline>;
+    patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void>;
 } 
 
 export class DisciplineRepository implements DisciplineRepositoryInterface {
@@ -25,5 +26,9 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
                 schedule: discipline.schedule,
             },
         });
+    }
+
+    async patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void> {
+        await this.prisma.discipline.update({ where: { id: idDiscipline }, data: updates });
     }
 }

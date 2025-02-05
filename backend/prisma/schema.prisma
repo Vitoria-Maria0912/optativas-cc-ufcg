@@ -14,7 +14,7 @@ model Discipline {
   name             String     @unique 
   acronym          String     
   teacher          String     @default("Undefined")
-  available        Boolean  @default(true)
+  available        Boolean    @default(true)
   description      String
   pre_requisites   String[]
   post_requisites  String[]
