@@ -34,4 +34,21 @@ export class DisciplineController {
         }
         return response.status(codeResponse).json(responseBody)
     }
+
+    async patchDiscipline(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { id } = request.params;
+            const updates = request.body;
+            await this.disciplineService.patchDiscipline(Number(id), updates);
+            const discipline = await this.disciplineService.getOneDisciplineByID(Number(id));
+            responseBody = { message: "Discipline's field updated successfully!", discipline};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to update a discipline's field!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
 }
