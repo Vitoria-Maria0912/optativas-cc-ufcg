@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
+    patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void>;
     getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
 } 
 
@@ -33,6 +34,18 @@ export class DisciplineService implements DisciplineServiceInterface {
         try { return await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
         } catch (error) {
             throw new NotFoundError('Discipline not found!');
+        }
+    }
+
+    async patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void> {
+        // if ((await this.getAllDisciplines()).length === 0) {
+        //     throw new NotFoundError('No disciplines found!');
+        // }
+        const discipline = await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
+        if(this.validate(discipline)){
+            await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
+        } else {
+            throw new NotFoundError(`Discipline not found!`);
         }
     }
 
