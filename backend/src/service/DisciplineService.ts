@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
     getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
+    getAllDisciplines(): Promise<DisciplineDTO[]>;
 } 
 
 export class DisciplineService implements DisciplineServiceInterface {
@@ -27,13 +28,21 @@ export class DisciplineService implements DisciplineServiceInterface {
     }
 
     async getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO> {
-        // if ((await this.getAllDisciplines()).length === 0) {
-        //     throw new NotFoundError('No disciplines found!');
-        // }
+        if ((await this.getAllDisciplines()).length === 0) {
+            throw new NotFoundError('No disciplines found!');
+        }
         try { return await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
         } catch (error) {
             throw new NotFoundError('Discipline not found!');
         }
+    }
+
+    async getAllDisciplines(): Promise<DisciplineDTO[]> {
+        const disciplines = await this.disciplineRepository.getAllDisciplines();
+        if (disciplines.length === 0) {
+            throw new NotFoundError('No disciplines found!');
+        }
+        return disciplines;
     }
 
     private validate(discipline: Discipline): boolean {
