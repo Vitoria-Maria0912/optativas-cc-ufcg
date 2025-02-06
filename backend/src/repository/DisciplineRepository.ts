@@ -5,6 +5,7 @@ import { DisciplineDTO } from "../dtos/DisciplineDTO";
 export interface DisciplineRepositoryInterface {
     createDiscipline(discipline:  Discipline): Promise<Discipline>;
     patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void>;
+    getOneDisciplineByID(idDiscipline: number): Promise<Discipline>;
 } 
 
 export class DisciplineRepository implements DisciplineRepositoryInterface {
@@ -27,8 +28,14 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
             },
         });
     }
+    
+    async getOneDisciplineByID(idDiscipline: number): Promise<Discipline> {
+        return await this.prisma.discipline.findUniqueOrThrow({ where: {id: idDiscipline }})
+    }
 
     async patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void> {
         await this.prisma.discipline.update({ where: { id: idDiscipline }, data: updates });
     }
+    
+    
 }
