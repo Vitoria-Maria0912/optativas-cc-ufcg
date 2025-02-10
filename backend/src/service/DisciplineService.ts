@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
     getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
+    getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
     getAllDisciplines(): Promise<DisciplineDTO[]>;
 } 
 
@@ -24,6 +25,16 @@ export class DisciplineService implements DisciplineServiceInterface {
             if (error instanceof Prisma.PrismaClientKnownRequestError && 
                 error.code === 'P2002') { throw new DisciplineAlreadyRegisteredError('Discipline already exists!'); 
             } throw error;
+        }
+    }
+
+    async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
+        if ((await this.getAllDisciplines()).length === 0) {
+            throw new NotFoundError('No disciplines found!');
+        }
+        try { return await this.disciplineRepository.getOneDisciplineByName(disciplineName);
+        } catch (error) {
+            throw new NotFoundError('Discipline not found!');
         }
     }
 
