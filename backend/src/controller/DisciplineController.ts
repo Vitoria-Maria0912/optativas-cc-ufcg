@@ -20,6 +20,21 @@ export class DisciplineController {
         return response.status(codeResponse).json(responseBody)
     }
 
+    async getOneDisciplineByName(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { name } = request.params;
+            const discipline = await this.disciplineService.getOneDisciplineByName(name);
+            responseBody = { message: "Discipline was found successfully!", discipline};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get one discipline!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
+
     async getOneDisciplineByID(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;
