@@ -20,4 +20,5 @@ const disciplineController = new DisciplineController();
 
 app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
 app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});
+app.get('/disciplines/getByName/:name', (req, res) => {disciplineController.getOneDisciplineByName(req, res)});
 app.post('/protected/disciplines', (req, res) => {disciplineController.createDiscipline(req,res)});
