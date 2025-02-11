@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import { DisciplineController } from '../controller/DisciplineController';
 
 export const app = express();
 app.use(cors());
@@ -14,3 +15,10 @@ const server = app.listen(PORT, () => {
 export const closeServer = () => {
     server.close();
 };
+
+const disciplineController = new DisciplineController();
+
+app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
+app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});
+app.get('/disciplines/getByName/:name', (req, res) => {disciplineController.getOneDisciplineByName(req, res)});
+app.post('/protected/disciplines', (req, res) => {disciplineController.createDiscipline(req,res)});

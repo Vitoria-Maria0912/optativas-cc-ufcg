@@ -10,6 +10,20 @@ datasource db {
 
 model Discipline {
   id               Int        @id @default(autoincrement())
+  type             Type       @default(OBRIGATORY)
+  name             String     @unique 
+  acronym          String     
+  teacher          String     @default("Undefined")
+  available        Boolean  @default(true)
+  description      String
+  pre_requisites   String[]
+  post_requisites  String[]
+  schedule         String     @default("Undefined")
+}
+
+enum Type {
+  OBRIGATORY
+  OPTATIVE
 }
 
 model Administrator {
