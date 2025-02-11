@@ -43,7 +43,7 @@ export const validateAllCredentials = async (user: User) => {
 
     const notOnlyNumbers = new RegExp('^(?!\\d+$).+');
 
-    if (!notOnlyNumbers.test(user.name)) { throw new InvalidCredentialsError('Name cannot contains only numbers!'); }
+    if (!notOnlyNumbers.test(user.name)) { throw new InvalidCredentialsError('Name cannot contain only numbers!'); }
 
     if (user.name.length < 3) { throw new InvalidCredentialsError('Name is too short, should be at least 3 characters!'); }
 

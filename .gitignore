@@ -9,3 +9,7 @@
 
 # build
 /backend/.env
+
+# tests
+/backend/coverage
+/backend/tests

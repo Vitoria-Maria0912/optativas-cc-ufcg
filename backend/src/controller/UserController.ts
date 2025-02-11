@@ -10,9 +10,9 @@ export class UserController {
         var codeResponse: number;
         var responseBody: object;
         try {
-            const user = request.body;
+            const user = { ...request.body, role: request.body.role ?? "COMMON" }
             const { name } = await this.userService.createUser(user);
-            responseBody = { message: `User '${ name }' was created successfully!`, user};
+            responseBody = { message: `User '${ name }' was created successfully!`, user };
             codeResponse = 201;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to create an user!":  error.message};

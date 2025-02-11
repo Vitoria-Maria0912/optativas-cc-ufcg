@@ -34,7 +34,7 @@ export class InvalidCredentialsError extends Error {
     constructor(message: string) {
         super(message);
         this.name = 'InvalidCredentialsError';
-        this.statusCode = 401;
+        this.statusCode = 400;
     }
 };
 
