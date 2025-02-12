@@ -4,7 +4,7 @@ import { Role } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
-import { InvalidCredentialsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
+import { AuthenticationError, InvalidCredentialsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
 
 export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
     return await bcrypt.compare(password, hashPassword);
@@ -14,7 +14,7 @@ export const isAdministrator = (authHeader: any): boolean => {
     
     try {
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            throw new InvalidCredentialsError('Access denied, token is missing!');
+            throw new AuthenticationError('Access denied, token is missing!');
         }
     
         const token = authHeader.split(' ')[1];
@@ -34,9 +34,7 @@ export const validateAllCredentials = async (user: User) => {
 
     const userService = new UserService();
 
-    try { 
-        const existingUser = await userService.getUserByEmail(user.email); 
-        if (existingUser) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
+    try { if (await userService.getUserByEmail(user.email)) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
     } catch (error) { if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); } }
 
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }

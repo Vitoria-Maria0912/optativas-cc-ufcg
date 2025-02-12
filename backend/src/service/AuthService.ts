@@ -11,7 +11,7 @@ import { AuthenticationError } from '../errorHandler/ErrorHandler';
 export interface AuthServiceInterface {
     createLogin(emailLogin: string, passwordLogin: string): Promise<string>;
     registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User>;
-    getLoginByUserEmail(user: User): Promise<{ email: string; token: string }>
+    getTokenByUserEmail(user: User): Promise<{ email: string; token: string }>
     generateToken(user: User): string;
     hashedPassword(password: string): Promise<string>;
 }
@@ -52,9 +52,9 @@ export class AuthService implements AuthServiceInterface {
         }
     }
 
-    async getLoginByUserEmail(user: User): Promise<{ email: string; token: string }> {
+    async getTokenByUserEmail(user: User): Promise<{ email: string; token: string }> {
         try { 
-            const login = await this.userRepository.getLoginByUserEmail(user.email); 
+            const login = await this.userRepository.getTokenByUserEmail(user.email); 
             const token = this.generateToken(user);
 
             return { email: login.email, token };

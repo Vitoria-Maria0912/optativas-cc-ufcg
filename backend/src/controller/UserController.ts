@@ -30,7 +30,7 @@ export class UserController {
             responseBody = { message: `User with ID '${ id }' was found successfully!`, user};
             codeResponse = 200;
         } catch (error: any) {
-            responseBody = { message: (!error.message) ? "Error trying to create a user by ID!":  error.message};
+            responseBody = { message: (!error.message) ? "Error trying to create a user by ID!": error.message};
             codeResponse = (error.statusCode && !isNaN(error.statusCode)) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody);

@@ -28,19 +28,25 @@ export class UserService implements UserServiceInterface {
     }
     
     async getUserById(userId: number): Promise<User> {
-        try { return await this.userRepository.getUserById(userId); }
-        catch (error : any) { throw new NotFoundError(`User with ID '${ userId }' not found!`); }
+        try { 
+            return await this.userRepository.getUserById(userId); }
+        catch (error : any) {             
+            if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
+            throw new NotFoundError(`User with ID '${ userId }' not found!`); 
+        }
     }
 
     async getUserByEmail(userEmail: string): Promise<User> {
+        
+        if (!userEmail.includes('@')) { throw new InvalidCredentialsError(`This email '${ userEmail }' is invalid, should be like 'name@example.com'!`); }
+
         try { return await this.userRepository.getUserByEmail(userEmail); } 
         catch (error: any) { throw new NotFoundError(`User with email '${ userEmail }' not found!`); }
     }
 
     async getUserByRole(userRole: Role): Promise<User[]> {
-        if (userRole !== Role.ADMINISTRATOR && userRole !== Role.COMMON) {
-            throw new InvalidCredentialsError(`Invalid user role '${ userRole }', must be either 'ADMINISTRATOR' or 'COMMON'!`);
-        }
+        
+        if (userRole && userRole !== Role.ADMINISTRATOR && userRole !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
     
         try { const users = await this.userRepository.getUserByRole(userRole);
     

@@ -32,7 +32,7 @@ app.use('/protected', (request: Request, response: Response, next) => {
 
 app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
 app.post('/auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});
-app.get('/login/getByUserEmail/:email', (request: Request, response: Response) => {authController.getLoginByUserEmail(request, response)});
+app.get('/login/getTokenByUserEmail/:email', (request: Request, response: Response) => {authController.getTokenByUserEmail(request, response)});
 app.get('/protected/users/getById/:id', (request: Request, response: Response) => {userController.getUserById(request, response)});
 app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
 app.get('/protected/users/getByRole/:role', (request: Request, response: Response) => {userController.getUserByRole(request, response)});

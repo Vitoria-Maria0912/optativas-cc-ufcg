@@ -8,7 +8,7 @@ export interface UserRepositoryInterface {
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
-    getLoginByUserEmail(userEmail: string): Promise<Login>;
+    getTokenByUserEmail(userEmail: string): Promise<Login>;
 }
 
 export class UserRepository implements UserRepositoryInterface {
@@ -19,7 +19,7 @@ export class UserRepository implements UserRepositoryInterface {
         return await this.prisma.user.create({
             data: {
                 id : user.id,
-                role : user.role,
+                role : user.role ?? Role.COMMON,
                 name : user.name,
                 email : user.email,
             }
@@ -79,7 +79,7 @@ export class UserRepository implements UserRepositoryInterface {
         });
     }
 
-    async getLoginByUserEmail(userEmail: string): Promise<Login> {
+    async getTokenByUserEmail(userEmail: string): Promise<Login> {
         return await this.prisma.login.findUniqueOrThrow({ where: { email: userEmail } });
     }
 }

@@ -12,4 +12,4 @@
 
 # tests
 /backend/coverage
-/backend/tests
+# /backend/tests
