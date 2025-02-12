@@ -27,9 +27,9 @@ export class AuthController {
         var codeResponse: number;
         var responseBody: object;
         try {
-            const { email } = request.params;
+            const { email, password } = request.body;
             const user = await this.userService.getUserByEmail(email);
-            const login = await this.authService.getTokenByUserEmail(user)
+            const login = await this.authService.getTokenByUserEmail(user, password)
             responseBody = { message: `Login for user '${ email }' was found successfully!`, login};
             codeResponse = 200;
         } catch (error: any) {

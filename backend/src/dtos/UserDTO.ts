@@ -1,4 +1,4 @@
-import { Contains, IsAlphanumeric, IsArray, IsEmail, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsOptional, IsString, Length } from "class-validator";
+import { Contains, IsAlphanumeric, IsArray, IsEmail, IsEnum, IsInstance, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { UserInterface } from "../model/User";
 import { Role } from "@prisma/client";
 import { Login } from "../model/Login";
@@ -16,7 +16,6 @@ export class UserDTO implements UserInterface {
     @IsString()
     @IsNotEmpty()
     @IsAlphanumeric()
-    @Length(3, 50, { message: 'Email must be between 15 and 50 characters long!' })
     public name: string;
 
     @IsNotEmpty()
@@ -27,8 +26,12 @@ export class UserDTO implements UserInterface {
     @IsNotEmpty()
     @Contains('@')
     @IsEmail()
-    @Length(15, 50, { message: 'Email must be between 15 and 50 characters long!' })
     public email: string;
+
+    @IsString()
+    @IsOptional()
+    @IsAlphanumeric()
+    public password: string;
 
     @IsOptional()
     @IsArray()
@@ -36,10 +39,11 @@ export class UserDTO implements UserInterface {
     @IsNotEmpty({ each: true })
     public planning: Discipline[];
     
-    constructor(id: number, role: Role, name: string, email: string, login: Login) {
+    constructor(id: number, role: Role, name: string, password:string, email: string, login: Login) {
         this.id = id;
         this.role = role;
         this.name = name;
+        this.password = password;
         this.email = email;
         this.login = login;
         this.planning = [];

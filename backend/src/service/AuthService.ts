@@ -6,12 +6,12 @@ import { UserRepository } from './../repository/UserRepository';
 import { UserService } from './UserService';
 import { User } from "../model/User";
 import { validateLoginCredentials } from '../util/util';
-import { AuthenticationError } from '../errorHandler/ErrorHandler';
+import { AuthenticationError, InvalidCredentialsError } from '../errorHandler/ErrorHandler';
 
 export interface AuthServiceInterface {
     createLogin(emailLogin: string, passwordLogin: string): Promise<string>;
     registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User>;
-    getTokenByUserEmail(user: User): Promise<{ email: string; token: string }>
+    getTokenByUserEmail(user: User, password: string): Promise<{ email: string; token: string }>
     generateToken(user: User): string;
     hashedPassword(password: string): Promise<string>;
 }
@@ -30,7 +30,7 @@ export class AuthService implements AuthServiceInterface {
             const passwordHash = await this.hashedPassword(passwordLogin);
             const token = this.generateToken(user);
 
-            if (await validateLoginCredentials(user, emailLogin, passwordLogin, passwordHash)) {
+            if (await validateLoginCredentials(user, emailLogin, passwordLogin)) {
                 await this.registerUser(user.id, emailLogin, passwordHash);
             }
 
@@ -52,7 +52,11 @@ export class AuthService implements AuthServiceInterface {
         }
     }
 
-    async getTokenByUserEmail(user: User): Promise<{ email: string; token: string }> {
+    async getTokenByUserEmail(user: User, password: string): Promise<{ email: string; token: string }> {
+
+        if (!password) { throw new InvalidCredentialsError('Password is required!'); }
+        // else if (user.password != password) { throw new InvalidCredentialsError('Password is incorrect!'); }   
+
         try { 
             const login = await this.userRepository.getTokenByUserEmail(user.email); 
             const token = this.generateToken(user);

@@ -8,6 +8,7 @@ export interface UserInterface {
     role : Role;
     name : string;
     email : string;
+    password? : string;
     login? : Login;
     planning? : Discipline[]
 }
@@ -17,6 +18,7 @@ export class User implements UserInterface {
     public role: Role;
     public name: string;
     public email: string;
+    public password?: string;
     public login?: Login;
     public planning?: Discipline[];
 
@@ -25,6 +27,7 @@ export class User implements UserInterface {
         this.role = userDTO.role;
         this.name = userDTO.name;
         this.email = userDTO.email;
+        this.password = userDTO.password;
         this.login = userDTO.login;
         this.planning = userDTO.planning;
     }
