@@ -1,14 +1,9 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import { Role } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
 import { AuthenticationError, InvalidCredentialsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
-
-export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
-    return await bcrypt.compare(password, hashPassword);
-}
 
 export const isAdministrator = (authHeader: any): boolean => {
     
@@ -60,7 +55,7 @@ export const validateAllCredentials = async (user: User) => {
     if (user.role && user.role !== Role.ADMINISTRATOR && user.role !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
 }
 
-export const validateLoginCredentials = async (user: User, email: string, password: string, passwordHash: string) : Promise<boolean> => {
+export const validateLoginCredentials = async (user: User, email: string, password: string) : Promise<boolean> => {
 
     if (!email) { throw new InvalidCredentialsError('Email is required!'); }
     
