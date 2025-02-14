@@ -35,6 +35,20 @@ export class DisciplineController {
         return response.status(codeResponse).json(responseBody)
     }
 
+    async deleteAllDisciplines(request: Request, response: Response): Promise<Response> {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            await this.disciplineService.deleteAllDisciplines();
+            responseBody = { message: "All disciplines were deleted successfully!"};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to delete all disciplines!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
+
     async getOneDisciplineByName(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;

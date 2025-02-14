@@ -7,6 +7,7 @@ import { Prisma } from "@prisma/client";
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
     deleteOneDiscipline(idDiscipline: number): Promise<void>;
+    deleteAllDisciplines(): Promise<void>;
     getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
     getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
     getAllDisciplines(): Promise<DisciplineDTO[]>;
@@ -38,6 +39,13 @@ export class DisciplineService implements DisciplineServiceInterface {
             throw new NotFoundError(`Discipline not found!`);
         }
         await this.disciplineRepository.deleteOneDiscipline(idDiscipline);
+    }
+    
+    async deleteAllDisciplines(): Promise<void> {
+        if ((await this.getAllDisciplines()).length === 0) {
+            throw new NotFoundError('No disciplines found!');
+        }
+        await this.disciplineRepository.deleteAllDisciplines();
     }
 
     async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
