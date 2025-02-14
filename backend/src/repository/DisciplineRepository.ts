@@ -4,6 +4,7 @@ import { DisciplineDTO } from "../dtos/DisciplineDTO";
 
 export interface DisciplineRepositoryInterface {
     createDiscipline(discipline:  Discipline): Promise<Discipline>;
+    deleteOneDiscipline(idDiscipline:  number): Promise<void>;
     getOneDisciplineByID(idDiscipline: number): Promise<Discipline>;
     getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
     getAllDisciplines(): Promise<Discipline[]>;
@@ -28,6 +29,10 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
                 schedule: discipline.schedule,
             },
         });
+    }
+
+    async deleteOneDiscipline(idDiscipline: number): Promise<void> {
+        await this.prisma.discipline.delete({where: {id: idDiscipline}})
     }
 
     async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
