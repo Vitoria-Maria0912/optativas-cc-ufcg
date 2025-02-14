@@ -6,9 +6,8 @@ import { Prisma } from "@prisma/client";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
+    patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void>;
     getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO>;
-    getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
-    getAllDisciplines(): Promise<DisciplineDTO[]>;
 } 
 
 export class DisciplineService implements DisciplineServiceInterface {
@@ -28,32 +27,26 @@ export class DisciplineService implements DisciplineServiceInterface {
         }
     }
 
-    async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
-        if ((await this.getAllDisciplines()).length === 0) {
-            throw new NotFoundError('No disciplines found!');
-        }
-        try { return await this.disciplineRepository.getOneDisciplineByName(disciplineName);
-        } catch (error) {
-            throw new NotFoundError('Discipline not found!');
-        }
-    }
-
     async getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO> {
-        if ((await this.getAllDisciplines()).length === 0) {
-            throw new NotFoundError('No disciplines found!');
-        }
+        // if ((await this.getAllDisciplines()).length === 0) {
+        //     throw new NotFoundError('No disciplines found!');
+        // }
         try { return await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
         } catch (error) {
             throw new NotFoundError('Discipline not found!');
         }
     }
 
-    async getAllDisciplines(): Promise<DisciplineDTO[]> {
-        const disciplines = await this.disciplineRepository.getAllDisciplines();
-        if (disciplines.length === 0) {
-            throw new NotFoundError('No disciplines found!');
+    async patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void> {
+        // if ((await this.getAllDisciplines()).length === 0) {
+        //     throw new NotFoundError('No disciplines found!');
+        // }
+        const discipline = await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
+        if(this.validate(discipline)){
+            await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
+        } else {
+            throw new NotFoundError(`Discipline not found!`);
         }
-        return disciplines;
     }
 
     private validate(discipline: Discipline): boolean {
