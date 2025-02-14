@@ -19,6 +19,21 @@ model Discipline {
   pre_requisites   String[]
   post_requisites  String[]
   schedule         String     @default("Undefined")
+  periods          Period[]   @relation("PeriodDisciplines")
+}
+
+model Period {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  disciplines Discipline[] @relation("PeriodDisciplines")
+  planning   Planning?    @relation("PlanningPeriods", fields: [planningId], references: [id])
+  planningId Int?
+}
+
+model Planning {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  periods Period[] @relation("PlanningPeriods")
 }
 
 enum Type {
