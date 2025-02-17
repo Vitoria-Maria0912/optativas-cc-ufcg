@@ -6,6 +6,7 @@ run:
 	docker-compose up -d
 	npm run dev
 
-migrate:
+prisma:
+	npx prisma generate
 	npx prisma migrate dev --name $(name)
 
