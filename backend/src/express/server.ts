@@ -22,190 +22,183 @@ export const closeServer = () => {
 const disciplineController = new DisciplineController();
 
 /**
-* @swagger
-*  /disciplines:
-*    get:
-*      summary: Retorna todas as disciplinas
-*      responses:
-*        200:
-*          description: Lista de disciplinas retornada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Disciplines were found successfully!"
-*                  disciplines:
-*                    type: array
-*                    items:
-*                      $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /disciplines/getByID/{id}:
-*    get:
-*      summary: Retorna uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      responses:
-*        200:
-*          description: Disciplina encontrada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was found successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /disciplines/getByName/{name}:
-*    get:
-*      summary: Retorna uma disciplina pelo nome
-*      parameters:
-*        - in: path
-*          name: name
-*          required: true
-*          schema:
-*            type: string
-*      responses:
-*        200:
-*          description: Disciplina encontrada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was found successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines:
-*    post:
-*      summary: Cria uma nova disciplina
-*      requestBody:
-*        required: true
-*        content:
-*          application/json:
-*            schema:
-*              $ref: '#/components/schemas/DisciplineDTO'
-*      responses:
-*        201:
-*          description: Disciplina criada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline created successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines/{id}:
-*    patch:
-*      summary: Atualiza uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      requestBody:
-*        required: true
-*        content:
-*          application/json:
-*            schema:
-*              $ref: '#/components/schemas/DisciplineDTO'
-*      responses:
-*        200:
-*          description: Disciplina atualizada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline's field updated successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines/{id}:
-*    delete:
-*      summary: Deleta uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      responses:
-*        200:
-*          description: Disciplina deletada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was deleted successfully!"
-*
-*  /protected/disciplines:
-*    delete:
-*      summary: Deleta todas as disciplinas
-*      responses:
-*        200:
-*          description: Todas as disciplinas foram deletadas com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "All disciplines were deleted successfully!"
-*
-*components:
-*  schemas:
-*    DisciplineDTO:
-*      type: object
-*      properties:
-*        id:
-*          type: integer
-*        type:
-*          type: string
-*        name:
-*          type: string
-*        acronym:
-*          type: string
-*        available:
-*          type: boolean
-*        description:
-*          type: string
-*        pre_requisites:
-*          type: array
-*          items:
-*            type: string
-*        post_requisites:
-*          type: array
-*          items:
-*            type: string
-*        teacher:
-*          type: string
-*        schedule:
-*          type: string
-*/
+ * @swagger
+ * paths:
+ *   /disciplines:
+ *     get:
+ *       summary: Retorna todas as disciplinas
+ *       responses:
+ *         200:
+ *           description: Lista de disciplinas retornada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Disciplines were found successfully!"
+ *                   disciplines:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/DisciplineDTO'
+ *   /disciplines/getByID/{id}:
+ *     get:
+ *       summary: Retorna uma disciplina pelo ID
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           schema:
+ *             type: integer
+ *       responses:
+ *         200:
+ *           description: Disciplina encontrada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Discipline was found successfully!"
+ *                   discipline:
+ *                     $ref: '#/components/schemas/DisciplineDTO'
+ *   /disciplines/getByName/{name}:
+ *     get:
+ *       summary: Retorna uma disciplina pelo nome
+ *       parameters:
+ *         - in: path
+ *           name: name
+ *           required: true
+ *           schema:
+ *             type: string
+ *       responses:
+ *         200:
+ *           description: Disciplina encontrada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Discipline was found successfully!"
+ *                   discipline:
+ *                     $ref: '#/components/schemas/DisciplineDTO'
+ *   /protected/disciplines:
+ *     post:
+ *       summary: Cria uma nova disciplina
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DisciplineDTO'
+ *       responses:
+ *         201:
+ *           description: Disciplina criada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Discipline created successfully!"
+ *                   discipline:
+ *                     $ref: '#/components/schemas/DisciplineDTO'
+ *     delete:
+ *       summary: Deleta todas as disciplinas
+ *       responses:
+ *         200:
+ *           description: Todas as disciplinas foram deletadas com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "All disciplines were deleted successfully!"
+ *   /protected/disciplines/{id}:
+ *     patch:
+ *       summary: Atualiza uma disciplina pelo ID
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           schema:
+ *             type: integer
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DisciplineDTO'
+ *       responses:
+ *         200:
+ *           description: Disciplina atualizada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Discipline's field updated successfully!"
+ *                   discipline:
+ *                     $ref: '#/components/schemas/DisciplineDTO'
+ *     delete:
+ *       summary: Deleta uma disciplina pelo ID
+ *       parameters:
+ *         - in: path
+ *           name: id
+ *           required: true
+ *           schema:
+ *             type: integer
+ *       responses:
+ *         200:
+ *           description: Disciplina deletada com sucesso
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 type: object
+ *                 properties:
+ *                   message:
+ *                     type: string
+ *                     example: "Discipline was deleted successfully!"
+ * components:
+ *   schemas:
+ *     DisciplineDTO:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         type:
+ *           type: string
+ *         name:
+ *           type: string
+ *         acronym:
+ *           type: string
+ *         available:
+ *           type: boolean
+ *         description:
+ *           type: string
+ *         pre_requisites:
+ *           type: array
+ *           items:
+ *             type: string
+ *         post_requisites:
+ *           type: array
+ *           items:
+ *             type: string
+ *         teacher:
+ *           type: string
+ *         schedule:
+ *           type: string
+ */
+
 
 app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
 app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});
