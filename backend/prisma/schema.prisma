@@ -16,8 +16,8 @@ model Discipline {
   teacher          String     @default("Undefined")
   available        Boolean  @default(true)
   description      String
-  pre_requisites   String[]
-  post_requisites  String[]
+  pre_requisites   String[] 
+  post_requisites  String[] 
   schedule         String     @default("Undefined")
   periods          Period[]   @relation("PeriodDisciplines")
 }
