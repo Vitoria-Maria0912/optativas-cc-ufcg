@@ -4,7 +4,7 @@ export class DisciplineAlreadyRegisteredError extends Error {
     constructor(message: string) {
         super(message);
         this.name = 'DisciplineAlreadyRegistered';
-        this.statusCode = 400;
+        this.statusCode = 409;
     }
 };
 

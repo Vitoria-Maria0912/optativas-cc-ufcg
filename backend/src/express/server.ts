@@ -45,7 +45,28 @@ const disciplineController = new DisciplineController();
  *                   example: "Discipline created successfully!"
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
- *
+ *       409:
+ *         description: Try to create a new discipline who already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline already exists!"
+ * 
+ *       400:
+ *         description: Try create a new discipline with empty fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline's ${property.name} cannot be empty!"
+ * 
  *   delete:
  *     summary: Delete all disciplines
  *     requestBody:
@@ -66,6 +87,17 @@ const disciplineController = new DisciplineController();
  *                   type: string
  *                   example: "All disciplines were deleted successfully!"
  * 
+ *       404:
+ *         description: Try to delete all disciplines when there are no disciplines
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
+ * 
  * /disciplines:
  *   get:
  *     summary: Returns a list of all disciplines
@@ -84,6 +116,17 @@ const disciplineController = new DisciplineController();
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/DisciplineDTO'
+ * 
+ *       404:
+ *         description: Try to get all disciplines when there are no disciplines
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No disciplines found!"
  *
  * /disciplines/getByID/{id}:
  *   get:
@@ -107,6 +150,17 @@ const disciplineController = new DisciplineController();
  *                   example: "Discipline was found successfully!"
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
+ * 
+ *       404:
+ *         description: Try to get a discipline by its id that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
  *
  * /disciplines/getByName/{name}:
  *   get:
@@ -130,6 +184,17 @@ const disciplineController = new DisciplineController();
  *                   example: "Discipline was found successfully!"
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
+ * 
+ *       404:
+ *         description: Try to get a discipline by its name that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
  *
  * /disciplines/getByAcronym/{acronym}:
  *   get:
@@ -153,6 +218,17 @@ const disciplineController = new DisciplineController();
  *                   example: "Discipline was found successfully!"
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
+ * 
+ *       404:
+ *         description: Try to get a discipline by its acronym that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
  *
  * /protected/disciplines/{id}:
  *   patch:
@@ -177,6 +253,17 @@ const disciplineController = new DisciplineController();
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
  * 
+ *       404:
+ *         description: Try to update a discipline that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
+ * 
  *   put:
  *     summary: Update a discipline
  *     requestBody:
@@ -199,6 +286,17 @@ const disciplineController = new DisciplineController();
  *                 discipline:
  *                   $ref: '#/components/schemas/DisciplineDTO'
  * 
+ *       404:
+ *         description: Try to update a discipline that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
+ * 
  *   delete:
  *     summary: Delete a discipline
  *     requestBody:
@@ -218,6 +316,17 @@ const disciplineController = new DisciplineController();
  *                 message:
  *                   type: string
  *                   example: "Discipline was deleted successfully!"
+ * 
+ *       404:
+ *         description: Try to delete a discipline that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Discipline not found!"
  * components:
  *   schemas:
  *     UserDTO:
@@ -265,6 +374,30 @@ const disciplineController = new DisciplineController();
  *           type: string
  *         schedule:
  *           type: string
+ * 
+ *     PeriodDTO:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         disciplines:
+ *           type: array
+ *           itens:
+ *              type: DisciplineDTO
+ * 
+ *     PlanningDTO:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         periods:
+ *           type: array
+ *           itens:
+ *              type: PeriodDTO
  */
 
 app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
