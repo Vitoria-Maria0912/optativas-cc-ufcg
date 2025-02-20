@@ -23,6 +23,96 @@ const disciplineController = new DisciplineController();
 
 /**
  * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Create a new login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginDTO'
+ *     responses:
+ *       201:
+ *         description: Create a new login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User '${ name }' was created successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/LoginDTO'
+ * 
+ *       409:
+ *         description: Try to create a new login who already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User already have a login!"
+ * 
+ *       400:
+ *         description: Try create a login with invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User's ${property.name} is required!"
+ * 
+ * /login/getTokenByUserEmail:
+ *   post:
+ *     summary: Returns a token for a user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginDTO'
+ *     responses:
+ *       201:
+ *         description: Returns a token for a user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User '${ name }' was created successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/LoginDTO'
+ * 
+ *       404:
+ *         description: Try to get a token for a user who does not have a login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User don't have a login!"
+ * 
+ *       400:
+ *         description: Try get a token for a user with invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User's ${property.name} is required!"
+ * 
  * /protected/users:
  *   post:
  *     summary: Create a new user
@@ -665,6 +755,7 @@ const disciplineController = new DisciplineController();
  *                 message:
  *                   type: string
  *                   example: "Discipline not found!"
+ * 
  * components:
  *   schemas:
  *     UserDTO:
@@ -684,6 +775,16 @@ const disciplineController = new DisciplineController();
  *          type: array
  *          items:
  *            type: string
+ * 
+ *     LoginDTO:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: integer
+ *        email:
+ *          type: string
+ *        password:
+ *          type: string
  * 
  *     DisciplineDTO:
  *       type: object
