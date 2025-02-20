@@ -23,6 +23,344 @@ const disciplineController = new DisciplineController();
 
 /**
  * @swagger
+ * /protected/users:
+ *   post:
+ *     summary: Create a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserDTO'
+ *     responses:
+ *       201:
+ *         description: Create a new user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User '${ name }' was created successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ *       409:
+ *         description: Try to create a new user who already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User already exists!"
+ * 
+ *       400:
+ *         description: Try create a new user with empty or invalid fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User's ${property.name} is required!"
+ * 
+ *   delete:
+ *     summary: Delete all users
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserDTO'
+ *     responses:
+ *       200:
+ *         description: Delete all users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "All users were deleted successfully!"
+ * 
+ *       404:
+ *         description: Try to delete all users when there are no users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No users found!"
+ * 
+ * /users:
+ *   get:
+ *     summary: Returns a list of all users
+ *     responses:
+ *       200:
+ *         description: All users were returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Users were found successfully!"
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/UserDTO'
+ * 
+ *       404:
+ *         description: Try to get all users when there are no users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No users found!"
+ *
+ * /users/getByID/{id}:
+ *   get:
+ *     summary: Returns a user by its ID
+ *     parameters:
+ *       - in: path
+ *         id: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User was found successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User was found successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ * 
+ *       400:
+ *         description: Try to get a user by its ID when the ID is not a number
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User ID must be a number!"
+ * 
+ *       404:
+ *         description: Try to get a user by its id that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found!"
+ *
+ * /users/getByEmail/{email}:
+ *   get:
+ *     summary: Returns a user by its email
+ *     parameters:
+ *       - in: path
+ *         email: email
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User was found successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User was found successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ * 
+ *       400:
+ *         description: Try to get a user by its email when the email is invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "This email '${ userEmail }' is invalid, should be like 'name@example.com'!"
+ * 
+ *       404:
+ *         description: Try to get a user by its id that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User with email '${ userEmail }' not found!"
+ * 
+ * /users/getByRole/{role}:
+ *   get:
+ *     summary: Returns a user by its role
+ *     parameters:
+ *       - in: path
+ *         role: role
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: User was found successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User was found successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ * 
+ *       400:
+ *         description: Try to get a user by its role when the role is invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "The role must be either ADMINISTRATOR or COMMON!"
+ * 
+ *       404:
+ *         description: Try to get a user by its role that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No users with '${ userRole }' role found!"
+ * 
+ * /protected/users/{id}:
+ *   patch:
+ *     summary: Update a user field
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserDTO'
+ *     responses:
+ *       200:
+ *         description: User's field was updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User's field was updated successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ * 
+ *       404:
+ *         description: Try to update a user that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found!"
+ * 
+ *   put:
+ *     summary: Update a user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserDTO'
+ *     responses:
+ *       200:
+ *         description: User's was updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User's was updated successfully!"
+ *                 user:
+ *                   $ref: '#/components/schemas/UserDTO'
+ * 
+ *       404:
+ *         description: Try to update a user that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found!"
+ * 
+ *   delete:
+ *     summary: Delete a user
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserDTO'
+ *     responses:
+ *       200:
+ *         description: User was deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User was deleted successfully!"
+ * 
+ *       404:
+ *         description: Try to delete a user that does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User not found!"
+ * 
  * /protected/disciplines:
  *   post:
  *     summary: Create a new discipline
@@ -96,7 +434,7 @@ const disciplineController = new DisciplineController();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Discipline not found!"
+ *                   example: "No disciplines found!"
  * 
  * /disciplines:
  *   get:
