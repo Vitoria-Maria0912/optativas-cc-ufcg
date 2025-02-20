@@ -38,3 +38,4 @@ Para manter um histórico claro e consistente, siga os padrões de commits abaix
 ## Funcionalidades disponíveis:
 - Realizar CRUD de disciplinas (restrito ao administrador)
 - Visualizar disciplinas obrigatórias e optativas existentes (professor, disponibilidade, pré-requisitos, pós-requisitos)
+- Criar planejamento de disciplinas

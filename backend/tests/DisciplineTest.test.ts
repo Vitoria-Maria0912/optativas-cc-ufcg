@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { closeServer } from '../src/express/server';
+import { app, closeServer } from '../src/express/server';
+import request from 'supertest';
 
 describe('DisciplineController', () => {
     

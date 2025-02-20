@@ -12,6 +12,7 @@ dotenv.config();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+setupSwagger(app);
 
 const PORT = process.env.PORT || 3001;
 export const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
@@ -19,6 +20,11 @@ export const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 const userController = new UserController();
 const authController = new AuthController();
 
+const server = app.listen(PORT, () => {
+    exec('xdg-open http://localhost:8080/api-docs')
+    console.log(`Server is running on port ${PORT}` + '\n' +
+                `Swagger in http://localhost:${PORT}/api-docs`);
+});
 const server = app.listen(PORT, () => { console.log(`Server is running on port ${ PORT }`); });
 
 export const closeServer = () => { server.close(); };
