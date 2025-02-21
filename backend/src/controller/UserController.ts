@@ -66,6 +66,20 @@ export class UserController {
         return response.status(codeResponse).json(responseBody);
     }
 
+    async getAllUsers(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const users = await this.userService.getAllUsers();
+            responseBody = { message: "Users were found successfully!", users};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get all users!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
+
     async deleteAllUsers(request: Request, response: Response): Promise<Response> {
         var codeResponse: number;
         var responseBody: object;

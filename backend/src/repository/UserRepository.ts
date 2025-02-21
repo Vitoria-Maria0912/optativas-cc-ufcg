@@ -5,6 +5,7 @@ import { Login } from "../model/Login";
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;
     registerUser(userId: number, email: string, password: string): Promise<User>;
+    getAllUsers() : Promise<User[]>;
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
@@ -47,41 +48,32 @@ export class UserRepository implements UserRepositoryInterface {
     async getUserById(userId: number): Promise<User> {
         return await this.prisma.user.findUniqueOrThrow({ 
             where: { id: userId },
-            select: {
-                id: true,
-                role: true,
-                name: true,
-                email: true,
-            },
+            select: { id: true, role: true, name: true, email: true } 
         });
     }
     
     async getUserByEmail(userEmail: string): Promise<User> {
         return await this.prisma.user.findUniqueOrThrow({ 
             where: { email: userEmail },
-            select: {
-                id: true,
-                role: true,
-                name: true,
-                email: true,
-            }, 
+            select: { id: true, role: true, name: true, email: true } 
         });
     }
     
     async getUserByRole(userRole: Role): Promise<User[]> {
         return await this.prisma.user.findMany({ 
             where: { role: userRole }, 
-            select: {
-                id: true,
-                role: true,
-                name: true,
-                email: true,
-            }, 
+            select: { id: true, role: true, name: true, email: true } 
         });
     }
     
     async getTokenByUserEmail(userEmail: string): Promise<Login> {
         return await this.prisma.login.findUniqueOrThrow({ where: { email: userEmail } });
+    }
+
+    async getAllUsers(): Promise<User[]> { 
+        return await this.prisma.user.findMany(
+            // { select: { id: true, role: true, name: true, email: true } }
+        ); 
     }
 
     async deleteAllUsers(): Promise<void> { await this.prisma.user.deleteMany(); }

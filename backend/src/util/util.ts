@@ -3,7 +3,7 @@ import { Role } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
-import { AuthenticationError, InvalidCredentialsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
+import { AuthenticationError, InvalidCredentialsError, UserAlreadyExistsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
 
 export const isAdministrator = (authHeader: any): boolean => {
     
@@ -29,8 +29,8 @@ export const validateAllCredentials = async (user: User) => {
 
     const userService = new UserService();
 
-    try { if (await userService.getUserByEmail(user.email)) { throw new InvalidCredentialsError(`This email '${ user.email }' is already in use!`); }
-    } catch (error) { if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); } }
+    try { if (await userService.getUserByEmail(user.email)) { throw new UserAlreadyExistsError(`This email '${ user.email }' is already in use!`); }
+    } catch (error) { if (error instanceof UserAlreadyExistsError) { throw error; } }
 
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }
 

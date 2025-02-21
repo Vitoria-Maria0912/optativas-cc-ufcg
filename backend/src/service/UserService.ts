@@ -1,12 +1,13 @@
-import { Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { User } from "../model/User";
 import { UserDTO } from "../dtos/UserDTO";
 import { UserRepository } from "../repository/UserRepository";
 import { validateAllCredentials } from "../util/util";
-import { InvalidCredentialsError, NotFoundError } from "../errorHandler/ErrorHandler";
+import { InvalidCredentialsError, NotFoundError, UserAlreadyExistsError } from "../errorHandler/ErrorHandler";
 
 export interface UserServiceInterface {
     createUser(user: UserDTO): Promise<User>;
+    getAllUsers(): Promise<User[]>;
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
@@ -22,19 +23,25 @@ export class UserService implements UserServiceInterface {
             const userToCreate = new User(user);
             await validateAllCredentials(userToCreate);
             return await this.userRepository.createUser(userToCreate); }
-            catch (error: any) { 
-                if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
-                else { throw new Error("Error trying to create a user!"); }
-            }
+        catch (error: any) { 
+            if (error instanceof InvalidCredentialsError || error instanceof UserAlreadyExistsError) { throw error; }
+            else { throw new Error("Error trying to create a user!"); }
         }
-        
-        async getUserById(userId: number): Promise<User> {
-            
-            if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
+    }
 
-            try { return await this.userRepository.getUserById(userId); }
-            catch (error : any) { 
-                throw new NotFoundError(`User with ID '${ userId }' not found!`); }
+    async getAllUsers(): Promise<User[]> { 
+        const users = await this.userRepository.getAllUsers(); 
+        if (users.length === 0) { throw new NotFoundError('No users found!'); }
+        return users;
+    }
+        
+    async getUserById(userId: number): Promise<User> {
+        
+        if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
+
+        try { return await this.userRepository.getUserById(userId); }
+        catch (error : any) { 
+            throw new NotFoundError(`User with ID '${ userId }' not found!`); }
     }
     
     async getUserByEmail(userEmail: string): Promise<User> {
@@ -62,9 +69,9 @@ export class UserService implements UserServiceInterface {
     }
 
     async deleteAllUsers(): Promise<void> {
-        // if ((await this.getAllUsers()).length === 0) {
-        //     throw new NotFoundError('No disciplines found!');
-        // }
+        if ((await this.getAllUsers()).length === 0) {
+            throw new NotFoundError('No users found!');
+        }
         await this.userRepository.deleteAllUsers();    
     }
 }
