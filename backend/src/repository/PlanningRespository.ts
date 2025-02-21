@@ -22,10 +22,15 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             data: {
                 name: planning.name,
                 periods: { create: []},
+                user: {
+                    connect: {
+                      id: planning.userId,
+                    }
+                }
             }
         })
         
-        return new Planning(createdPlanning.id, createdPlanning.name, []);
+        return new Planning(createdPlanning.id, createdPlanning.userId, createdPlanning.name, []);
     }
     
     async addPeriods(planningId: number, periodIds: []): Promise<Planning> {
@@ -47,7 +52,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
         );
         
-        return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+        return new Planning(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
         
     }
     
@@ -67,7 +72,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             };
         });
 
-        return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+        return new Planning(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
     }
     
     async getAll(): Promise<Planning[]> {
@@ -81,7 +86,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             const periodsDTO = planning.periods.map(period =>
                 new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
             );
-            return new Planning(planning.id, planning.name, periodsDTO);
+            return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
         });
     }    
     
@@ -101,7 +106,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
         );
     
-        return new Planning(planning.id, planning.name, periodsDTO);
+        return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
     }
     
     async getOneByName(name: string): Promise<Planning | null> {
@@ -120,7 +125,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
         );
     
-        return new Planning(planning.id, planning.name, periodsDTO);
+        return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
     }
     
 }

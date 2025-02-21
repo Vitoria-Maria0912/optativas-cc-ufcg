@@ -8,18 +8,18 @@ const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Minha API",
+      title: "Trilharei",
       version: "1.0.0",
-      description: "Documentação da API usando Swagger",
+      description: "API do Trilharei",
     },
     servers: [
       {
         url: "http://localhost:3001",
-        description: "Servidor local",
+        description: "Localhost",
       },
     ],
   },
-  apis: ["./src/**/*.ts"], // Certifique-se de que esse caminho inclui seus arquivos de rota
+  apis: ["./src/**/*.ts"], 
 };
 
 const swaggerSpec = swaggerJsdoc(options);

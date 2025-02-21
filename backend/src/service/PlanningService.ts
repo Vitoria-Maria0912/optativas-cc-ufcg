@@ -84,7 +84,7 @@ export class PlanningService implements PlanningServiceInterface {
                 )
             );
     
-            return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+            return new PlanningDTO(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
         } catch (error) {
             console.error("Erro na criação do planejamento:", error);
     
@@ -157,7 +157,7 @@ export class PlanningService implements PlanningServiceInterface {
             )
         );
     
-        return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+        return new PlanningDTO(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
     }
     
     async getPlanning(): Promise<PlanningDTO[]> {
@@ -170,7 +170,7 @@ export class PlanningService implements PlanningServiceInterface {
                 return new PeriodDTO(periodId, period.name, period.planningId ?? 0, period.disciplines || []);
             }) ?? []; 
     
-            return new PlanningDTO(id, planning.name, periods);
+            return new PlanningDTO(id, planning.userId, planning.name, periods);
         });
     } 
     
@@ -190,6 +190,6 @@ export class PlanningService implements PlanningServiceInterface {
             throw new Error(`Planning with ID ${id} not found.`);
         }
 
-        return new PlanningDTO(planning.id, planning.name, periodsDTO);
+        return new PlanningDTO(planning.id, planning.userId, planning.name, periodsDTO);
     }
 }
