@@ -8,6 +8,7 @@ import { PeriodRepository, PeriodRepositoryInterface } from "../repository/Perio
 export interface PlanningServiceInterface {
     createPlanning(planningData: any): Promise<PlanningDTO>;
     updatePlanning(planningData: any): Promise<PlanningDTO>;
+    getPlanning(): Promise<PlanningDTO[]>
 }
 
 export class PlanningService implements PlanningServiceInterface {
@@ -56,7 +57,7 @@ export class PlanningService implements PlanningServiceInterface {
         if (updatedPlanning.id === undefined) {
             throw new Error("Planning ID is undefined.");
         }
-    
+        
         const periodsDTO = updatedPlanning.periods.map(period =>
             new PeriodDTO(
                 period.id ?? 0,
@@ -65,8 +66,23 @@ export class PlanningService implements PlanningServiceInterface {
                 period.disciplines || []
             )
         );
-    
+        
         return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
     }
     
+    async getPlanning(): Promise<PlanningDTO[]> {
+        const plannings = await this.planningRepository.getAll();
+    
+        return plannings.map(planning => {
+            // Garantir que `planning.id` e `planning.periods` são válidos
+            const id = planning.id ?? 0; // Caso `id` seja `undefined`, atribui 0
+            const periods = planning.periods?.map(period => {
+                // Garantir que `period.id` seja válido
+                const periodId = period.id ?? 0; // Caso `period.id` seja `undefined`, atribui 0
+                return new PeriodDTO(periodId, period.name, period.planningId ?? 0, period.disciplines || []);
+            }) ?? []; // Caso `planning.periods` seja `undefined`, atribui um array vazio
+    
+            return new PlanningDTO(id, planning.name, periods);
+        });
+    } 
 }
