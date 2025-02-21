@@ -2,6 +2,7 @@ import { Contains, IsAlphanumeric, IsArray, IsEmail, IsEnum, IsInstance, IsNotEm
 import { UserInterface } from "../model/User";
 import { Role } from "@prisma/client";
 import { Login } from "../model/Login";
+import { Planning } from "../model/Planning";
 
 export class UserDTO implements UserInterface {
 
@@ -27,16 +28,15 @@ export class UserDTO implements UserInterface {
     @IsEmail()
     public email: string;
 
-    @IsString()
+    @IsArray()
     @IsOptional()
-    @IsAlphanumeric()
-    public password: string;
+    public plannings: Planning[];
     
-    constructor(id: number, role: Role, name: string, password:string, email: string, login: Login) {
+    constructor(id: number, role: Role, name: string, plannings:Planning[], email: string, login: Login) {
         this.id = id;
         this.role = role;
         this.name = name;
-        this.password = password;
+        this.plannings = plannings;
         this.email = email;
         this.login = login;
     }

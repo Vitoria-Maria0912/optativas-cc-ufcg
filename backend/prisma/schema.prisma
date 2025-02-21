@@ -20,10 +20,7 @@ model Discipline {
   post_requisites  String[] 
   schedule         String     @default("Undefined")
   periods          Period[]   @relation("PeriodDisciplines")
-  users            User[]     @relation("UserDisciplines") 
-  usersPlanning    User[]     @relation("UserDisciplinesPlanning") 
 }
-
 
 model Period {
   id         Int          @id @default(autoincrement())
@@ -41,7 +38,6 @@ model Planning {
   userId  Int      
 }
 
-
 enum Type {
   OBRIGATORY
   OPTATIVE
@@ -58,10 +54,8 @@ model User {
   name            String
   email           String        @unique
   loginId         Int?          @unique     
-  planning        Discipline[]  @relation("UserDisciplinesPlanning") 
   login           Login?        @relation(fields: [loginId], references: [id])
   plannings       Planning[]    @relation("UserPlannings")
-  disciplineUsers Discipline[]  @relation("UserDisciplines") 
 }
 
 model Login {
