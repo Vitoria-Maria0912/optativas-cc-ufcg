@@ -11,7 +11,7 @@ export interface PlanningRepositoryInterface {
     updateName(planningId: number, newName: string): Promise<Planning>;
     getAll(): Promise<Planning[]>;
     getOneById(id: number): Promise<Planning>;
-    getOneByName(name: string): Promise<Planning>;
+    getOneByName(name: string): Promise<Planning | null>;
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
@@ -104,7 +104,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
         return new Planning(planning.id, planning.name, periodsDTO);
     }
     
-    async getOneByName(name: string): Promise<Planning> {
+    async getOneByName(name: string): Promise<Planning | null> {
         const planning = await this.prisma.planning.findUnique({
             where: { name: name },
             include: {
@@ -113,7 +113,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
         });
         
         if (!planning) {
-            throw new Error(`Planning with ID ${name} not found.`);
+            return null;
         }
     
         const periodsDTO = planning.periods.map(period =>

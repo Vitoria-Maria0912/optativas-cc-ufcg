@@ -197,7 +197,7 @@ paths:
                         type: array
                         description: Lista de disciplinas associadas ao período
                         items:
-                          type: string
+                          type: integer
               required:
               - name
               - periods
@@ -222,7 +222,7 @@ paths:
           description: Erro interno do servidor
 
     put:
-      summary: Atualiza um planejamento existente
+      summary: Atualiza um planejamento existente, mas precisa do id do planajamento e também do id de cada period(frontend terá acesso através do get)
       requestBody:
         required: true
         content:
@@ -252,7 +252,7 @@ paths:
                         type: array
                         description: Lista de disciplinas associadas ao período
                         items:
-                          type: string
+                          type: integer
               required:
               - id
               - name
