@@ -1,7 +1,8 @@
 import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { DisciplineInterface } from "../model/Discipline";
+import { PeriodInterface } from "../model/Period";
 
-export class PeriodDTO {
+export class PeriodDTO implements PeriodInterface {
     @IsNumber()
     public id: number;
 
