@@ -154,18 +154,55 @@ paths:
                   message:
                     type: string
                     example: "Discipline was deleted successfully!"
-
   /planning:
+    get:
+      summary: Retorna todos os planejamentos
+      responses:
+        200:
+          description: Lista de planejamentos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Plannings fetched"
+                  planning:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlanningDTO'
     post:
-      summary: Cria um planejamento
+      summary: Cria um novo planejamento
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PlanningDTO'
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: O nome do planejamento
+                periods:
+                  type: array
+                  description: Lista de períodos associados ao planejamento
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Nome do período
+                      disciplines:
+                        type: array
+                        description: Lista de disciplinas associadas ao período
+                        items:
+                          type: string
+              required:
+              - name
+              - periods
       responses:
-        200:
+        201:
           description: Planejamento criado com sucesso
           content:
             application/json:
@@ -174,10 +211,99 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Planning Created!"
-                  discipline:
+                    example: "Planning created!"
+                  createdPlanning:
                     $ref: '#/components/schemas/PlanningDTO'
+        400:
+          description: Erro nos dados fornecidos
+        409:
+          description: Planejamento já existente com o nome fornecido
+        500:
+          description: Erro interno do servidor
 
+    put:
+      summary: Atualiza um planejamento existente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: ID do planejamento
+                name:
+                  type: string
+                  description: Nome do planejamento
+                periods:
+                  type: array
+                  description: Lista de períodos associados ao planejamento
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: ID do período
+                      name:
+                        type: string
+                        description: Nome do período
+                      disciplines:
+                        type: array
+                        description: Lista de disciplinas associadas ao período
+                        items:
+                          type: string
+              required:
+              - id
+              - name
+              - periods
+      responses:
+        200:
+          description: Planejamento atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Planning updated!"
+                  updatedPlanning:
+                    $ref: '#/components/schemas/PlanningDTO'
+        400:
+          description: Erro nos dados fornecidos
+        404:
+          description: Planejamento não encontrado
+        500:
+          description: Erro interno do servidor
+
+  /planning/{id}:
+    get:
+      summary: Retorna um planejamento específico pelo ID
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: ID do planejamento
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Planejamento encontrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Planning fetched"
+                  planning:
+                    $ref: '#/components/schemas/PlanningDTO'
+        404:
+          description: Planejamento não encontrado
+        500:
+          description: Erro interno do servidor
 components:
   schemas:
     DisciplineDTO:

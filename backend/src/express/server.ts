@@ -24,6 +24,10 @@ export const closeServer = () => {
 const disciplineController = new DisciplineController();
 const planningController = new PlanningController();
 
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
 setupSwagger(app);
 
 app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
@@ -34,10 +38,7 @@ app.patch('/protected/disciplines/:id', (req, res) => {disciplineController.patc
 app.delete('/protected/disciplines/:id', (req, res) => {disciplineController.deleteOneDiscipline(req, res)});
 app.delete('/protected/disciplines', (req, res) => {disciplineController.deleteAllDisciplines(req, res)});
 
-const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-};
-
+/* Planning */
 app.post("/planning", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.createPlanning(req, res)
