@@ -41,10 +41,12 @@ app.use('/protected', (request: Request, response: Response, next) => {
 
 // User Routes
 app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
+app.get('/protected/users', (request: Request, response: Response) => {userController.getAllUsers(request,response)});
 app.get('/protected/users/getById/:id', (request: Request, response: Response) => {userController.getUserById(request, response)});
 app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
 app.get('/protected/users/getByRole/:role', (request: Request, response: Response) => {userController.getUserByRole(request, response)});
 app.delete('/protected/users', (request: Request, response: Response) => {userController.deleteAllUsers(request,response)});
+app.delete('/users/:id', (request: Request, response: Response) => {userController.deleteOneUser(request,response)});
 
 // Auth Routes
 app.post('/auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});

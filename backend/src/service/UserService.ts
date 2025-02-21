@@ -11,6 +11,7 @@ export interface UserServiceInterface {
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
+    deleteOneUser(userId: number): Promise<void>;
     deleteAllUsers() : Promise<void>;
 }
 
@@ -66,6 +67,15 @@ export class UserService implements UserServiceInterface {
             if (error instanceof InvalidCredentialsError || error instanceof NotFoundError) { throw error; }
             else { throw new Error("Error trying to get users by role!"); }
         }
+    }
+
+    async deleteOneUser(userId: number): Promise<void> {
+
+        if ((await this.getAllUsers()).length === 0) { throw new NotFoundError('No users found!'); }
+        if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
+
+        try { await this.userRepository.deleteOneUser(userId); }
+        catch (error : any) { throw new NotFoundError(`User with ID '${ userId }' not found!`); }         
     }
 
     async deleteAllUsers(): Promise<void> {

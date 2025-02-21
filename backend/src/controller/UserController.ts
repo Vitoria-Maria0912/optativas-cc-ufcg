@@ -80,6 +80,21 @@ export class UserController {
         return response.status(codeResponse).json(responseBody)
     }
 
+    async deleteOneUser(request: Request, response: Response): Promise<Response> {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { id } = request.params ;
+            await this.userService.deleteOneUser(Number(id));
+            responseBody = { message: `User with ID '${ id }' was deleted successfully!` };
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to delete user by id!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
+
     async deleteAllUsers(request: Request, response: Response): Promise<Response> {
         var codeResponse: number;
         var responseBody: object;

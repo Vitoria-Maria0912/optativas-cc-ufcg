@@ -1,7 +1,6 @@
 import { Role } from "@prisma/client";
 import { Login } from "./Login";
 import { UserDTO } from "../dtos/UserDTO";
-import { Discipline } from "./Discipline";
 
 export interface UserInterface {
     id: number;
@@ -10,7 +9,6 @@ export interface UserInterface {
     email : string;
     password? : string;
     login? : Login;
-    planning? : Discipline[]
 }
 
 export class User implements UserInterface {
@@ -20,7 +18,6 @@ export class User implements UserInterface {
     public email: string;
     public password?: string;
     public login?: Login;
-    public planning?: Discipline[];
 
     constructor(userDTO : UserDTO) {
         this.id = userDTO.id;
@@ -29,6 +26,5 @@ export class User implements UserInterface {
         this.email = userDTO.email;
         this.password = userDTO.password;
         this.login = userDTO.login;
-        this.planning = userDTO.planning;
     }
 }

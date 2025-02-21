@@ -19,8 +19,6 @@ model Discipline {
   pre_requisites   String[] 
   post_requisites  String[] 
   schedule         String     @default("Undefined")
-
-  User User[]
 }
 
 enum Type {
@@ -39,8 +37,6 @@ model User {
   name            String
   email           String        @unique
   loginId         Int?          @unique     
-  planning        Discipline[] 
-  
   login           Login?        @relation(fields: [loginId], references: [id])
 }
 

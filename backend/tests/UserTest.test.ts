@@ -320,4 +320,49 @@ describe('UserController', () => {
             expect(response.status).toBe(400);
         });
     });
+
+    describe("DeleteOneUser should return 'User with ID ${ id } was deleted successfully!' ", () => {
+        
+        test("deleteOneUser should return 'No users found!'", async () => {
+            await request(app).delete('/protected/users').set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).delete('/users/1').set("Authorization", `Bearer ${ TOKEN }`);
+            
+            expect(response.body).toEqual({ message: 'No users found!'});
+            expect(response.status).toBe(404);
+        });
+        
+        test('deleteOneUser should return success message', async () => {
+        
+            const userData = {
+                id: 1,
+                role: Role.ADMINISTRATOR,
+                name: "Alice Johnson",
+                email: "alice@example.com"
+            };
+    
+            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ TOKEN }`);
+    
+            const response = await request(app).delete(`/users/${ userData.id }`).set("Authorization", `Bearer ${ TOKEN }`);
+    
+            expect(response.body).toEqual({ message: `User with ID '${ userData.id }' was deleted successfully!`, });
+            expect(response.status).toBe(200);
+        });
+
+    });
+
+    describe("DeleteAllUsers should return 'All users were deleted successfully!' ", () => {
+        test("should return 'No users found!'", async () => {
+            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            
+            expect(response.body).toEqual({ message: "No users found!" });
+        });
+
+        test("should return a message when all users are deleted", async () => {
+            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Delete Test", email: "deleteTest@example.com" });
+
+            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            
+            expect(response.body).toEqual({ message: "All users were deleted successfully!" });
+        });
+    });
 });

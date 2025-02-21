@@ -1,6 +1,8 @@
 import { PrismaClient, Role } from "@prisma/client";
 import { User } from "../model/User";
 import { Login } from "../model/Login";
+import { DisciplineDTO } from "../dtos/DisciplineDTO";
+import { UserDTO } from "../dtos/UserDTO";
 
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;
@@ -10,6 +12,7 @@ export interface UserRepositoryInterface {
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
     getTokenByUserEmail(userEmail: string): Promise<Login>;
+    deleteOneUser(userId: number): Promise<void>;
     deleteAllUsers() : Promise<void>;
 }
 
@@ -72,8 +75,12 @@ export class UserRepository implements UserRepositoryInterface {
 
     async getAllUsers(): Promise<User[]> { 
         return await this.prisma.user.findMany(
-            // { select: { id: true, role: true, name: true, email: true } }
+            { select: { id: true, role: true, name: true, email: true } }
         ); 
+    }
+
+    async deleteOneUser(idUser: number): Promise<void> {
+        await this.prisma.user.delete({ where: { id: idUser } });
     }
 
     async deleteAllUsers(): Promise<void> { await this.prisma.user.deleteMany(); }
