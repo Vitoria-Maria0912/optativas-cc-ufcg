@@ -24,7 +24,7 @@ model Discipline {
 
 model Period {
   id         Int          @id @default(autoincrement())
-  name       String       @unique
+  name       String
   disciplines Discipline[] @relation("PeriodDisciplines")
   planning   Planning?    @relation("PlanningPeriods", fields: [planningId], references: [id])
   planningId Int?
