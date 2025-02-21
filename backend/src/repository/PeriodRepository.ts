@@ -25,28 +25,8 @@ export class PeriodRepository implements PeriodRepositoryInterface {
         
         return new Period(createdPeriod.id, createdPeriod.name, createdPeriod.planningId ?? undefined, createdPeriod.disciplines || []);
     }
-
-    // async updatePeriod(period: any): Promise<Period> {
-    //     console.log(period.disciplines)
-    //     const updatedPeriod = await this.prisma.period.update({
-    //         where: { id: period.id },
-    //         data: {
-    //             name: period.name,
-    //             disciplines: period.disciplines.length > 0
-    //                 ? { connect: period.disciplines.map((id: number) => ({ id })) }
-    //                 : { disconnect: period.disciplines.map((id: number) => ({ id })) },
-    //         },
-    //         include: { disciplines: true },
-    //     });
-        
-    //     return new Period(updatedPeriod.id, updatedPeriod.name, updatedPeriod.planningId ?? undefined, updatedPeriod.disciplines || []);
-    // }     
-
     
-    
-    async updatePeriod(period: any): Promise<Period> {
-        console.log(period.disciplines);
-    
+    async updatePeriod(period: any): Promise<Period> {    
         const existingPeriod = await this.prisma.period.findUnique({
             where: { id: period.id },
             include: { disciplines: true }

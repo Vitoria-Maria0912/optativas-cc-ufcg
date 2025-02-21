@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from "express";
 import express from 'express';
 import cors from 'cors';
 import { DisciplineController } from '../controller/DisciplineController';
@@ -33,7 +34,45 @@ app.patch('/protected/disciplines/:id', (req, res) => {disciplineController.patc
 app.delete('/protected/disciplines/:id', (req, res) => {disciplineController.deleteOneDiscipline(req, res)});
 app.delete('/protected/disciplines', (req, res) => {disciplineController.deleteAllDisciplines(req, res)});
 
-app.post("/planning", (req, res) => {planningController.createPlanning(req, res)})
-app.put("/planning", (req, res) => {planningController.updatePlanning(req, res)})
-app.get("/planning", (req, res) => {planningController.getPlanning(req, res)})
-app.get("/planning/:id", (req, res) => {planningController.getOnePlanning(req, res)})
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+app.post("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.createPlanning(req, res)
+));
+
+app.put("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.updatePlanning(req, res)
+));
+
+app.get("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.getPlanning(req, res)
+));
+
+app.get("/planning/:id", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.getOnePlanning(req, res)
+));
+
+export const errorHandler = (
+    err: any, 
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+) => {
+    console.error(err.stack);
+
+    const statusCode = err.status || 500;
+    res.status(statusCode).json({
+        error: {
+            message: err.message || "Internal server error",
+            status: statusCode
+        }
+    });
+};
+
+app.use(errorHandler);
