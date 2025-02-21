@@ -72,7 +72,7 @@ export class UserRepository implements UserRepositoryInterface {
 
     async getAllUsers(): Promise<User[]> { 
         return await this.prisma.user.findMany(
-            // { select: { id: true, role: true, name: true, email: true } }
+            { select: { id: true, role: true, name: true, email: true } }
         ); 
     }
 

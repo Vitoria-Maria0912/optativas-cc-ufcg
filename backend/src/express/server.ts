@@ -41,6 +41,7 @@ app.use('/protected', (request: Request, response: Response, next) => {
 
 // User Routes
 app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
+app.get('/protected/users', (request: Request, response: Response) => {userController.getAllUsers(request, response)});
 app.get('/protected/users/getById/:id', (request: Request, response: Response) => {userController.getUserById(request, response)});
 app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
 app.get('/protected/users/getByRole/:role', (request: Request, response: Response) => {userController.getUserByRole(request, response)});
@@ -51,13 +52,13 @@ app.post('/auth/login', (request: Request, response: Response) => {authControlle
 app.post('/login/getTokenByUserEmail', (request: Request, response: Response) => {authController.getTokenByUserEmail(request, response)});
 
 // Discipline Routes
-app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
-app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});
-app.get('/disciplines/getByName/:name', (req, res) => {disciplineController.getOneDisciplineByName(req, res)});
-app.post('/protected/disciplines', (req, res) => {disciplineController.createDiscipline(req,res)});
-app.patch('/protected/disciplines/:id', (req, res) => {disciplineController.patchDiscipline(req, res)});
-app.delete('/protected/disciplines/:id', (req, res) => {disciplineController.deleteOneDiscipline(req, res)});
-app.delete('/protected/disciplines', (req, res) => {disciplineController.deleteAllDisciplines(req, res)});
+app.get('/disciplines', (request: Request, response: Response) => {disciplineController.getAllDisciplines(request,response)});
+app.get('/disciplines/getByID/:id', (request: Request, response: Response) => {disciplineController.getOneDisciplineByID(request,response)});
+app.get('/disciplines/getByName/:name', (request: Request, response: Response) => {disciplineController.getOneDisciplineByName(request,response)});
+app.post('/protected/disciplines', (request: Request, response: Response) => {disciplineController.createDiscipline(request,response)});
+app.patch('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.patchDiscipline(request,response)});
+app.delete('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.deleteOneDiscipline(request,response)});
+app.delete('/protected/disciplines', (request: Request, response: Response) => {disciplineController.deleteAllDisciplines(request,response)});
 
 // Planning Routes
 
