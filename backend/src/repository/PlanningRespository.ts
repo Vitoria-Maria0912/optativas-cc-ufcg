@@ -10,6 +10,7 @@ export interface PlanningRepositoryInterface {
     addPeriods(planningId: number, periodIds: number[]): Promise<Planning>;
     updateName(planningId: number, newName: string): Promise<Planning>;
     getAll(): Promise<Planning[]>;
+    getOneById(id: number): Promise<Planning>;
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
@@ -36,7 +37,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             where: { id: planningId },
             include: { periods: { include: { disciplines: true } } }
         });
-
+        
         if (!updatedPlanning) {
             throw new Error(`Planning with ID ${planningId} not found.`);
         }
@@ -67,14 +68,14 @@ export class PlanningRepository implements PlanningRepositoryInterface {
 
         return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
     }
-
+    
     async getAll(): Promise<Planning[]> {
         const allPlannings = await this.prisma.planning.findMany({
             include: {
                 periods: { include: { disciplines: true } },
             },
         });
-    
+        
         return allPlannings.map(planning => {
             const periodsDTO = planning.periods.map(period =>
                 new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
@@ -82,4 +83,24 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             return new Planning(planning.id, planning.name, periodsDTO);
         });
     }    
+    
+    async getOneById(planningId: number): Promise<Planning> {
+        const planning = await this.prisma.planning.findUnique({
+            where: { id: planningId },
+            include: {
+                periods: { include: { disciplines: true } },
+            },
+        });
+    
+        if (!planning) {
+            throw new Error(`Planning with ID ${planningId} not found.`);
+        }
+    
+        const periodsDTO = planning.periods.map(period =>
+            new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
+        );
+    
+        return new Planning(planning.id, planning.name, periodsDTO);
+    }
+    
 }

@@ -8,7 +8,8 @@ import { PeriodRepository, PeriodRepositoryInterface } from "../repository/Perio
 export interface PlanningServiceInterface {
     createPlanning(planningData: any): Promise<PlanningDTO>;
     updatePlanning(planningData: any): Promise<PlanningDTO>;
-    getPlanning(): Promise<PlanningDTO[]>
+    getPlanning(): Promise<PlanningDTO[]>;
+    getOnePlanning(id: number): Promise<PlanningDTO>;
 }
 
 export class PlanningService implements PlanningServiceInterface {
@@ -24,11 +25,11 @@ export class PlanningService implements PlanningServiceInterface {
                 return createPeriod.id;
             })
         );
-
+        
         if (createdPlanning.id === undefined) {
             throw new Error("Planning ID is undefined.");
         }
-
+        
         const updatedPlanning = await this.planningRepository.addPeriods(createdPlanning.id, periodIds);
         
         const periodsDTO = updatedPlanning.periods.map(period =>
@@ -43,7 +44,7 @@ export class PlanningService implements PlanningServiceInterface {
         if (updatedPlanning.id === undefined) {
             throw new Error("Planning ID is undefined.");
         }
-
+        
         return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
     }
 
@@ -51,9 +52,9 @@ export class PlanningService implements PlanningServiceInterface {
         await planningData.periods.forEach((period: any) => {
             this.periodRepository.updatePeriod(period);
         });
-    
+        
         const updatedPlanning = await this.planningRepository.updateName(planningData.id, planningData.name);
-    
+        
         if (updatedPlanning.id === undefined) {
             throw new Error("Planning ID is undefined.");
         }
@@ -72,17 +73,35 @@ export class PlanningService implements PlanningServiceInterface {
     
     async getPlanning(): Promise<PlanningDTO[]> {
         const plannings = await this.planningRepository.getAll();
-    
+        
         return plannings.map(planning => {
-            // Garantir que `planning.id` e `planning.periods` são válidos
-            const id = planning.id ?? 0; // Caso `id` seja `undefined`, atribui 0
+            const id = planning.id ?? 0; 
             const periods = planning.periods?.map(period => {
-                // Garantir que `period.id` seja válido
-                const periodId = period.id ?? 0; // Caso `period.id` seja `undefined`, atribui 0
+                const periodId = period.id ?? 0; 
                 return new PeriodDTO(periodId, period.name, period.planningId ?? 0, period.disciplines || []);
-            }) ?? []; // Caso `planning.periods` seja `undefined`, atribui um array vazio
+            }) ?? []; 
     
             return new PlanningDTO(id, planning.name, periods);
         });
     } 
+    
+    async getOnePlanning(id: number): Promise<PlanningDTO> {
+        const planning = await this.planningRepository.getOneById(id);
+
+        // Mapeia os Planning para PlanningDTO
+        const periodsDTO = planning.periods.map(period =>
+            new PeriodDTO(
+                period.id ?? 0,  // Garantir que o ID não seja undefined
+                period.name,
+                period.planningId ?? 0, // Garantir que o planningId não seja undefined
+                period.disciplines || []
+            )
+        );
+
+        if (planning.id === undefined) {
+            throw new Error(`Planning with ID ${id} not found.`);
+        }
+
+        return new PlanningDTO(planning.id, planning.name, periodsDTO);
+    }
 }
