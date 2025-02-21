@@ -2,50 +2,47 @@ import { PrismaClient } from "@prisma/client";
 import { Discipline } from "../model/Discipline";
 import { Planning } from "../model/Planning";
 import { Period } from "../model/Period";
+import { PeriodDTO } from "../dtos/PeriodDTO";
 
 export interface PlanningRepositoryInterface {
     createPlanning(planning: Planning): Promise<Planning>;
+    addPeriods(planningId: number, periodIds: number[]): Promise<Planning>;
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
     private prisma: PrismaClient = new PrismaClient();
-
+    
     async createPlanning(planning: Planning): Promise<Planning> {
         const createdPlanning = await this.prisma.planning.create({
             data: {
                 name: planning.name,
-                periods: {
-                    create: planning.periods.map(period => ({
-                        planningId: undefined,
-                        name: period.name,
-                        disciplines: {
-                            connect: period.disciplines.map(discipline => ({
-                                id: discipline.id  // Conectar as disciplinas existentes
-                            }))
-                        },
-                    }))
-                }
-            },
-            include: {
-                periods: {
-                    include: {
-                        disciplines: true
-                    }
-                }
+                periods: { create: []},
             }
-        });
-
-        await this.prisma.period.updateMany({
-            where: {
-                planningId: undefined
-            },
-            data: {
-                planningId: createdPlanning.id
-            }
-        });
-    
-        return createdPlanning;
-
+        })
+        
+        return new Planning(createdPlanning.id, createdPlanning.name, []);
     }
     
+    async addPeriods(planningId: number, periodIds: []): Promise<Planning> {
+        await this.prisma.period.updateMany({
+            where: { id: { in: periodIds } },
+            data: { planningId: planningId }
+        });
+
+        const updatedPlanning = await this.prisma.planning.findUnique({
+            where: { id: planningId },
+            include: { periods: { include: { disciplines: true } } }
+        });
+
+        if (!updatedPlanning) {
+            throw new Error(`Planning with ID ${planningId} not found.`);
+        }
+
+        const periodsDTO = updatedPlanning.periods.map(period =>
+            new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
+        );
+
+        return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+
+    }
 }
