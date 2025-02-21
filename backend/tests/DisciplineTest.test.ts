@@ -55,7 +55,7 @@ describe('DisciplineController', () => {
             schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
         };
 
-        await request(app).post('/protected/disciplines').send(disciplineData);
+        await request(app).post('/protected/disciplines').send(disciplineData).set("Authorization", `Bearer ${ TOKEN }`);
 
         const response = await request(app).delete(`/protected/disciplines/${disciplineData.id}`).set("Authorization", `Bearer ${ TOKEN }`);
 

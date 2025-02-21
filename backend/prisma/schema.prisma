@@ -19,7 +19,28 @@ model Discipline {
   pre_requisites   String[] 
   post_requisites  String[] 
   schedule         String     @default("Undefined")
+  periods          Period[]   @relation("PeriodDisciplines")
+  users            User[]     @relation("UserDisciplines") 
+  usersPlanning    User[]     @relation("UserDisciplinesPlanning") 
 }
+
+
+model Period {
+  id         Int          @id @default(autoincrement())
+  name       String
+  disciplines Discipline[] @relation("PeriodDisciplines")
+  planning   Planning?    @relation("PlanningPeriods", fields: [planningId], references: [id])
+  planningId Int?
+}
+
+model Planning {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  periods Period[] @relation("PlanningPeriods")
+  user    User     @relation("UserPlannings", fields: [userId], references: [id]) 
+  userId  Int      
+}
+
 
 enum Type {
   OBRIGATORY
@@ -37,7 +58,10 @@ model User {
   name            String
   email           String        @unique
   loginId         Int?          @unique     
+  planning        Discipline[]  @relation("UserDisciplinesPlanning") 
   login           Login?        @relation(fields: [loginId], references: [id])
+  plannings       Planning[]    @relation("UserPlannings")
+  disciplineUsers Discipline[]  @relation("UserDisciplines") 
 }
 
 model Login {
