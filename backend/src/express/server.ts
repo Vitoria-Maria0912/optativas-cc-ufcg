@@ -34,3 +34,4 @@ app.delete('/protected/disciplines/:id', (req, res) => {disciplineController.del
 app.delete('/protected/disciplines', (req, res) => {disciplineController.deleteAllDisciplines(req, res)});
 
 app.post("/planning", (req, res) => {planningController.createPlanning(req, res)})
+app.put("/planning", (req, res) => {planningController.updatePlanning(req, res)})

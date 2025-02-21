@@ -5,17 +5,15 @@ import { Period, PeriodInterface } from "../model/Period";
 import { PlanningRepository, PlanningRepositoryInterface } from "../repository/PlanningRespository";
 import { PeriodRepository, PeriodRepositoryInterface } from "../repository/PeriodRepository";
 
-// Definindo a interface do serviço de planejamento
 export interface PlanningServiceInterface {
     createPlanning(planningData: any): Promise<PlanningDTO>;
+    updatePlanning(planningData: any): Promise<PlanningDTO>;
 }
 
-// Implementando o serviço de planejamento
 export class PlanningService implements PlanningServiceInterface {
     private planningRepository: PlanningRepositoryInterface = new PlanningRepository();
     private periodRepository: PeriodRepositoryInterface = new PeriodRepository();
     
-    // Implementação do método de criação de planejamento
     async createPlanning(planningData: any): Promise<PlanningDTO> {
         const createdPlanning = await this.planningRepository.createPlanning(planningData);
         
@@ -30,13 +28,11 @@ export class PlanningService implements PlanningServiceInterface {
             throw new Error("Planning ID is undefined.");
         }
 
-        // Adiciona os períodos ao planejamento
         const updatedPlanning = await this.planningRepository.addPeriods(createdPlanning.id, periodIds);
-
-        // Converte os períodos para PeriodDTO
+        
         const periodsDTO = updatedPlanning.periods.map(period =>
             new PeriodDTO(
-                period.id!, // Afirmando que o id será um número
+                period.id!,
                 period.name,
                 period.planningId ?? 0,
                 period.disciplines || []
@@ -49,4 +45,28 @@ export class PlanningService implements PlanningServiceInterface {
 
         return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
     }
+
+    async updatePlanning(planningData: any): Promise<PlanningDTO> {
+        await planningData.periods.forEach((period: any) => {
+            this.periodRepository.updatePeriod(period);
+        });
+    
+        const updatedPlanning = await this.planningRepository.updateName(planningData.id, planningData.name);
+    
+        if (updatedPlanning.id === undefined) {
+            throw new Error("Planning ID is undefined.");
+        }
+    
+        const periodsDTO = updatedPlanning.periods.map(period =>
+            new PeriodDTO(
+                period.id ?? 0,
+                period.name,
+                period.planningId ?? 0,
+                period.disciplines || []
+            )
+        );
+    
+        return new PlanningDTO(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+    }
+    
 }

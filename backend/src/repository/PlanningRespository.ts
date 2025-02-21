@@ -7,6 +7,7 @@ import { PeriodDTO } from "../dtos/PeriodDTO";
 export interface PlanningRepositoryInterface {
     createPlanning(planning: Planning): Promise<Planning>;
     addPeriods(planningId: number, periodIds: number[]): Promise<Planning>;
+    updateName(planningId: number, newName: string): Promise<Planning>;
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
@@ -28,7 +29,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             where: { id: { in: periodIds } },
             data: { planningId: planningId }
         });
-
+        
         const updatedPlanning = await this.prisma.planning.findUnique({
             where: { id: planningId },
             include: { periods: { include: { disciplines: true } } }
@@ -41,8 +42,27 @@ export class PlanningRepository implements PlanningRepositoryInterface {
         const periodsDTO = updatedPlanning.periods.map(period =>
             new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
         );
+        
+        return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
+        
+    }
+    
+    async updateName(planningId: number, newName: string): Promise<Planning> {
+        const updatedPlanning = await this.prisma.planning.update({
+            where: { id: planningId },
+            data: { name: newName },
+            include: { periods: { include: { disciplines: true } } }
+        });
+
+        const periodsDTO = updatedPlanning.periods.map((period: any) => {
+            return {
+                id: period.id,
+                name: period.name,
+                planningId: period.planningId,
+                disciplines: period.disciplines || [],
+            };
+        });
 
         return new Planning(updatedPlanning.id, updatedPlanning.name, periodsDTO);
-
     }
 }
