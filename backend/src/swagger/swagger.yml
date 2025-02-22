@@ -4,29 +4,27 @@ info:
   version: 1.0.0
   description: Documentação da API de Disciplinas e Planejamento
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     UserDTO:
       type: object
       properties:
-        id:
-          type: integer
         role:
           type: string
+          enum:
+          - COMMON
+          - ADMINISTRATOR
         name:
           type: string
         email:
           type: string
-        password:
-          type: boolean
-        planning:
-          type: array
-          items:
-            type: string
     LoginDTO:
       type: object
       properties:
-        id:
-          type: integer
         email:
           type: string
         password:
@@ -34,10 +32,11 @@ components:
     DisciplineDTO:
       type: object
       properties:
-        id:
-          type: integer
         type:
           type: string
+          enum:
+          - "OBRIGATORY"
+          - "OPTATIVE"
         name:
           type: string
         acronym:
@@ -227,7 +226,7 @@ paths:
                     type: string
                     example: "User's ${property.name} is required!"
 
-  /protected/users:
+  /user:
     post:
       summary: Create a new user
       requestBody:
@@ -270,8 +269,12 @@ paths:
                   message:
                     type: string
                     example: "User's ${property.name} is required!"
+
+  /protected/users:
     delete:
       summary: Delete all users
+      security:
+      - BearerAuth: []
       requestBody:
         required: false
         content:
@@ -300,10 +303,10 @@ paths:
                   message:
                     type: string
                     example: "No users found!"
-
-  /users:
     get:
       summary: Returns a list of all users
+      security:
+      - BearerAuth: []
       responses:
         200:
           description: All users were returned successfully
@@ -331,9 +334,11 @@ paths:
                     type: string
                     example: "No users found!"
 
-  /users/getByID/{id}:
+  /protected/users/getByID/{id}:
     get:
       summary: Returns a user by its ID
+      security:
+      - BearerAuth: []
       parameters:
       - in: path
         id: id
@@ -376,9 +381,11 @@ paths:
                     type: string
                     example: "User not found!"
 
-  /users/getByEmail/{email}:
+  /protected/users/getByEmail/{email}:
     get:
       summary: Returns a user by its email
+      security:
+      - BearerAuth: []
       parameters:
       - in: path
         email: email
@@ -421,9 +428,11 @@ paths:
                     type: string
                     example: "User with email '${ userEmail }' not found!"
 
-  /users/getByRole/{role}:
+  /protected/users/getByRole/{role}:
     get:
       summary: Returns a user by its role
+      security:
+      - BearerAuth: []
       parameters:
       - in: path
         role: role
@@ -566,6 +575,8 @@ paths:
   /protected/disciplines:
     post:
       summary: Create a new discipline
+      security:
+      - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -898,6 +909,9 @@ paths:
                 name:
                   type: string
                   description: O nome do planejamento
+                userId:
+                  type: integer
+                  description: o ID do usuário que criou o planejamento
                 periods:
                   type: array
                   description: Lista de períodos associados ao planejamento
