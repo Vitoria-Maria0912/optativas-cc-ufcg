@@ -413,6 +413,8 @@ paths:
       summary: Delete a user
       tags:
         - User routes
+      security:
+      - BearerAuth: []
       requestBody:
         required: false
         content:
@@ -588,6 +590,8 @@ paths:
       summary: Delete all disciplines
       tags:
         - Discipline routes
+      security:
+      - BearerAuth: []
       requestBody:
         required: false
         content:
@@ -762,6 +766,8 @@ paths:
       summary: Update a new discipline field
       tags:
         - Discipline routes
+      security:
+      - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -832,6 +838,8 @@ paths:
       summary: Delete a discipline
       tags:
         - Discipline routes
+      security:
+      - BearerAuth: []
       requestBody:
         required: false
         content:
@@ -862,28 +870,9 @@ paths:
                     example: "Discipline not found!"
 
   /planning:
-    get:
-      summary: Retorna todos os planejamentos
-      tags:
-        - Planning routes
-      responses:
-        200:
-          description: Lista de planejamentos retornada com sucesso
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Plannings fetched"
-                  planning:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/PlanningDTO'
 
     post:
-      summary: Cria um novo planejamento
+      summary: Create a new plan
       tags:
         - Planning routes
       requestBody:
@@ -895,22 +884,22 @@ paths:
               properties:
                 name:
                   type: string
-                  description: O nome do planejamento
+                  description: The name of the planning
                 userId:
                   type: integer
-                  description: o ID do usuário que criou o planejamento
+                  description: The ID of the user who created the planning
                 periods:
                   type: array
-                  description: Lista de períodos associados ao planejamento
+                  description: List of periods associated with planning
                   items:
                     type: object
                     properties:
                       name:
                         type: string
-                        description: Nome do período
+                        description: Period name
                       disciplines:
                         type: array
-                        description: Lista de disciplinas associadas ao período
+                        description: List of subjects associated with the period
                         items:
                           type: integer
               required:
@@ -919,7 +908,7 @@ paths:
 
       responses:
         201:
-          description: Planejamento criado com sucesso
+          description: Planning created successfully
           content:
             application/json:
               schema:
@@ -938,7 +927,7 @@ paths:
           description: Erro interno do servidor
           
     put:
-      summary: Atualiza um planejamento existente, mas precisa do id do planajamento e também do id de cada period(frontend terá acesso através do get)
+      summary: Updates an existing planning, but needs the planning ID and also the ID of each period (frontend will have access through get)
       tags:
         - Planning routes
       requestBody:
@@ -950,25 +939,25 @@ paths:
               properties:
                 id:
                   type: integer
-                  description: ID do planejamento
+                  description: Planning's ID
                 name:
                   type: string
-                  description: Nome do planejamento
+                  description: Planning's name
                 periods:
                   type: array
-                  description: Lista de períodos associados ao planejamento
+                  description: List of periods associated with planning
                   items:
                     type: object
                     properties:
                       id:
                         type: integer
-                        description: ID do período
+                        description: Period's ID
                       name:
                         type: string
-                        description: Nome do período
+                        description: Period's name
                       disciplines:
                         type: array
-                        description: Lista de disciplinas associadas ao período
+                        description: List of disciplines associated with the period
                         items:
                           type: integer
               required:
@@ -977,7 +966,7 @@ paths:
               - periods
       responses:
         200:
-          description: Planejamento atualizado com sucesso
+          description: Planning updated successfully
           content:
             application/json:
               schema:
@@ -989,27 +978,47 @@ paths:
                   updatedPlanning:
                     $ref: '#/components/schemas/PlanningDTO'
         400:
-          description: Erro nos dados fornecidos
+          description: Error in the data provided
         404:
-          description: Planejamento não encontrado
+          description: Planning not found
         500:
-          description: Erro interno do servidor
+          description: Internal server error
 
+    get:
+      summary: Returns all plans
+      tags:
+        - Planning routes
+      responses:
+        200:
+          description: Planning list returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Plannings fetched"
+                  planning:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PlanningDTO'
+        
   /planning/{id}:
     get:
-      summary: Retorna um planejamento específico pelo ID
+      summary: Returns a specific planning by ID
       tags:
         - Planning routes
       parameters:
       - in: path
         name: id
         required: true
-        description: ID do planejamento
+        description: Planning's ID
         schema:
           type: integer
       responses:
         200:
-          description: Planejamento encontrado com sucesso
+          description: Planning found successful
           content:
             application/json:
               schema:
@@ -1021,6 +1030,6 @@ paths:
                   planning:
                     $ref: '#/components/schemas/PlanningDTO'
         404:
-          description: Planejamento não encontrado
+          description: Planning not found
         500:
-          description: Erro interno do servidor
+          description: Internal server error
