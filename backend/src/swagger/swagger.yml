@@ -3,6 +3,16 @@ info:
   title: API de Disciplinas e Planejamento
   version: 1.0.0
   description: Documentação da API de Disciplinas e Planejamento
+
+tags:
+  - name: User routes
+    description: Endpoints related to users
+  - name: Login routes
+    description: Endpoints related to login
+  - name: Discipline routes
+    description: Endpoints related to disciplines
+  - name: Planning routes
+    description: Endpoints related to planning
 components:
   securitySchemes:
     BearerAuth:
@@ -136,9 +146,307 @@ components:
         schedule:
           type: string
 paths:
+
+  /user:
+    post:
+      summary: Create a new user
+      tags:
+        - User routes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        201:
+          description: Create a new user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User '${ name }' was created successfully!"
+                  user:
+                    $ref: '#/components/schemas/UserDTO'
+        409:
+          description: Try to create a new user who already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User already exists!"
+
+        400:
+          description: Try create a new user with empty or invalid fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User's ${property.name} is required!"
+
+  /protected/users:
+    delete:
+      summary: Delete all users
+      tags:
+        - User routes
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        200:
+          description: Delete all users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "All users were deleted successfully!"
+
+        404:
+          description: Try to delete all users when there are no users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No users found!"
+    get:
+      summary: Returns a list of all users
+      tags:
+        - User routes
+      security:
+      - BearerAuth: []
+      responses:
+        200:
+          description: All users were returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Users were found successfully!"
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserDTO'
+
+        404:
+          description: Try to get all users when there are no users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No users found!"
+
+  /protected/users/getByID/{id}:
+    get:
+      summary: Returns a user by its ID
+      tags:
+        - User routes
+      security:
+      - BearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: User was found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User was found successfully!"
+                  user:
+                    $ref: '#/components/schemas/UserDTO'
+
+        400:
+          description: Try to get a user by its ID when the ID is not a number
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User ID must be a number!"
+
+        404:
+          description: Try to get a user by its id that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found!"
+
+  /protected/users/getByEmail/{email}:
+    get:
+      summary: Returns a user by its email
+      tags:
+        - User routes
+      security:
+      - BearerAuth: []
+      parameters:
+      - in: path
+        name: email
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: User was found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User was found successfully!"
+                  user:
+                    $ref: '#/components/schemas/UserDTO'
+
+        400:
+          description: Try to get a user by its email when the email is invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "This email '${ userEmail }' is invalid, should be like 'name@example.com'!"
+
+        404:
+          description: Try to get a user by its id that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User with email '${ userEmail }' not found!"
+
+  /protected/users/getByRole/{role}:
+    get:
+      summary: Returns a user by its role
+      tags:
+        - User routes
+      security:
+      - BearerAuth: []
+      parameters:
+      - in: path
+        name: role
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: User was found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User was found successfully!"
+                  user:
+                    $ref: '#/components/schemas/UserDTO'
+
+        400:
+          description: Try to get a user by its role when the role is invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The role must be either ADMINISTRATOR or COMMON!"
+
+        404:
+          description: Try to get a user by its role that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No users with '${ userRole }' role found!"
+
+  /protected/users/{id}:
+    delete:
+      summary: Delete a user
+      tags:
+        - User routes
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        200:
+          description: User was deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User was deleted successfully!"
+
+        404:
+          description: Try to delete a user that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found!"
+
   /auth/login:
     post:
       summary: Create a new login
+      tags:
+        - Login routes
       requestBody:
         required: true
         content:
@@ -184,6 +492,8 @@ paths:
   /login/getTokenByUserEmail:
     post:
       summary: Returns a token for a user
+      tags:
+        - Login routes
       requestBody:
         required: true
         content:
@@ -226,355 +536,11 @@ paths:
                     type: string
                     example: "User's ${property.name} is required!"
 
-  /user:
-    post:
-      summary: Create a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        201:
-          description: Create a new user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User '${ name }' was created successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-        409:
-          description: Try to create a new user who already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User already exists!"
-
-        400:
-          description: Try create a new user with empty or invalid fields
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User's ${property.name} is required!"
-
-  /protected/users:
-    delete:
-      summary: Delete all users
-      security:
-      - BearerAuth: []
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        200:
-          description: Delete all users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "All users were deleted successfully!"
-
-        404:
-          description: Try to delete all users when there are no users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "No users found!"
-    get:
-      summary: Returns a list of all users
-      security:
-      - BearerAuth: []
-      responses:
-        200:
-          description: All users were returned successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Users were found successfully!"
-                  users:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/UserDTO'
-
-        404:
-          description: Try to get all users when there are no users
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "No users found!"
-
-  /protected/users/getByID/{id}:
-    get:
-      summary: Returns a user by its ID
-      security:
-      - BearerAuth: []
-      parameters:
-      - in: path
-        id: id
-        required: true
-        schema:
-          type: integer
-      responses:
-        200:
-          description: User was found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User was found successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-
-        400:
-          description: Try to get a user by its ID when the ID is not a number
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User ID must be a number!"
-
-        404:
-          description: Try to get a user by its id that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User not found!"
-
-  /protected/users/getByEmail/{email}:
-    get:
-      summary: Returns a user by its email
-      security:
-      - BearerAuth: []
-      parameters:
-      - in: path
-        email: email
-        required: true
-        schema:
-          type: integer
-      responses:
-        200:
-          description: User was found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User was found successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-
-        400:
-          description: Try to get a user by its email when the email is invalid
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "This email '${ userEmail }' is invalid, should be like 'name@example.com'!"
-
-        404:
-          description: Try to get a user by its id that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User with email '${ userEmail }' not found!"
-
-  /protected/users/getByRole/{role}:
-    get:
-      summary: Returns a user by its role
-      security:
-      - BearerAuth: []
-      parameters:
-      - in: path
-        role: role
-        required: true
-        schema:
-          type: integer
-      responses:
-        200:
-          description: User was found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User was found successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-
-        400:
-          description: Try to get a user by its role when the role is invalid
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "The role must be either ADMINISTRATOR or COMMON!"
-
-        404:
-          description: Try to get a user by its role that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "No users with '${ userRole }' role found!"
-
-  /protected/users/{id}:
-    patch:
-      summary: Update a user field
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        200:
-          description: User's field was updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User's field was updated successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-
-        404:
-          description: Try to update a user that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User not found!"
-
-    put:
-      summary: Update a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        200:
-          description: User's was updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User's was updated successfully!"
-                  user:
-                    $ref: '#/components/schemas/UserDTO'
-
-        404:
-          description: Try to update a user that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User not found!"
-    delete:
-      summary: Delete a user
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        200:
-          description: User was deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User was deleted successfully!"
-
-        404:
-          description: Try to delete a user that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User not found!"
-
   /protected/disciplines:
     post:
       summary: Create a new discipline
+      tags:
+        - Discipline routes
       security:
       - BearerAuth: []
       requestBody:
@@ -620,6 +586,8 @@ paths:
 
     delete:
       summary: Delete all disciplines
+      tags:
+        - Discipline routes
       requestBody:
         required: false
         content:
@@ -652,6 +620,8 @@ paths:
   /disciplines:
     get:
       summary: Returns a list of all disciplines
+      tags:
+        - Discipline routes
       responses:
         200:
           description: All disciplines were returned successfully
@@ -682,9 +652,11 @@ paths:
   /disciplines/getByID/{id}:
     get:
       summary: Returns a discipline by its ID
+      tags:
+        - Discipline routes
       parameters:
       - in: path
-        id: id
+        name: id
         required: true
         schema:
           type: integer
@@ -716,6 +688,8 @@ paths:
   /disciplines/getByName/{name}:
     get:
       summary: Returns a discipline by its name
+      tags:
+        - Discipline routes
       parameters:
       - in: path
         name: name
@@ -747,43 +721,47 @@ paths:
                     type: string
                     example: "Discipline not found!"
 
-  /disciplines/getByAcronym/{acronym}:
-    get:
-      summary: Returns a discipline by its acronym
-      parameters:
-      - in: path
-        acronym: acronym
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Discipline was found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline was found successfully!"
-                  discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+  # /disciplines/getByAcronym/{acronym}:
+  #   get:
+  #     summary: Returns a discipline by its acronym
+  #     tags:
+  #       - Discipline routes
+  #     parameters:
+  #     - in: path
+  #       name: acronym
+  #       required: true
+  #       schema:
+  #         type: string
+  #     responses:
+  #       200:
+  #         description: Discipline was found successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 message:
+  #                   type: string
+  #                   example: "Discipline was found successfully!"
+  #                 discipline:
+  #                   $ref: '#/components/schemas/DisciplineDTO'
 
-        404:
-          description: Try to get a discipline by its acronym that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline not found!"
+  #       404:
+  #         description: Try to get a discipline by its acronym that does not exist
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 message:
+  #                   type: string
+  #                   example: "Discipline not found!"
 
   /protected/disciplines/{id}:
     patch:
       summary: Update a new discipline field
+      tags:
+        - Discipline routes
       requestBody:
         required: true
         content:
@@ -815,41 +793,45 @@ paths:
                     type: string
                     example: "Discipline not found!"
 
-    put:
-      summary: Update a discipline
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisciplineDTO'
-      responses:
-        200:
-          description: Discipline was updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline was updated successfully!"
-                  discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+    # put:
+    #   summary: Update a discipline
+    #   tags:
+    #     - Discipline routes
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/DisciplineDTO'
+    #   responses:
+    #     200:
+    #       description: Discipline was updated successfully
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               message:
+    #                 type: string
+    #                 example: "Discipline was updated successfully!"
+    #               discipline:
+    #                 $ref: '#/components/schemas/DisciplineDTO'
 
-        404:
-          description: Try to update a discipline that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline not found!"
+    #     404:
+    #       description: Try to update a discipline that does not exist
+    #       content:
+    #         application/json:
+    #           schema:
+    #             type: object
+    #             properties:
+    #               message:
+    #                 type: string
+    #                 example: "Discipline not found!"
 
     delete:
       summary: Delete a discipline
+      tags:
+        - Discipline routes
       requestBody:
         required: false
         content:
@@ -882,6 +864,8 @@ paths:
   /planning:
     get:
       summary: Retorna todos os planejamentos
+      tags:
+        - Planning routes
       responses:
         200:
           description: Lista de planejamentos retornada com sucesso
@@ -897,8 +881,11 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/PlanningDTO'
+
     post:
       summary: Cria um novo planejamento
+      tags:
+        - Planning routes
       requestBody:
         required: true
         content:
@@ -929,6 +916,7 @@ paths:
               required:
               - name
               - periods
+
       responses:
         201:
           description: Planejamento criado com sucesso
@@ -948,9 +936,11 @@ paths:
           description: Planejamento já existente com o nome fornecido
         500:
           description: Erro interno do servidor
-
+          
     put:
       summary: Atualiza um planejamento existente, mas precisa do id do planajamento e também do id de cada period(frontend terá acesso através do get)
+      tags:
+        - Planning routes
       requestBody:
         required: true
         content:
@@ -1008,6 +998,8 @@ paths:
   /planning/{id}:
     get:
       summary: Retorna um planejamento específico pelo ID
+      tags:
+        - Planning routes
       parameters:
       - in: path
         name: id
