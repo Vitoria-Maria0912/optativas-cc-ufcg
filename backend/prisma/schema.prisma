@@ -14,11 +14,28 @@ model Discipline {
   name             String     @unique 
   acronym          String     
   teacher          String     @default("Undefined")
-  available        Boolean  @default(true)
+  available        Boolean    @default(true)
   description      String
   pre_requisites   String[] 
   post_requisites  String[] 
   schedule         String     @default("Undefined")
+  periods          Period[]   @relation("PeriodDisciplines")
+}
+
+model Period {
+  id         Int          @id @default(autoincrement())
+  name       String
+  disciplines Discipline[] @relation("PeriodDisciplines")
+  planning   Planning?    @relation("PlanningPeriods", fields: [planningId], references: [id])
+  planningId Int?
+}
+
+model Planning {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  periods Period[] @relation("PlanningPeriods")
+  user    User     @relation("UserPlannings", fields: [userId], references: [id]) 
+  userId  Int      
 }
 
 enum Type {
@@ -26,6 +43,25 @@ enum Type {
   OPTATIVE
 }
 
-model Administrator {
-  id               Int        @id @default(autoincrement())
+enum Role {
+  ADMINISTRATOR
+  COMMON
+}
+
+model User {
+  id              Int           @id @default(autoincrement())
+  role            Role          @default(COMMON)
+  name            String
+  email           String        @unique
+  loginId         Int?          @unique     
+  login           Login?        @relation(fields: [loginId], references: [id])
+  plannings       Planning[]    @relation("UserPlannings")
+}
+
+model Login {
+  id              Int        @id @default(autoincrement())
+  email           String     @unique
+  password        String
+
+  User            User?
 }

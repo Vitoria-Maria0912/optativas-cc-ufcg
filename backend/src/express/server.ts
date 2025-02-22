@@ -1,217 +1,109 @@
+import { Request, Response, NextFunction } from "express";
 import express from 'express';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import { DisciplineController } from '../controller/DisciplineController';
-import { setupSwagger } from "../swagger";
+import { PlanningController } from '../controller/PlanningController';
+import { setupSwagger } from "../swagger/swagger";
+import { exec } from 'child_process';
+import { UserController } from "../controller/UserController";
+import { AuthController } from "../controller/AuthController";
+import { isAdministrator } from "../util/util";
 
-export const app = express();
+const app = express();
+
+dotenv.config();
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 setupSwagger(app);
 
 const PORT = process.env.PORT || 3001;
+export const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 
 const server = app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Swagger in http://localhost:${PORT}/api-docs`);
+    exec('xdg-open http://localhost:8080/api-docs')
+    console.log(`Server is running on port ${PORT}` + '\n' +
+                `Swagger in http://localhost:${PORT}/api-docs`);
 });
 
-export const closeServer = () => {
-    server.close();
-};
+export const closeServer = () => { server.close(); };
 
 const disciplineController = new DisciplineController();
+const planningController = new PlanningController();
 
-/**
-* @swagger
-*  /disciplines:
-*    get:
-*      summary: Retorna todas as disciplinas
-*      responses:
-*        200:
-*          description: Lista de disciplinas retornada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Disciplines were found successfully!"
-*                  disciplines:
-*                    type: array
-*                    items:
-*                      $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /disciplines/getByID/{id}:
-*    get:
-*      summary: Retorna uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      responses:
-*        200:
-*          description: Disciplina encontrada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was found successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /disciplines/getByName/{name}:
-*    get:
-*      summary: Retorna uma disciplina pelo nome
-*      parameters:
-*        - in: path
-*          name: name
-*          required: true
-*          schema:
-*            type: string
-*      responses:
-*        200:
-*          description: Disciplina encontrada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was found successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines:
-*    post:
-*      summary: Cria uma nova disciplina
-*      requestBody:
-*        required: true
-*        content:
-*          application/json:
-*            schema:
-*              $ref: '#/components/schemas/DisciplineDTO'
-*      responses:
-*        201:
-*          description: Disciplina criada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline created successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines/{id}:
-*    patch:
-*      summary: Atualiza uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      requestBody:
-*        required: true
-*        content:
-*          application/json:
-*            schema:
-*              $ref: '#/components/schemas/DisciplineDTO'
-*      responses:
-*        200:
-*          description: Disciplina atualizada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline's field updated successfully!"
-*                  discipline:
-*                    $ref: '#/components/schemas/DisciplineDTO'
-*
-*  /protected/disciplines/{id}:
-*    delete:
-*      summary: Deleta uma disciplina pelo ID
-*      parameters:
-*        - in: path
-*          name: id
-*          required: true
-*          schema:
-*            type: integer
-*      responses:
-*        200:
-*          description: Disciplina deletada com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "Discipline was deleted successfully!"
-*
-*  /protected/disciplines:
-*    delete:
-*      summary: Deleta todas as disciplinas
-*      responses:
-*        200:
-*          description: Todas as disciplinas foram deletadas com sucesso
-*          content:
-*            application/json:
-*              schema:
-*                type: object
-*                properties:
-*                  message:
-*                    type: string
-*                    example: "All disciplines were deleted successfully!"
-*
-*components:
-*  schemas:
-*    DisciplineDTO:
-*      type: object
-*      properties:
-*        id:
-*          type: integer
-*        type:
-*          type: string
-*        name:
-*          type: string
-*        acronym:
-*          type: string
-*        available:
-*          type: boolean
-*        description:
-*          type: string
-*        pre_requisites:
-*          type: array
-*          items:
-*            type: string
-*        post_requisites:
-*          type: array
-*          items:
-*            type: string
-*        teacher:
-*          type: string
-*        schedule:
-*          type: string
-*/
+const asyncHandler = (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+};
 
-app.get('/disciplines', (req, res) => {disciplineController.getAllDisciplines(req, res)});
-app.get('/disciplines/getByID/:id', (req, res) => {disciplineController.getOneDisciplineByID(req, res)});
-app.get('/disciplines/getByName/:name', (req, res) => {disciplineController.getOneDisciplineByName(req, res)});
-app.post('/protected/disciplines', (req, res) => {disciplineController.createDiscipline(req,res)});
-app.patch('/protected/disciplines/:id', (req, res) => {disciplineController.patchDiscipline(req, res)});
-app.delete('/protected/disciplines/:id', (req, res) => {disciplineController.deleteOneDiscipline(req, res)});
-app.delete('/protected/disciplines', (req, res) => {disciplineController.deleteAllDisciplines(req, res)});
+const userController = new UserController();
+const authController = new AuthController();
 
+app.use('/protected', (request: Request, response: Response, next) => {
+    const authHeader = request.headers.authorization;
+    try { 
+        if (isAdministrator(authHeader)) { next(); }
+    } catch (error: any) { response.status(error.statusCode).json({ error: error.message }); }
+});
+
+// User Routes
+app.post('/users', (request: Request, response: Response) => {userController.createUser(request,response)});
+app.get('/protected/users', (request: Request, response: Response) => {userController.getAllUsers(request, response)});
+app.get('/protected/users/getById/:id', (request: Request, response: Response) => {userController.getUserById(request, response)});
+app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
+app.get('/protected/users/getByRole/:role', (request: Request, response: Response) => {userController.getUserByRole(request, response)});
+app.delete('/protected/users', (request: Request, response: Response) => {userController.deleteAllUsers(request,response)});
+app.delete('/users/:id', (request: Request, response: Response) => {userController.deleteOneUser(request,response)});
+
+// Auth Routes
+app.post('/auth/login', (request: Request, response: Response) => {authController.createLogin(request,response)});
+app.post('/login/getTokenByUserEmail', (request: Request, response: Response) => {authController.getTokenByUserEmail(request, response)});
+
+// Discipline Routes
+app.get('/disciplines', (request: Request, response: Response) => {disciplineController.getAllDisciplines(request,response)});
+app.get('/disciplines/getByID/:id', (request: Request, response: Response) => {disciplineController.getOneDisciplineByID(request,response)});
+app.get('/disciplines/getByName/:name', (request: Request, response: Response) => {disciplineController.getOneDisciplineByName(request,response)});
+app.post('/protected/disciplines', (request: Request, response: Response) => {disciplineController.createDiscipline(request,response)});
+app.patch('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.patchDiscipline(request,response)});
+app.delete('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.deleteOneDiscipline(request,response)});
+app.delete('/protected/disciplines', (request: Request, response: Response) => {disciplineController.deleteAllDisciplines(request,response)});
+
+// Planning Routes
+app.post("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.createPlanning(req, res)
+));
+app.put("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.updatePlanning(req, res)
+));
+app.get("/planning", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.getPlanning(req, res)
+));
+app.get("/planning/:id", asyncHandler(
+    (req: Request, res: Response, next: NextFunction) => 
+        planningController.getOnePlanning(req, res)
+));
+
+export const errorHandler = (
+    err: any, 
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+) => {
+    console.error(err.stack);
+
+    const statusCode = err.status || 500;
+    res.status(statusCode).json({
+        error: {
+            message: err.message || "Internal server error",
+            status: statusCode
+        }
+    });
+};
+
+app.use(errorHandler);
+
+export default app;
