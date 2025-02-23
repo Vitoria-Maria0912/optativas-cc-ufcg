@@ -1,240 +1,168 @@
 openapi: 3.0.0
 info:
-  title: API de Disciplinas e Planejamento
+  title: API of Disciplines and Plannings
   version: 1.0.0
-  description: Documentação da API de Disciplinas e Planejamento
+  description: Documentation for API of Disciplines and Plannings
+
+tags:
+  - name: User routes
+    description: Endpoints related to users
+  - name: Login routes
+    description: Endpoints related to login
+  - name: Discipline routes
+    description: Endpoints related to disciplines
+  - name: Planning routes
+    description: Endpoints related to planning
+
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+
   schemas:
-    UserDTO:
+    UserInterface:
       type: object
+      required:
+      - role
+      - name
+      - email
       properties:
+        id:
+          type: integer
+          example: 0
         role:
           type: string
-          enum:
-          - COMMON
-          - ADMINISTRATOR
+          enum: [ADMINISTRATOR, COMMON]
+          example: COMMON
         name:
           type: string
+          example: User0
         email:
           type: string
-    LoginDTO:
+          example: user0@example.com
+
+    LoginInterface:
       type: object
+      required:
+      - email
+      - password
       properties:
+        id: 
+          type: integer
+          example: 0
         email:
           type: string
+          example: user0@example.com
         password:
           type: string
-    DisciplineDTO:
+          example: password0
+
+    DisciplineInterface:
       type: object
+      required:
+      - name
+      - type
+      - acronym
+      - available
+      - description
       properties:
-        type:
-          type: string
-          enum:
-          - "OBRIGATORY"
-          - "OPTATIVE"
+        id:
+          type: integer
+          example: 0
         name:
           type: string
+          example: Discipline0
+        type:
+          type: string
+          enum: [OBRIGATORY, OPTATIVE]
+          example: OBRIGATORY
         acronym:
           type: string
+          example: DISC0
         available:
           type: boolean
+          example: true
         description:
           type: string
+          example: Discipline0 description
         pre_requisites:
           type: array
           items:
             type: string
+            example: D-1
         post_requisites:
           type: array
           items:
             type: string
+            example: D1
         teacher:
           type: string
+          example: Teacher0
         schedule:
           type: string
-    PlanningDTO:
+          example: Schedule0
+
+    PlanningInterface:
       type: object
       required:
-      - id
       - name
       - periods
       properties:
         id:
           type: integer
-          description: ID único do planejamento
+          description: Unique planning ID
+          example: 0
         name:
           type: string
-          description: Nome do planejamento
+          description: Planning's name
+          example: Planning0
         periods:
           type: array
-          description: Lista de períodos associados ao planejamento
+          description: List of periods associated with the planning
           items:
-            $ref: '#/components/schemas/PeriodDTO'
-    PeriodDTO:
+            $ref: '#/components/schemas/PeriodInterface'
+
+    PeriodInterface:
       type: object
       required:
-      - id
       - name
       - planningId
       - disciplines
       properties:
         id:
           type: integer
-          description: ID único do período
+          description: Unique period ID
+          example: 0
         name:
           type: string
-          description: Nome do período
+          description: Period's name
+          example: Period0
         planningId:
           type: integer
-          description: ID do planejamento ao qual o período pertence
+          description: Planning's ID to which the period belongs
+          example: 0
         disciplines:
           type: array
-          description: Lista de disciplinas do período
+          description: List of disciplines for the period
           items:
             $ref: '#/components/schemas/DisciplineInterface'
-    DisciplineInterface:
-      type: object
-      required:
-      - id
-      - name
-      - type
-      - acronym
-      - available
-      - description
-      - pre_requisites
-      - post_requisites
-      - teacher
-      - schedule
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        type:
-          type: string
-        acronym:
-          type: string
-        available:
-          type: boolean
-        description:
-          type: string
-        pre_requisites:
-          type: array
-          items:
-            type: string
-        post_requisites:
-          type: array
-          items:
-            type: string
-        teacher:
-          type: string
-        schedule:
-          type: string
+
 paths:
-  /auth/login:
-    post:
-      summary: Create a new login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginDTO'
-      responses:
-        201:
-          description: Create a new login
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User '${ name }' was created successfully!"
-                  user:
-                    $ref: '#/components/schemas/LoginDTO'
 
-        409:
-          description: Try to create a new login who already exists
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User already have a login!"
-
-        400:
-          description: Try create a login with invalid data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User's ${property.name} is required!"
-
-  /login/getTokenByUserEmail:
-    post:
-      summary: Returns a token for a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginDTO'
-      responses:
-        201:
-          description: Returns a token for a user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User '${ name }' was created successfully!"
-                  user:
-                    $ref: '#/components/schemas/LoginDTO'
-
-        404:
-          description: Try to get a token for a user who does not have a login
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User don't have a login!"
-
-        400:
-          description: Try get a token for a user with invalid data
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User's ${property.name} is required!"
-
-  /user:
+# User routes
+  /users:
     post:
       summary: Create a new user
+      tags:
+        - User routes
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: '#/components/schemas/UserInterface'
       responses:
         201:
           description: Create a new user
@@ -247,7 +175,7 @@ paths:
                     type: string
                     example: "User '${ name }' was created successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/UserInterface'
         409:
           description: Try to create a new user who already exists
           content:
@@ -270,17 +198,48 @@ paths:
                     type: string
                     example: "User's ${property.name} is required!"
 
+  /users/{id}:
+    delete:
+      summary: Delete one user
+      tags:
+        - User routes
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: User was deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User was deleted successfully!"
+
+        404:
+          description: Try to delete a user that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found!"
+
   /protected/users:
     delete:
       summary: Delete all users
+      tags:
+        - User routes
       security:
       - BearerAuth: []
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
+
       responses:
         200:
           description: Delete all users
@@ -293,6 +252,17 @@ paths:
                     type: string
                     example: "All users were deleted successfully!"
 
+        403:
+          description: Try to delete all users without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"            
+
         404:
           description: Try to delete all users when there are no users
           content:
@@ -303,8 +273,11 @@ paths:
                   message:
                     type: string
                     example: "No users found!"
+    
     get:
       summary: Returns a list of all users
+      tags:
+        - User routes
       security:
       - BearerAuth: []
       responses:
@@ -321,7 +294,17 @@ paths:
                   users:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDTO'
+                      $ref: '#/components/schemas/UserInterface'
+        403:
+          description: Try to get all users without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"  
 
         404:
           description: Try to get all users when there are no users
@@ -337,11 +320,13 @@ paths:
   /protected/users/getByID/{id}:
     get:
       summary: Returns a user by its ID
+      tags:
+        - User routes
       security:
       - BearerAuth: []
       parameters:
       - in: path
-        id: id
+        name: id
         required: true
         schema:
           type: integer
@@ -357,7 +342,18 @@ paths:
                     type: string
                     example: "User was found successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/UserInterface'
+
+        403:
+          description: Try to get user by ID without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"  
 
         400:
           description: Try to get a user by its ID when the ID is not a number
@@ -384,14 +380,16 @@ paths:
   /protected/users/getByEmail/{email}:
     get:
       summary: Returns a user by its email
+      tags:
+        - User routes
       security:
       - BearerAuth: []
       parameters:
       - in: path
-        email: email
+        name: email
         required: true
         schema:
-          type: integer
+          type: string
       responses:
         200:
           description: User was found successfully
@@ -404,7 +402,7 @@ paths:
                     type: string
                     example: "User was found successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/UserInterface'
 
         400:
           description: Try to get a user by its email when the email is invalid
@@ -416,6 +414,17 @@ paths:
                   message:
                     type: string
                     example: "This email '${ userEmail }' is invalid, should be like 'name@example.com'!"
+
+        403:
+          description: Try to get a user by its email without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"  
 
         404:
           description: Try to get a user by its id that does not exist
@@ -431,14 +440,17 @@ paths:
   /protected/users/getByRole/{role}:
     get:
       summary: Returns a user by its role
+      tags:
+        - User routes
       security:
       - BearerAuth: []
       parameters:
       - in: path
-        role: role
+        name: role
         required: true
         schema:
-          type: integer
+          type: string
+          enum: [ADMINISTRATOR, COMMON]
       responses:
         200:
           description: User was found successfully
@@ -451,7 +463,18 @@ paths:
                     type: string
                     example: "User was found successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/UserInterface'
+
+        403:
+          description: Try to get a user by its role without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"
 
         400:
           description: Try to get a user by its role when the role is invalid
@@ -475,18 +498,21 @@ paths:
                     type: string
                     example: "No users with '${ userRole }' role found!"
 
-  /protected/users/{id}:
-    patch:
-      summary: Update a user field
+# Login routes
+  /auth/login:
+    post:
+      summary: Create a new login
+      tags:
+        - Login routes
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: '#/components/schemas/LoginInterface'
       responses:
-        200:
-          description: User's field was updated successfully
+        201:
+          description: Create a new login
           content:
             application/json:
               schema:
@@ -494,12 +520,12 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User's field was updated successfully!"
+                    example: "User '${ name }' was created successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/LoginInterface'
 
-        404:
-          description: Try to update a user that does not exist
+        409:
+          description: Try to create a new login who already exists
           content:
             application/json:
               schema:
@@ -507,19 +533,44 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User not found!"
+                    example: "User already have a login!"
 
-    put:
-      summary: Update a user
+        400:
+          description: Try create a login with invalid data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User's ${property.name} is required!"
+
+  /login/getTokenByUserEmail:
+    post:
+      summary: Returns a token for a user
+      tags:
+        - Login routes
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              type: object
+              required:
+              - email
+              - password
+              properties:
+                email:
+                  type: string
+                  example: user0@example.com
+                password:
+                  type: string
+                  example: password0
+                  
       responses:
-        200:
-          description: User's was updated successfully
+        201:
+          description: Returns a token for a user
           content:
             application/json:
               schema:
@@ -527,12 +578,12 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User's was updated successfully!"
+                    example: "User '${ name }' was created successfully!"
                   user:
-                    $ref: '#/components/schemas/UserDTO'
+                    $ref: '#/components/schemas/LoginInterface'
 
         404:
-          description: Try to update a user that does not exist
+          description: Try to get a token for a user who does not have a login
           content:
             application/json:
               schema:
@@ -540,29 +591,10 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User not found!"
-    delete:
-      summary: Delete a user
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-      responses:
-        200:
-          description: User was deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "User was deleted successfully!"
+                    example: "User don't have a login!"
 
-        404:
-          description: Try to delete a user that does not exist
+        400:
+          description: Try get a token for a user with invalid data
           content:
             application/json:
               schema:
@@ -570,11 +602,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "User not found!"
+                    example: "User's ${property.name} is required!"
 
+# Discipline routes
   /protected/disciplines:
     post:
       summary: Create a new discipline
+      tags:
+        - Discipline routes
       security:
       - BearerAuth: []
       requestBody:
@@ -582,7 +617,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DisciplineDTO'
+              $ref: '#/components/schemas/DisciplineInterface'
       responses:
         201:
           description: Create a new discipline
@@ -595,7 +630,19 @@ paths:
                     type: string
                     example: "Discipline created successfully!"
                   discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+                    $ref: '#/components/schemas/DisciplineInterface'
+
+        403:
+          description: Try to create a discipline without a valid token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!" 
+
         409:
           description: Try to create a new discipline who already exists
           content:
@@ -620,12 +667,10 @@ paths:
 
     delete:
       summary: Delete all disciplines
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisciplineDTO'
+      tags:
+        - Discipline routes
+      security:
+      - BearerAuth: []
       responses:
         200:
           description: Delete all disciplines
@@ -637,6 +682,17 @@ paths:
                   message:
                     type: string
                     example: "All disciplines were deleted successfully!"
+
+        403:
+          description: Try to delete all disciplines without authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!" 
 
         404:
           description: Try to delete all disciplines when there are no disciplines
@@ -652,6 +708,8 @@ paths:
   /disciplines:
     get:
       summary: Returns a list of all disciplines
+      tags:
+        - Discipline routes
       responses:
         200:
           description: All disciplines were returned successfully
@@ -666,7 +724,7 @@ paths:
                   disciplines:
                     type: array
                     items:
-                      $ref: '#/components/schemas/DisciplineDTO'
+                      $ref: '#/components/schemas/DisciplineInterface'
 
         404:
           description: Try to get all disciplines when there are no disciplines
@@ -682,9 +740,11 @@ paths:
   /disciplines/getByID/{id}:
     get:
       summary: Returns a discipline by its ID
+      tags:
+        - Discipline routes
       parameters:
       - in: path
-        id: id
+        name: id
         required: true
         schema:
           type: integer
@@ -700,7 +760,7 @@ paths:
                     type: string
                     example: "Discipline was found successfully!"
                   discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+                    $ref: '#/components/schemas/DisciplineInterface'
 
         404:
           description: Try to get a discipline by its id that does not exist
@@ -716,6 +776,8 @@ paths:
   /disciplines/getByName/{name}:
     get:
       summary: Returns a discipline by its name
+      tags:
+        - Discipline routes
       parameters:
       - in: path
         name: name
@@ -734,7 +796,7 @@ paths:
                     type: string
                     example: "Discipline was found successfully!"
                   discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+                    $ref: '#/components/schemas/DisciplineInterface'
 
         404:
           description: Try to get a discipline by its name that does not exist
@@ -747,49 +809,27 @@ paths:
                     type: string
                     example: "Discipline not found!"
 
-  /disciplines/getByAcronym/{acronym}:
-    get:
-      summary: Returns a discipline by its acronym
-      parameters:
-      - in: path
-        acronym: acronym
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: Discipline was found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline was found successfully!"
-                  discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
-
-        404:
-          description: Try to get a discipline by its acronym that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline not found!"
-
   /protected/disciplines/{id}:
     patch:
-      summary: Update a new discipline field
+      summary: Update discipline's field
+      tags:
+        - Discipline routes
+      security:
+      - BearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Discipline's ID
+        schema:
+          type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DisciplineDTO'
+              $ref: '#/components/schemas/DisciplineInterface'
+
       responses:
         200:
           description: Discipline field was updated successfully
@@ -802,7 +842,18 @@ paths:
                     type: string
                     example: "Discipline's field was updated successfully!"
                   discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
+                    $ref: '#/components/schemas/DisciplineInterface'
+
+        403:
+          description: Try to update a discipline field without being authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!" 
 
         404:
           description: Try to update a discipline that does not exist
@@ -814,48 +865,20 @@ paths:
                   message:
                     type: string
                     example: "Discipline not found!"
-
-    put:
-      summary: Update a discipline
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisciplineDTO'
-      responses:
-        200:
-          description: Discipline was updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline was updated successfully!"
-                  discipline:
-                    $ref: '#/components/schemas/DisciplineDTO'
-
-        404:
-          description: Try to update a discipline that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline not found!"
-
+                    
     delete:
       summary: Delete a discipline
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisciplineDTO'
+      tags:
+        - Discipline routes
+      security:
+      - BearerAuth: []
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: Discipline's ID
+        schema:
+          type: integer
       responses:
         200:
           description: Discipline was deleted successfully
@@ -868,6 +891,17 @@ paths:
                     type: string
                     example: "Discipline was deleted successfully!"
 
+        403:
+          description: Try to delete a discipline without being authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Access denied: invalid token!"
+
         404:
           description: Try to delete a discipline that does not exist
           content:
@@ -879,12 +913,129 @@ paths:
                     type: string
                     example: "Discipline not found!"
 
+# Planning routes
   /planning:
-    get:
-      summary: Retorna todos os planejamentos
+
+    post:
+      summary: Create a new plan
+      tags:
+        - Planning routes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the planning
+                userId:
+                  type: integer
+                  description: The ID of the user who created the planning
+                periods:
+                  type: array
+                  description: List of periods associated with planning
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Period name
+                      disciplines:
+                        type: array
+                        description: List of subjects associated with the period
+                        items:
+                          type: integer
+              required:
+              - name
+              - periods
+
+      responses:
+        201:
+          description: Planning created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Planning created!"
+                  createdPlanning:
+                    $ref: '#/components/schemas/PlanningInterface'
+        400:
+          description: Erro nos dados fornecidos
+        409:
+          description: Planejamento já existente com o nome fornecido
+        500:
+          description: Erro interno do servidor
+          
+    put:
+      summary: Updates an existing planning, but needs the planning ID and also the ID of each period (frontend will have access through get)
+      tags:
+        - Planning routes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Planning's ID
+                name:
+                  type: string
+                  description: Planning's name
+                periods:
+                  type: array
+                  description: List of periods associated with planning
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: Period's ID
+                      name:
+                        type: string
+                        description: Period's name
+                      disciplines:
+                        type: array
+                        description: List of disciplines associated with the period
+                        items:
+                          type: integer
+              required:
+              - id
+              - name
+              - periods
       responses:
         200:
-          description: Lista de planejamentos retornada com sucesso
+          description: Planning updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Planning updated!"
+                  updatedPlanning:
+                    $ref: '#/components/schemas/PlanningInterface'
+        400:
+          description: Error in the data provided
+        404:
+          description: Planning not found
+        500:
+          description: Internal server error
+
+    get:
+      summary: Returns all plans
+      tags:
+        - Planning routes
+      responses:
+        200:
+          description: Planning list returned successfully
           content:
             application/json:
               schema:
@@ -896,128 +1047,23 @@ paths:
                   planning:
                     type: array
                     items:
-                      $ref: '#/components/schemas/PlanningDTO'
-    post:
-      summary: Cria um novo planejamento
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: O nome do planejamento
-                userId:
-                  type: integer
-                  description: o ID do usuário que criou o planejamento
-                periods:
-                  type: array
-                  description: Lista de períodos associados ao planejamento
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: Nome do período
-                      disciplines:
-                        type: array
-                        description: Lista de disciplinas associadas ao período
-                        items:
-                          type: integer
-              required:
-              - name
-              - periods
-      responses:
-        201:
-          description: Planejamento criado com sucesso
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Planning created!"
-                  createdPlanning:
-                    $ref: '#/components/schemas/PlanningDTO'
-        400:
-          description: Erro nos dados fornecidos
-        409:
-          description: Planejamento já existente com o nome fornecido
-        500:
-          description: Erro interno do servidor
-
-    put:
-      summary: Atualiza um planejamento existente, mas precisa do id do planajamento e também do id de cada period(frontend terá acesso através do get)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  description: ID do planejamento
-                name:
-                  type: string
-                  description: Nome do planejamento
-                periods:
-                  type: array
-                  description: Lista de períodos associados ao planejamento
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        description: ID do período
-                      name:
-                        type: string
-                        description: Nome do período
-                      disciplines:
-                        type: array
-                        description: Lista de disciplinas associadas ao período
-                        items:
-                          type: integer
-              required:
-              - id
-              - name
-              - periods
-      responses:
-        200:
-          description: Planejamento atualizado com sucesso
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Planning updated!"
-                  updatedPlanning:
-                    $ref: '#/components/schemas/PlanningDTO'
-        400:
-          description: Erro nos dados fornecidos
-        404:
-          description: Planejamento não encontrado
-        500:
-          description: Erro interno do servidor
-
+                      $ref: '#/components/schemas/PlanningInterface'
+        
   /planning/{id}:
     get:
-      summary: Retorna um planejamento específico pelo ID
+      summary: Returns a specific planning by ID
+      tags:
+        - Planning routes
       parameters:
       - in: path
         name: id
         required: true
-        description: ID do planejamento
+        description: Planning's ID
         schema:
           type: integer
       responses:
         200:
-          description: Planejamento encontrado com sucesso
+          description: Planning found successful
           content:
             application/json:
               schema:
@@ -1027,8 +1073,8 @@ paths:
                     type: string
                     example: "Planning fetched"
                   planning:
-                    $ref: '#/components/schemas/PlanningDTO'
+                    $ref: '#/components/schemas/PlanningInterface'
         404:
-          description: Planejamento não encontrado
+          description: Planning not found
         500:
-          description: Erro interno do servidor
+          description: Internal server error

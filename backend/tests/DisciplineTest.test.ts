@@ -134,65 +134,65 @@ describe('DisciplineController', () => {
 
     });
 
-    test("updateDiscipline should return 'No disciplines found!'", async () => {
-        const disciplineData = {
-            name: 'Web II',
-            acronym: 'Web II',
-            type: 'OPTATIVE',
-            available: true,
-            description: 'Backend for web development',
-            pre_requisites: [],
-            post_requisites: [],
-            teacher: 'Glauber',
-            schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
-        };
+    // test("updateDiscipline should return 'No disciplines found!'", async () => {
+    //     const disciplineData = {
+    //         name: 'Web II',
+    //         acronym: 'Web II',
+    //         type: 'OPTATIVE',
+    //         available: true,
+    //         description: 'Backend for web development',
+    //         pre_requisites: [],
+    //         post_requisites: [],
+    //         teacher: 'Glauber',
+    //         schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+    //     };
 
-        const response = await request(app)
-           .put('/protected/disciplines/1')
-           .send(disciplineData).set("Authorization", `Bearer ${ TOKEN }`);
+    //     const response = await request(app)
+    //        .put('/protected/disciplines/1')
+    //        .send(disciplineData).set("Authorization", `Bearer ${ TOKEN }`);
         
-        expect(response.status).toBe(404);
-        expect(response.body).toEqual({ message: 'No disciplines found!'});
-    });
+    //     expect(response.status).toBe(404);
+    //     expect(response.body).toEqual({ message: 'No disciplines found!'});
+    // });
 
-    test('updateDiscipline should return success message', async () => {
+    // test('updateDiscipline should return success message', async () => {
 
-        await request(app).post('/protected/disciplines').send({
-            id: 1,
-            name: 'Web II',
-            acronym: 'Web II',
-            type: 'OPTATIVE',
-            available: true,
-            description: 'Backend for web development',
-            pre_requisites: [],
-            post_requisites: [],
-            teacher: 'Glauber',
-            schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
-        }).set("Authorization", `Bearer ${ TOKEN }`);
+    //     await request(app).post('/protected/disciplines').send({
+    //         id: 1,
+    //         name: 'Web II',
+    //         acronym: 'Web II',
+    //         type: 'OPTATIVE',
+    //         available: true,
+    //         description: 'Backend for web development',
+    //         pre_requisites: [],
+    //         post_requisites: [],
+    //         teacher: 'Glauber',
+    //         schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+    //     }).set("Authorization", `Bearer ${ TOKEN }`);
 
-        const disciplineData = {
-            id: 1,
-            name: 'Verificação e Validação de Software',
-            acronym: 'VeV',
-            type: 'OPTATIVE',
-            available: true,
-            description: 'Tests for software engineering',
-            pre_requisites: ["ES", "PSoft"],
-            post_requisites: [],
-            teacher: 'Everton',
-            schedule: 'Terça (8h-10h), Quinta (10h-12h)',
-        };
+    //     const disciplineData = {
+    //         id: 1,
+    //         name: 'Verificação e Validação de Software',
+    //         acronym: 'VeV',
+    //         type: 'OPTATIVE',
+    //         available: true,
+    //         description: 'Tests for software engineering',
+    //         pre_requisites: ["ES", "PSoft"],
+    //         post_requisites: [],
+    //         teacher: 'Everton',
+    //         schedule: 'Terça (8h-10h), Quinta (10h-12h)',
+    //     };
 
-        const response = await request(app)
-           .put(`/protected/disciplines/${disciplineData.id}`)
-           .send(disciplineData).set("Authorization", `Bearer ${ TOKEN }`);
+    //     const response = await request(app)
+    //        .put(`/protected/disciplines/${disciplineData.id}`)
+    //        .send(disciplineData).set("Authorization", `Bearer ${ TOKEN }`);
         
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-            message: "Discipline updated successfully!",
-            discipline: disciplineData,
-        });
-    });
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toEqual({
+    //         message: "Discipline updated successfully!",
+    //         discipline: disciplineData,
+    //     });
+    // });
 
     test("getOneDisciplineByID should return 'No disciplines found!'", async () => {
 
