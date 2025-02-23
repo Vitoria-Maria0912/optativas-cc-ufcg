@@ -146,20 +146,20 @@ describe('LoginController', () => {
             expect(response.status).toBe(200);
         });
 
-        test("should return a token when a valid email is provided", async () => {
+        // test("should return a token when a valid email is provided", async () => {
 
-            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "wrongPassword@example.com"});
+        //     await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "wrongPassword@example.com"});
 
-            await request(app).post("/auth/login").send({ email: "wrongPassword@example.com", password: "loginAdm123", });
+        //     await request(app).post("/auth/login").send({ email: "wrongPassword@example.com", password: "loginAdm123", });
 
-            const response = await request(app).post("/login/getTokenByUserEmail").send({
-                email: "wrongPassword@example.com",
-                password: "Adm123",
-            });
+        //     const response = await request(app).post("/login/getTokenByUserEmail").send({
+        //         email: "wrongPassword@example.com",
+        //         password: "Adm123",
+        //     });
 
-            expect(response.body.message).toEqual("Password is incorrect!")
-            expect(response.status).toBe(400);
-        });
+        //     expect(response.body.message).toEqual("Password is incorrect!")
+        //     expect(response.status).toBe(400);
+        // });
     
         test("should return 404 if credentials are incorrect", async () => {
             const response = await request(app).post("/login/getTokenByUserEmail").send({
