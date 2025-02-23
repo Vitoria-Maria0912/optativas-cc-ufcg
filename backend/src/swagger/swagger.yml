@@ -865,60 +865,7 @@ paths:
                   message:
                     type: string
                     example: "Discipline not found!"
-    
-    put:
-      summary: Update a discipline
-      tags:
-        - Discipline routes
-      parameters:
-      - in: path
-        name: id
-        required: true
-        description: Discipline's ID
-        schema:
-          type: integer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DisciplineInterface'
-      responses:
-        200:
-          description: Discipline was updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline was updated successfully!"
-                  discipline:
-                    $ref: '#/components/schemas/DisciplineInterface'
-
-        403:
-          description: Try to update a discipline without being authenticated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Access denied: invalid token!"
-
-        404:
-          description: Try to update a discipline that does not exist
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Discipline not found!"
-
+                    
     delete:
       summary: Delete a discipline
       tags:
