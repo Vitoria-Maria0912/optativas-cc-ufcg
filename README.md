@@ -43,6 +43,8 @@ Para manter um histórico claro e consistente, siga os padrões de commits abaix
 
 ### Passos para Rodar o Projeto
 
+Para executar o projeto utilizando o podman, siga o tutorial contido [aqui](backend/README.md)
+
 1. **Clone o Repositório**
 
    Primeiro, você precisará clonar o repositório do projeto. Execute o seguinte comando:
