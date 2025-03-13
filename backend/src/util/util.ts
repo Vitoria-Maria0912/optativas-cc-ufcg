@@ -1,9 +1,14 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { Role } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
 import { AuthenticationError, InvalidCredentialsError, UserAlreadyExistsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
+
+export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
+    return await bcrypt.compare(password, hashPassword);
+}
 
 export const isAdministrator = (authHeader: any): boolean => {
     
