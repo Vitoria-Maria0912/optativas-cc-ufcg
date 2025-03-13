@@ -9,7 +9,8 @@ export interface DisciplineRepositoryInterface {
     patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void>;
     getOneDisciplineByID(idDiscipline: number): Promise<Discipline>;
     getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
-    getAllDisciplines(): Promise<Discipline[]>;
+    getAllDisciplines(offset: number, limit: number): Promise<{disciplines: Discipline[], total: number}>;
+    getAmountOfDisciplines(): Promise<number>;
 } 
 
 export class DisciplineRepository implements DisciplineRepositoryInterface {
@@ -53,7 +54,20 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
         await this.prisma.discipline.update({ where: { id: idDiscipline }, data: updates });
     }
     
-    async getAllDisciplines(): Promise<Discipline[]> {
-        return await this.prisma.discipline.findMany();
+    async getAllDisciplines(offset: number, limit: number): Promise<{disciplines: Discipline[], total: number}> {
+        const [disciplines, total] = await Promise.all([
+            this.prisma.discipline.findMany({
+                skip: offset,
+                take: limit
+            }),
+            this.prisma.discipline.count()
+        ]);
+        
+        return {disciplines, total};
     }
+
+    async getAmountOfDisciplines(): Promise<number> {
+        return await this.prisma.discipline.count();
+    }
+    
 }
