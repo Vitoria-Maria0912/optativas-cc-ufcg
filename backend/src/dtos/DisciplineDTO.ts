@@ -22,6 +22,7 @@ export class DisciplineDTO implements DisciplineInterface {
     public available: boolean;
 
     @IsString()
+    @IsOptional()
     public description: string;
 
     @IsOptional()
