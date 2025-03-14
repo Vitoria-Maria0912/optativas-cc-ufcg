@@ -35,10 +35,8 @@ export class DisciplineService implements DisciplineServiceInterface {
         if ((await this.getAllDisciplines()).length === 0) {
             throw new NotFoundError('No disciplines found!');
         }
-        const discipline = await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
-        if (!discipline) {
-            throw new NotFoundError(`Discipline not found!`);
-        }
+        const discipline = await this.getOneDisciplineByID(idDiscipline);
+        if (!discipline) { throw new NotFoundError(`Discipline not found!`); }
         await this.disciplineRepository.deleteOneDiscipline(idDiscipline);
     }
     
@@ -53,12 +51,12 @@ export class DisciplineService implements DisciplineServiceInterface {
         if ((await this.getAllDisciplines()).length === 0) {
             throw new NotFoundError('No disciplines found!');
         }
-        const discipline = await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
-        if(this.validate(discipline)){
-            await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
-        } else {
-            throw new NotFoundError(`Discipline not found!`);
-        }
+        try {
+            const discipline = await this.getOneDisciplineByID(idDiscipline);
+            if(this.validate(discipline)){
+                await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
+            }
+        } catch (error) { if(error instanceof NotFoundError){ throw error; } }
     }
 
     async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
@@ -66,9 +64,7 @@ export class DisciplineService implements DisciplineServiceInterface {
             throw new NotFoundError('No disciplines found!');
         }
         try { return await this.disciplineRepository.getOneDisciplineByName(disciplineName);
-        } catch (error) {
-            throw new NotFoundError('Discipline not found!');
-        }
+        } catch (error) { throw new NotFoundError('Discipline not found!'); }
     }
 
     async getOneDisciplineByID(idDiscipline: number): Promise<DisciplineDTO> {
@@ -76,9 +72,7 @@ export class DisciplineService implements DisciplineServiceInterface {
             throw new NotFoundError('No disciplines found!');
         }
         try { return await this.disciplineRepository.getOneDisciplineByID(idDiscipline);
-        } catch (error) {
-            throw new NotFoundError('Discipline not found!');
-        }
+        } catch (error) { throw new NotFoundError('Discipline not found!'); }
     }
 
     async getAllDisciplines(): Promise<DisciplineDTO[]> {
