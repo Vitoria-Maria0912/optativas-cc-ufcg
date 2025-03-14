@@ -37,10 +37,10 @@ export class DisciplineDTO implements DisciplineInterface {
     public post_requisites: string[];
 
     @IsString()
-    public teacher: string;
+    public professor: string;
 
     @IsString()
-    public schedule: string;     
+    public schedule: string;
 
     constructor(
         id: number,
@@ -51,7 +51,7 @@ export class DisciplineDTO implements DisciplineInterface {
         description: string,
         pre_requisites: string[],
         post_requisites: string[],
-        teacher: string,
+        professor: string,
         schedule: string
     ) {
         this.id = id;
@@ -62,7 +62,7 @@ export class DisciplineDTO implements DisciplineInterface {
         this.description = description;
         this.pre_requisites = pre_requisites;
         this.post_requisites = post_requisites;
-        this.teacher = teacher;
+        this.professor = professor;
         this.schedule = schedule;
     }
 }

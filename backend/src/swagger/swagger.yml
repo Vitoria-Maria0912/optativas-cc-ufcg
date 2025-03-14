@@ -97,9 +97,9 @@ components:
           items:
             type: string
             example: D1
-        teacher:
+        professor:
           type: string
-          example: Teacher0
+          example: Professor0
         schedule:
           type: string
           example: Schedule0
