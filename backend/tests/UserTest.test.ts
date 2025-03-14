@@ -291,6 +291,7 @@ describe('UserController', () => {
     });
     
     describe("GetUserByEmail should return 'User with email ${ email } was found successfully!' ", () => {
+        
         test("should return a user when a valid email is provided", async () => {
 
             const user = await request(app).post("/users").send({ name: "Get by email Test", email: "emailTest@example.com" });
@@ -348,9 +349,27 @@ describe('UserController', () => {
             expect(response.status).toBe(200);
         });
 
+        test('deleteOneUser should return 404 if user with ID does not exist', async () => {
+
+            const userData = {
+                id: 9,
+                role: Role.ADMINISTRATOR,
+                name: "Alice Johnson",
+                email: "alice@example.com"
+            };
+    
+            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ TOKEN }`);
+    
+            const response = await request(app).delete(`/users/-1`).set("Authorization", `Bearer ${ TOKEN }`);
+    
+            expect(response.body).toEqual({ message: `User with ID '-1' not found!`, });
+            expect(response.status).toBe(404);
+        });
+
     });
 
     describe("DeleteAllUsers should return 'All users were deleted successfully!' ", () => {
+        
         test("should return 'No users found!'", async () => {
             const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
             

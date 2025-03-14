@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3001;
 export const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 
 const server = app.listen(PORT, () => {
-    exec('xdg-open http://localhost:8080/api-docs')
+    // exec('xdg-open http://localhost:8080/api-docs')
     console.log(`Server is running on port ${PORT}` + '\n' +
                 `Swagger in http://localhost:${PORT}/api-docs`);
 });

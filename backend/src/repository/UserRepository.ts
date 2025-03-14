@@ -1,8 +1,6 @@
 import { PrismaClient, Role } from "@prisma/client";
 import { User } from "../model/User";
 import { Login } from "../model/Login";
-import { DisciplineDTO } from "../dtos/DisciplineDTO";
-import { UserDTO } from "../dtos/UserDTO";
 
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;

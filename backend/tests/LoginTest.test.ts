@@ -180,6 +180,15 @@ describe('LoginController', () => {
             expect(response.body).toEqual({ message: "This email 'invalid-email' is invalid, should be like 'name@example.com'!" });
             expect(response.status).toBe(400);
         });
+
+        test("should return 400 if email is missing", async () => {
+            const response = await request(app).post("/login/getTokenByUserEmail").send({
+                password: "password123",
+            });
+    
+            expect(response.body).toEqual({ message: "Email is required!" });
+            expect(response.status).toBe(400);
+        });
     
         test("should return 400 if password is missing", async () => {
 

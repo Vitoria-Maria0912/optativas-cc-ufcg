@@ -56,11 +56,8 @@ export class AuthService implements AuthServiceInterface {
 
         if (!password) { throw new InvalidCredentialsError('Password is required!'); }
         
-        console.log((await this.hashedPassword(password)))
         try { 
             const login = await this.userRepository.getTokenByUserEmail(user.email); 
-            // console.log(login.password)
-            // console.log(await comparePassword(password, login.password))
             if (!(await comparePassword(password, login.password))) { throw new InvalidCredentialsError('Password is incorrect!'); }   
             const token = this.generateToken(user);
             

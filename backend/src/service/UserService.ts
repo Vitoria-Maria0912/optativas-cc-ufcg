@@ -46,8 +46,10 @@ export class UserService implements UserServiceInterface {
     }
     
     async getUserByEmail(userEmail: string): Promise<User> {
-        
-        if (!userEmail.includes('@')) { throw new InvalidCredentialsError(`This email '${ userEmail }' is invalid, should be like 'name@example.com'!`); }
+
+        if (!userEmail) { throw new InvalidCredentialsError('Email is required!'); }
+
+        else if (!userEmail.includes('@')) { throw new InvalidCredentialsError(`This email '${ userEmail }' is invalid, should be like 'name@example.com'!`); }
         
         try { return await this.userRepository.getUserByEmail(userEmail); } 
         catch (error: any) { throw new NotFoundError(`User with email '${ userEmail }' not found!`); }
