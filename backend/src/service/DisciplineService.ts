@@ -3,6 +3,7 @@ import { DisciplineRepository, DisciplineRepositoryInterface } from "../reposito
 import { DisciplineDTO } from "../dtos/DisciplineDTO";
 import { Discipline } from "../model/Discipline";
 import { Prisma } from "@prisma/client";
+import { validateDisciplineFields } from "../util/util";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
@@ -21,13 +22,12 @@ export class DisciplineService implements DisciplineServiceInterface {
     async createDiscipline(disciplineDTO: DisciplineDTO): Promise<DisciplineDTO> {
         try { 
             let discipline = new Discipline(disciplineDTO);  
-            this.validate(discipline);
+            await validateDisciplineFields(discipline);
             return await this.disciplineRepository.createDiscipline(discipline);
 
         } catch (error: any) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError && 
-                error.code === 'P2002') { throw new DisciplineAlreadyRegisteredError('Discipline already exists!'); 
-            } throw error;
+            if (error instanceof InvalidFieldError || error instanceof DisciplineAlreadyRegisteredError) { throw error; }
+            else { throw new Error("Error trying to create a discipline!"); }
         }
     }
 
@@ -53,7 +53,7 @@ export class DisciplineService implements DisciplineServiceInterface {
         }
         try {
             const discipline = await this.getOneDisciplineByID(idDiscipline);
-            if(this.validate(discipline)){
+            if(await validateDisciplineFields(discipline)){
                 await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
             }
         } catch (error) { if(error instanceof NotFoundError){ throw error; } }
@@ -82,28 +82,4 @@ export class DisciplineService implements DisciplineServiceInterface {
         if (disciplines.length === 0) { throw new NotFoundError('No disciplines found!'); }
         return disciplines;
     }  
-
-    private validate(discipline: Discipline): boolean {
-
-        const stringProperties = [
-            { name: 'name', value: discipline.name },
-            { name: 'acronym', value: discipline.acronym },
-        ];    
-
-        stringProperties.forEach(property => {
-            if(!property.value || (typeof property.value === 'string' && property.value.trim() === '')) {
-                throw new InvalidFieldError(`Discipline's ${property.name} cannot be empty!`);
-            }
-        });
-
-        discipline.pre_requisites.forEach(req => {
-            if(!req) { throw new InvalidFieldError('A pre requisite cannot be a empty word!'); }
-        });
-
-        discipline.post_requisites.forEach(req => {
-            if(!req) { throw new InvalidFieldError('A post requisite cannot be a empty word!'); }
-        });
-        
-        return true;
-    }
 }

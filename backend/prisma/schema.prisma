@@ -12,12 +12,12 @@ model Discipline {
   type            Type     @default(OBRIGATORY)
   name            String   @unique
   acronym         String
-  professor       String   @default("Undefined")
+  professor       String   @default("Not specified")
   available       Boolean  @default(true)
-  description     String
+  description     String   
   pre_requisites  String[]
   post_requisites String[]
-  schedule        String   @default("Undefined")
+  schedule        String   @default("Not specified")
   periods         Period[] @relation("PeriodDisciplines")
 }
 

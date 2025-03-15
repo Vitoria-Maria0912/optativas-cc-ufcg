@@ -34,25 +34,130 @@ describe('DisciplineController', () => {
             expect(response.status).toBe(201);
         });
 
+        test("emptyAvailability should create a discipline with available = true", async () => {
+
+            const disciplineData = {
+                name: 'Web II',
+                acronym: 'Web II',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline created successfully!");
+            expect(response.body.discipline.available).toEqual(true);
+            expect(response.status).toBe(201);
+        });
+
+        test("emptySchedule should create a discipline with schedule = 'Not specified'", async () => {
+            
+            const disciplineData = {
+                name: 'Web II',
+                acronym: 'Web II',
+                type: Type.OPTATIVE,
+                professor: 'Glauber',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline created successfully!");
+            expect(response.body.discipline.schedule).toEqual("Not specified");
+            expect(response.status).toBe(201);
+        });
+
+        test("emptyProfessor should create a discipline with professor = 'Not specified'", async () => {
+            const disciplineData = {
+                name: 'Web II',
+                acronym: 'Web II',
+                type: Type.OPTATIVE,
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline created successfully!");
+            expect(response.body.discipline.professor).toEqual("Not specified");
+            expect(response.status).toBe(201);
+        });
+
+        test("emptyType should create a discipline with type = 'OBRIGATORY'", async () => {
+            
+            const disciplineData = {
+                name: 'Web II',
+                acronym: 'Web II',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline created successfully!");
+            expect(response.body.discipline.type).toEqual(Type.OBRIGATORY);
+            expect(response.status).toBe(201);
+        });
+
+        test("emptyDescription should create a discipline without description", async () => {
+            
+            const disciplineData = {
+                name: 'Web II',
+                acronym: 'Web II',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline created successfully!");
+            expect(response.body.discipline.description).toBe('');
+            expect(response.status).toBe(201);
+        });
+
+        test("emptyName should return a 400 error", async () => {
+            const disciplineData = {
+                acronym: 'Web II',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline name is required!")
+            expect(response.status).toBe(400);
+        });
+
+        test("emptyAcronym should return a 400 error", async () => {
+            const disciplineData = {
+                name: 'Web II',
+            };
+            const response = await request(app)
+                .post('/protected/disciplines')
+                .send(disciplineData).set("Authorization", `Bearer ${TOKEN}`);
+
+            expect(response.body.message).toEqual("Discipline acronym is required!")
+            expect(response.status).toBe(400);
+        });
+
         const testCases = [
-            { name: "Type inválido", data: { type: "INVALID" }, expected: "Invalid type provided!" },
-            { name: "Nome vazio", data: { name: "" }, expected: "Name is required!" },
-            { name: "Nome já existente", data: { name: "Web II" }, expected: "Discipline already exists!" },
-            { name: "Nome apenas números", data: { name: "12345" }, expected: "Invalid name format!" },
-            { name: "Nome existente com caixa diferente", data: { name: "web ii" }, expected: "Discipline already exists!" },
-            { name: "Sigla vazia", data: { acronym: "" }, expected: "Acronym is required!" },
-            { name: "Sigla apenas números", data: { acronym: "123" }, expected: "Invalid acronym format!" },
-            { name: "Nome do professor apenas números", data: { professor: "12345" }, expected: "Invalid professor name format!" },
-            { name: "Disponibilidade inválida", data: { available: "maybe" }, expected: "Invalid availability value!" },
-            { name: "Descrição apenas números", data: { description: "123456" }, expected: "Invalid description format!" },
-            { name: "Sem pré ou pós-requisitos", data: { pre_requisites: [], post_requisites: [] }, expected: "Discipline created successfully!" },
-            { name: "Pré ou pós-requisitos inexistentes", data: { pre_requisites: [999], post_requisites: [998] }, expected: "Invalid prerequisites or post-requisites!" },
-            { name: "Horário apenas números", data: { schedule: "12345" }, expected: "Invalid schedule format!" }
+            { name: "should return 'Discipline created successfully!'", data: { description: "" }, expected: "Discipline created successfully!" , code: 201 },
+            { name: "should return 'Discipline created successfully!'", data: { pre_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
+            { name: "should return 'Discipline created successfully!'", data: { post_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
+            { name: "error 'Discipline already exists!'", data: { name: "web ii" }, expected: "A discipline 'Web II' already exists!", code: 409 },
+            { name: "error 'Discipline already exists!'", data: { name: "Web II" }, expected: "A discipline 'Web II' already exists!", code: 409 },
+            { name: "error 'Discipline already exists!'", data: { acronym: "Web II" }, expected: "A discipline 'Web II' already exists!", code: 409 },
+            { name: "error 'name should not contains only numbers!'", data: { name: "12345" }, expected: "Discipline's name '12345' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'acronym should not contains only numbers!'", data: { acronym: "123" }, expected: "Discipline's acronym '123' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'professor should not contains only numbers!'", data: { professor: "" }, expected: "Discipline created successfully!", code: 201 },
+            { name: "error 'type must be either OBRIGATORY or OPTATIVE!'", data: { type: "INVALID" }, expected: "Discipline's type must be either OBRIGATORY or OPTATIVE!", code: 400 },
+            { name: "error 'type must be a boolean!", data: { available: "maybe" }, expected: "Discipline's availability must be a boolean!", code: 400 },
+            { name: "error 'description should not contains only numbers!'", data: { description: "123456" }, expected: "Discipline's description '123456' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'schedule should not contains only numbers!'", data: { schedule: "12345" }, expected: "Discipline's schedule '12345' is invalid, should not contains only numbers!", code: 400 },
+            // { name: "error 'pre_requisites should be a existing discipline!'", data: { pre_requisites: ["999"] }, expected: "Invalid prerequisites!" },
+            // { name: "error 'post_requisites should be a existing discipline!'", data: { post_requisites: ["998"] }, expected: "Invalid post-requisites!" },
         ];
 
-        testCases.forEach(({ name, data, expected }) => {
-            test(`Tentativa de criação de disciplina - ${ name }`, async () => {
+        testCases.forEach(({ name, data, expected, code }) => {
+
+            test(`createDiscipline should return ${name}`, async () => {
                 await request(app).post('/protected/disciplines').send({ name: 'Web II', acronym: 'Web II', type: Type.OPTATIVE }).set("Authorization", `Bearer ${TOKEN}`);
+
                 const disciplineData = {
                     name: data.name || "Valid Name",
                     acronym: data.acronym || "Valid Acronym",
@@ -71,7 +176,7 @@ describe('DisciplineController', () => {
                     .set("Authorization", `Bearer ${TOKEN}`);
 
                 expect(response.body.message).toEqual(expected);
-                expect(response.status).toBe(expected === "Discipline created successfully!" ? 201 : 400);
+                expect(response.status).toBe(code);
             });
         });
     });

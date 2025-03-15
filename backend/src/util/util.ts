@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Role } from "@prisma/client";
+import { Role, Type } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
 import { AuthenticationError, DisciplineAlreadyRegisteredError, InvalidCredentialsError, InvalidFieldError, UserAlreadyExistsError, UserNotAuthorizedError } from "../errorHandler/ErrorHandler";
 import { Discipline } from '../model/Discipline';
+import { isBoolean } from 'class-validator';
 import { DisciplineService } from '../service/DisciplineService';
 
 const stringOnlyNumbers = new RegExp('^(?!\\d+$).+');
@@ -83,20 +84,23 @@ export const validateLoginCredentials = async (user: User, email: string, passwo
 
 export const validateDisciplineFields = async (discipline: Discipline): Promise<boolean> => {
 
-    const stringProperties = [
-        { name: 'name', value: discipline.name },
-        { name: 'acronym', value: discipline.acronym },
-    ];
-
-    stringProperties.forEach(property => {
-        if (!property.value || (typeof property.value === 'string' && property.value.trim() === '')) {
-            throw new InvalidFieldError(`Discipline's ${property.name} cannot be empty!`);
-        }
-    });
-
     const disciplineService = new DisciplineService();
 
-    if (await disciplineService.getOneDisciplineByName(discipline.name)) { throw new DisciplineAlreadyRegisteredError('Discipline already exists!'); }
+    try {
+        if (await disciplineService.getOneDisciplineByName(discipline.name)) { throw new DisciplineAlreadyRegisteredError(`A discipline '${ discipline.name }' already exists!`); }
+    } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
+
+    // try {
+    //     if (await disciplineService.getOneDisciplineByAcronym(discipline.acronym)) { throw new DisciplineAlreadyRegisteredError(`A discipline '${ discipline.acronym }' already exists!`); }
+    // } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
+
+    if (!discipline.name) { throw new InvalidFieldError('Discipline name is required!'); }
+
+    if (!discipline.acronym) { throw new InvalidFieldError('Discipline acronym is required!'); }
+
+    if (discipline.type && discipline.type !== Type.OBRIGATORY && discipline.type !== Type.OPTATIVE) { throw new InvalidFieldError("Discipline's type must be either OBRIGATORY or OPTATIVE!"); }
+
+    if (discipline.available && !isBoolean(discipline.available)) { throw new InvalidFieldError("Discipline's availability must be a boolean!"); }
 
     if (!stringOnlyNumbers.test(discipline.name)) { throw new InvalidFieldError(`Discipline's name '${discipline.name}' is invalid, should not contains only numbers!`); }
 
@@ -106,11 +110,13 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
     
     if (!stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
 
-    discipline.pre_requisites.forEach(req => {
+    if (!stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
+
+    discipline.pre_requisites?.forEach(req => {
         if (!req) { throw new InvalidFieldError('A pre requisite cannot be a empty word!'); }
     });
 
-    discipline.post_requisites.forEach(req => {
+    discipline.post_requisites?.forEach(req => {
         if (!req) { throw new InvalidFieldError('A post requisite cannot be a empty word!'); }
     });
 
