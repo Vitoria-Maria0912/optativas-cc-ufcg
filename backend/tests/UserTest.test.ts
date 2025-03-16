@@ -260,6 +260,23 @@ describe('UserController', () => {
             ); expect(response.status).toBe(200);
         });
 
+        test("should return users when ADMINISTRATOR role, even if the text is in lowercase", async () => {
+
+            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Adm Test", email: "admTest@example.com" });
+
+            const response = await request(app).get("/protected/users/getByRole/administrator").set("Authorization", `Bearer ${ TOKEN }`);
+
+            expect(response.body.message).toEqual(`Users with 'administrator' role were found successfully!`)
+
+            expect(response.body.users).toEqual(
+                expect.arrayContaining(
+                    response.body.users.map(() =>
+                        expect.objectContaining({ role: "ADMINISTRATOR" })
+                    )
+                )
+            ); expect(response.status).toBe(200);
+        });
+
         test("should return users when COMMON role", async () => {
 
             await request(app).post("/users").send({ name: "Common Test", email: "commonTest@example.com" });
@@ -267,6 +284,23 @@ describe('UserController', () => {
             const response = await request(app).get(`/protected/users/getByRole/COMMON`).set("Authorization", `Bearer ${ TOKEN }`);
 
             expect(response.body.message).toEqual(`Users with 'COMMON' role were found successfully!`)
+
+            expect(response.body.users).toEqual(
+                expect.arrayContaining(
+                    response.body.users.map(() =>
+                        expect.objectContaining({ role: "COMMON" })
+                    )
+                )
+            ); expect(response.status).toBe(200);
+        });
+
+        test("should return users when COMMON role, even if the text is in lowercase", async () => {
+
+            await request(app).post("/users").send({ name: "Common Test", email: "commonTest@example.com" });
+
+            const response = await request(app).get(`/protected/users/getByRole/common`).set("Authorization", `Bearer ${ TOKEN }`);
+
+            expect(response.body.message).toEqual(`Users with 'common' role were found successfully!`)
 
             expect(response.body.users).toEqual(
                 expect.arrayContaining(
@@ -300,6 +334,23 @@ describe('UserController', () => {
 
             expect(response.body).toMatchObject({
                 message : "User with email 'emailTest@example.com' was found successfully!",
+                user: {
+                    name: "Get by email Test",
+                    email: "emailTest@example.com",
+                    role: "COMMON",
+                }
+            });
+            expect(response.status).toBe(200);
+        });
+
+        test("should return a user when a valid email is provided, even if the text is in uppercase", async () => {
+
+            const user = await request(app).post("/users").send({ name: "Get by email Test", email: "emailTest@example.com" });
+
+            const response = await request(app).get("/protected/users/getByEmail/EMAILTEST@example.com").set("Authorization", `Bearer ${ TOKEN }`);
+
+            expect(response.body).toMatchObject({
+                message : "User with email 'EMAILTEST@example.com' was found successfully!",
                 user: {
                     name: "Get by email Test",
                     email: "emailTest@example.com",

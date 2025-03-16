@@ -54,8 +54,8 @@ export class UserRepository implements UserRepositoryInterface {
     }
     
     async getUserByEmail(userEmail: string): Promise<User> {
-        return await this.prisma.user.findUniqueOrThrow({ 
-            where: { email: userEmail },
+        return await this.prisma.user.findFirstOrThrow({ 
+            where: { email: { equals: userEmail, mode: 'insensitive'} },
             select: { id: true, role: true, name: true, email: true } 
         });
     }
@@ -68,7 +68,7 @@ export class UserRepository implements UserRepositoryInterface {
     }
     
     async getTokenByUserEmail(userEmail: string): Promise<Login> {
-        return await this.prisma.login.findUniqueOrThrow({ where: { email: userEmail } });
+        return await this.prisma.login.findFirstOrThrow({ where: { email: { equals: userEmail, mode: 'insensitive'} } });
     }
 
     async getAllUsers(): Promise<User[]> { 

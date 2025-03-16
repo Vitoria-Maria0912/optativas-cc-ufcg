@@ -49,8 +49,8 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
     }
 
     async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {
-        return await this.prisma.discipline.findUniqueOrThrow({ 
-            where: { name: disciplineName },
+        return await this.prisma.discipline.findFirstOrThrow({ 
+            where: { name: { equals: disciplineName, mode: 'insensitive'}, },
             select: { id: true, type: true, name: true, acronym: true, available: true, description: true, pre_requisites: true, post_requisites: true, professor: true, schedule: true } 
         })
     }

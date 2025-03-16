@@ -87,11 +87,11 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
     const disciplineService = new DisciplineService();
 
     try {
-        if (await disciplineService.getOneDisciplineByName(discipline.name)) { throw new DisciplineAlreadyRegisteredError(`A discipline '${ discipline.name }' already exists!`); }
+        if (await disciplineService.getOneDisciplineByName(discipline.name)) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ discipline.name }' already exists!`); }
     } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
 
     // try {
-    //     if (await disciplineService.getOneDisciplineByAcronym(discipline.acronym)) { throw new DisciplineAlreadyRegisteredError(`A discipline '${ discipline.acronym }' already exists!`); }
+    //     if (await disciplineService.getOneDisciplineByAcronym(discipline.acronym)) { throw new DisciplineAlreadyRegisteredError(`A discipline  with this acronym '${ discipline.acronym }' already exists!`); }
     // } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
 
     if (!discipline.name) { throw new InvalidFieldError('Discipline name is required!'); }

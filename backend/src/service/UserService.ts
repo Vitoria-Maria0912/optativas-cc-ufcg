@@ -56,12 +56,14 @@ export class UserService implements UserServiceInterface {
     }
     
     async getUserByRole(userRole: Role): Promise<User[]> {
+
+        const normalizedRole = userRole.toUpperCase() as Role;
+                
+        if (!Object.values(Role).includes(normalizedRole)) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
         
-        if (userRole && userRole !== Role.ADMINISTRATOR && userRole !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
-        
-        try { const users = await this.userRepository.getUserByRole(userRole);
+        try { const users = await this.userRepository.getUserByRole(normalizedRole);
             
-            if (users.length === 0) { throw new NotFoundError(`No users with '${ userRole }' role found!`); }
+            if (users.length === 0) { throw new NotFoundError(`No users with '${ normalizedRole }' role found!`); }
             
             else { return users; }
             
