@@ -1,15 +1,23 @@
-import { Role, PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 import app, { closeServer } from '../src/express/server';
 import request from 'supertest';
 
 describe('UserController', () => {
 
-    const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDYsInJvbGUiOiJBRE1JTklTVFJBVE9SIiwibmFtZSI6IkFsaWNlIEpvaG5zb24iLCJlbWFpbCI6ImFsaWNlQGV4YW1wbGUuY29tIiwibG9naW5JZCI6bnVsbCwiaWF0IjoxNzM2MDQ3ODUzfQ.W9CnU-tu1E_bNvaimZW0aKwpQd-dkpisBZLvEnhuFaM"
-    
-    afterEach(async () => { await request(app).delete('/protected/users').set("Authorization", `Bearer ${ TOKEN }`) });
-    afterEach( async () => { await (new PrismaClient).login.deleteMany() });
+    const prismaClient = new PrismaClient();
+    let token: string;
 
-    afterAll(async () => { closeServer(); await (new PrismaClient).$disconnect(); });
+    beforeAll( async () => {
+        await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
+        await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123" });
+        token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdm@example.com", password: "loginAdm123" })).body.login.token;
+    });    
+
+    afterAll(async () => { 
+        await request(app).delete('/protected/users').set("Authorization", `Bearer ${ token }`); 
+        await prismaClient.login.deleteMany(); 
+        closeServer(); await prismaClient.$disconnect(); 
+    });
 
     describe("CreateUser should return 'User ${ name } was created successfully!'", () => {
 
@@ -176,7 +184,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send(userData);
 
-            const response = await request(app).get("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body.message).toEqual(`Users were found successfully!`);
 
@@ -191,8 +199,8 @@ describe('UserController', () => {
         });
     
         test("should return 404 'No users found!'", async () => {
-            await request(app).delete('/protected/users').set("Authorization", `Bearer ${ TOKEN }`)
-            const response = await request(app).get("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            await request(app).delete('/protected/users').set("Authorization", `Bearer ${ token }`)
+            const response = await request(app).get("/protected/users").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body.message).toEqual(`No users found!`);
             expect(response.status).toBe(404);
@@ -211,7 +219,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send(userData);
 
-            const response = await request(app).get("/protected/users/getByID/1").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByID/1").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body).toMatchObject({
                 message: `User with ID '${ userData.id }' was found successfully!`,
@@ -227,14 +235,14 @@ describe('UserController', () => {
     
         test("should return 404 if user ID does not exist", async () => {
 
-            const response = await request(app).get("/protected/users/getByID/999999999").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByID/999999999").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body).toEqual({ message: `User with ID '999999999' not found!` });
             expect(response.status).toBe(404);
         });
     
         test("should return 400 if ID is invalid", async () => {
-            const response = await request(app).get("/protected/users/getByID/invalid-id").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByID/invalid-id").set("Authorization", `Bearer ${ token }`);
 
             expect(response.body).toEqual({ message: "User ID must be a number!" });
             expect(response.status).toBe(400);
@@ -247,7 +255,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Adm Test", email: "admTest@example.com" });
 
-            const response = await request(app).get("/protected/users/getByRole/ADMINISTRATOR").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByRole/ADMINISTRATOR").set("Authorization", `Bearer ${ token }`);
 
             expect(response.body.message).toEqual(`Users with 'ADMINISTRATOR' role were found successfully!`)
 
@@ -264,7 +272,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Adm Test", email: "admTest@example.com" });
 
-            const response = await request(app).get("/protected/users/getByRole/administrator").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByRole/administrator").set("Authorization", `Bearer ${ token }`);
 
             expect(response.body.message).toEqual(`Users with 'administrator' role were found successfully!`)
 
@@ -281,7 +289,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send({ name: "Common Test", email: "commonTest@example.com" });
 
-            const response = await request(app).get(`/protected/users/getByRole/COMMON`).set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get(`/protected/users/getByRole/COMMON`).set("Authorization", `Bearer ${ token }`);
 
             expect(response.body.message).toEqual(`Users with 'COMMON' role were found successfully!`)
 
@@ -298,7 +306,7 @@ describe('UserController', () => {
 
             await request(app).post("/users").send({ name: "Common Test", email: "commonTest@example.com" });
 
-            const response = await request(app).get(`/protected/users/getByRole/common`).set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get(`/protected/users/getByRole/common`).set("Authorization", `Bearer ${ token }`);
 
             expect(response.body.message).toEqual(`Users with 'common' role were found successfully!`)
 
@@ -312,13 +320,13 @@ describe('UserController', () => {
         });
     
         test("should return 400 if role is invalid", async () => {
-            const response = await request(app).get("/protected/users/getByRole/UNKNOWN_ROLE").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByRole/UNKNOWN_ROLE").set("Authorization", `Bearer ${ token }`);
             expect(response.body).toEqual({ message: "The role must be either ADMINISTRATOR or COMMON!" });
             expect(response.status).toBe(400);
         });
     
         test("should return 400 if role is only numbers", async () => {
-            const response = await request(app).get("/protected/users/getByRole/123").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByRole/123").set("Authorization", `Bearer ${ token }`);
             expect(response.body).toEqual({ message: "The role must be either ADMINISTRATOR or COMMON!" });
             expect(response.status).toBe(400);
         });
@@ -330,7 +338,7 @@ describe('UserController', () => {
 
             const user = await request(app).post("/users").send({ name: "Get by email Test", email: "emailTest@example.com" });
 
-            const response = await request(app).get("/protected/users/getByEmail/emailTest@example.com").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByEmail/emailTest@example.com").set("Authorization", `Bearer ${ token }`);
 
             expect(response.body).toMatchObject({
                 message : "User with email 'emailTest@example.com' was found successfully!",
@@ -347,7 +355,7 @@ describe('UserController', () => {
 
             const user = await request(app).post("/users").send({ name: "Get by email Test", email: "emailTest@example.com" });
 
-            const response = await request(app).get("/protected/users/getByEmail/EMAILTEST@example.com").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByEmail/EMAILTEST@example.com").set("Authorization", `Bearer ${ token }`);
 
             expect(response.body).toMatchObject({
                 message : "User with email 'EMAILTEST@example.com' was found successfully!",
@@ -361,13 +369,13 @@ describe('UserController', () => {
         });
     
         test("should return 404 if user with email does not exist", async () => {
-            const response = await request(app).get("/protected/users/getByEmail/notfound@example.com").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByEmail/notfound@example.com").set("Authorization", `Bearer ${ token }`);
             expect(response.body).toEqual({ message: "User with email 'notfound@example.com' not found!" });
             expect(response.status).toBe(404);
         });
     
         test("should return 400 if email format is invalid", async () => {
-            const response = await request(app).get("/protected/users/getByEmail/invalid-email").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).get("/protected/users/getByEmail/invalid-email").set("Authorization", `Bearer ${ token }`);
             expect(response.body).toEqual({ message: "This email 'invalid-email' is invalid, should be like 'name@example.com'!" });
             expect(response.status).toBe(400);
         });
@@ -376,8 +384,8 @@ describe('UserController', () => {
     describe("DeleteOneUser should return 'User with ID ${ id } was deleted successfully!' ", () => {
         
         test("deleteOneUser should return 'No users found!'", async () => {
-            await request(app).delete('/protected/users').set("Authorization", `Bearer ${ TOKEN }`);
-            const response = await request(app).delete('/users/1').set("Authorization", `Bearer ${ TOKEN }`);
+            await request(app).delete('/protected/users').set("Authorization", `Bearer ${ token }`);
+            const response = await request(app).delete('/users/1').set("Authorization", `Bearer ${ token }`);
             
             expect(response.body).toEqual({ message: 'No users found!'});
             expect(response.status).toBe(404);
@@ -392,9 +400,9 @@ describe('UserController', () => {
                 email: "alice@example.com"
             };
     
-            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ TOKEN }`);
+            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ token }`);
     
-            const response = await request(app).delete(`/users/${ userData.id }`).set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).delete(`/users/${ userData.id }`).set("Authorization", `Bearer ${ token }`);
     
             expect(response.body).toEqual({ message: `User with ID '${ userData.id }' was deleted successfully!`, });
             expect(response.status).toBe(200);
@@ -409,9 +417,9 @@ describe('UserController', () => {
                 email: "alice@example.com"
             };
     
-            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ TOKEN }`);
+            await request(app).post('/users').send(userData).set("Authorization", `Bearer ${ token }`);
     
-            const response = await request(app).delete(`/users/-1`).set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).delete(`/users/-1`).set("Authorization", `Bearer ${ token }`);
     
             expect(response.body).toEqual({ message: `User with ID '-1' not found!`, });
             expect(response.status).toBe(404);
@@ -422,7 +430,8 @@ describe('UserController', () => {
     describe("DeleteAllUsers should return 'All users were deleted successfully!' ", () => {
         
         test("should return 'No users found!'", async () => {
-            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            await request(app).delete("/protected/users").set("Authorization", `Bearer ${ token }`)
+            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body).toEqual({ message: "No users found!" });
         });
@@ -430,7 +439,7 @@ describe('UserController', () => {
         test("should return a message when all users are deleted", async () => {
             await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Delete Test", email: "deleteTest@example.com" });
 
-            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ TOKEN }`);
+            const response = await request(app).delete("/protected/users").set("Authorization", `Bearer ${ token }`);
             
             expect(response.body).toEqual({ message: "All users were deleted successfully!" });
         });

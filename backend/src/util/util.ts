@@ -82,17 +82,28 @@ export const validateLoginCredentials = async (user: User, email: string, passwo
     return true;
 }
 
-export const validateDisciplineFields = async (discipline: Discipline): Promise<boolean> => {
+export const validateDisciplineExistence = async (discipline: Discipline) => {
 
     const disciplineService = new DisciplineService();
 
-    try {
-        if (await disciplineService.getOneDisciplineByName(discipline.name)) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ discipline.name }' already exists!`); }
-    } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
+    let existingDisciplineName = null;
+    let existingDisciplineAcronym = null;
 
-    // try {
-    //     if (await disciplineService.getOneDisciplineByAcronym(discipline.acronym)) { throw new DisciplineAlreadyRegisteredError(`A discipline  with this acronym '${ discipline.acronym }' already exists!`); }
-    // } catch (error) { if (error instanceof DisciplineAlreadyRegisteredError) { throw error; } }
+    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) {}
+    
+    if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ discipline.name }' already exists!`); }
+    
+    // try { existingDisciplineAcronym = await disciplineService.getOneDisciplineByAcronym(discipline.acronym); } catch (error) {}
+
+    if (existingDisciplineAcronym) { throw new DisciplineAlreadyRegisteredError(`A discipline with this acronym '${ discipline.acronym }' already exists!`); }
+}
+
+export const validateDisciplineFields = async (discipline: Discipline): Promise<boolean> => {
+
+    const disciplineService = new DisciplineService();
+    let existingDisciplineName = null;
+
+    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) {}
 
     if (!discipline.name) { throw new InvalidFieldError('Discipline name is required!'); }
 
@@ -106,19 +117,21 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
 
     if (!stringOnlyNumbers.test(discipline.acronym)) { throw new InvalidFieldError(`Discipline's acronym '${discipline.acronym}' is invalid, should not contains only numbers!`); }
 
-    if (!stringOnlyNumbers.test(discipline.professor)) { throw new InvalidFieldError(`Discipline's professor '${discipline.professor}' is invalid, should not contains only numbers!`); }
+    if (discipline.professor && !stringOnlyNumbers.test(discipline.professor)) { throw new InvalidFieldError(`Discipline's professor '${discipline.professor}' is invalid, should not contains only numbers!`); }
     
-    if (!stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
+    if (discipline.description && !stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
 
-    if (!stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
+    if (discipline.description && !stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
 
-    discipline.pre_requisites?.forEach(req => {
-        if (!req) { throw new InvalidFieldError('A pre requisite cannot be a empty word!'); }
-    });
-
-    discipline.post_requisites?.forEach(req => {
-        if (!req) { throw new InvalidFieldError('A post requisite cannot be a empty word!'); }
-    });
+    for (const disciplineName of discipline.pre_requisites || []) {
+        if (!disciplineName) { throw new InvalidFieldError('A pre requisite cannot be an empty word!'); }
+        else if (!existingDisciplineName) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+    }
+    
+    for (const disciplineName of discipline.post_requisites || []) {
+        if (!disciplineName) { throw new InvalidFieldError('A post requisite cannot be an empty word!'); }
+        else if (!existingDisciplineName) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+    }
 
     return true;
 }

@@ -1,9 +1,8 @@
 import { DisciplineAlreadyRegisteredError, InvalidFieldError, NotFoundError } from "../errorHandler/ErrorHandler";
 import { DisciplineRepository, DisciplineRepositoryInterface } from "../repository/DisciplineRepository";
+import { validateDisciplineExistence, validateDisciplineFields } from "../util/util";
 import { DisciplineDTO } from "../dtos/DisciplineDTO";
 import { Discipline } from "../model/Discipline";
-import { Prisma } from "@prisma/client";
-import { validateDisciplineFields } from "../util/util";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
@@ -22,6 +21,7 @@ export class DisciplineService implements DisciplineServiceInterface {
     async createDiscipline(disciplineDTO: DisciplineDTO): Promise<DisciplineDTO> {
         try { 
             let discipline = new Discipline(disciplineDTO);  
+            await validateDisciplineExistence(discipline);
             await validateDisciplineFields(discipline);
             return await this.disciplineRepository.createDiscipline(discipline);
 
@@ -56,7 +56,7 @@ export class DisciplineService implements DisciplineServiceInterface {
             if(await validateDisciplineFields(discipline)){
                 await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
             }
-        } catch (error) { if(error instanceof NotFoundError){ throw error; } }
+        } catch (error) { throw error; }
     }
 
     async getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO> {

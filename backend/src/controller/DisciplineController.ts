@@ -15,7 +15,7 @@ export class DisciplineController {
                                     available: request.body.available ?? true,
                                     professor: request.body.professor ?? "Not specified",
                                     schedule: request.body.schedule ?? "Not specified",
-                                    // description: request.body.description ?? ''
+                                    description: request.body.description ?? ''
             };
             await this.disciplineService.createDiscipline(discipline);
             responseBody = { message: "Discipline created successfully!", discipline};
