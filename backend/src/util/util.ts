@@ -36,13 +36,15 @@ export const isAdministrator = (authHeader: any): boolean => {
     }
 }
 
-export const validateAllCredentials = async (user: User) => {
+export const validateUserExistence = async (user: User) => {
 
     const userService = new UserService();
+    let existingUser = null;
+    try { existingUser = await userService.getUserByEmail(user.email); } catch (error) {}
+    if (existingUser) { throw new UserAlreadyExistsError(`This email '${ user.email }' is already in use!`); }
+}
 
-    try {
-        if (await userService.getUserByEmail(user.email)) { throw new UserAlreadyExistsError(`This email '${user.email}' is already in use!`); }
-    } catch (error) { if (error instanceof UserAlreadyExistsError) { throw error; } }
+export const validateUserFields = async (user: User): Promise<boolean> => {
 
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }
 
@@ -52,17 +54,19 @@ export const validateAllCredentials = async (user: User) => {
 
     if (user.name.length > 50) { throw new InvalidCredentialsError('Name is too long, should be at most 50 characters!'); }
 
-    if (!stringOnlyNumbers.test(user.email)) { throw new InvalidCredentialsError('Email cannot contains only numbers!'); }
-
     if (!user.email) { throw new InvalidCredentialsError('Email is required!'); }
-
+    
     if (!user.email.includes('@')) { throw new InvalidCredentialsError(`This email '${user.email}' is invalid, should be like 'name@example.com'!`); }
+    
+    if (!stringOnlyNumbers.test(user.email)) { throw new InvalidCredentialsError('Email cannot contains only numbers!'); }
 
     if (user.email.length < 15) { throw new InvalidCredentialsError('Email is too short, should be at least 15 characters!'); }
 
     if (user.email.length > 50) { throw new InvalidCredentialsError('Email is too long, should be at most 50 characters!'); }
 
     if (user.role && user.role !== Role.ADMINISTRATOR && user.role !== Role.COMMON) { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
+
+    return true;
 }
 
 export const validateLoginCredentials = async (user: User, email: string, password: string): Promise<boolean> => {

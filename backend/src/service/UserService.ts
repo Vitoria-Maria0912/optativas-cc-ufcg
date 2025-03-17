@@ -1,16 +1,18 @@
-import { Prisma, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { User } from "../model/User";
 import { UserDTO } from "../dtos/UserDTO";
 import { UserRepository } from "../repository/UserRepository";
-import { validateAllCredentials } from "../util/util";
+import { validateUserExistence, validateUserFields } from "../util/util";
 import { InvalidCredentialsError, NotFoundError, UserAlreadyExistsError } from "../errorHandler/ErrorHandler";
 
 export interface UserServiceInterface {
     createUser(user: UserDTO): Promise<User>;
     getAllUsers(): Promise<User[]>;
+    getAmountOfUsers(): Promise<number>
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
+    patchUser(userId: number, updates: Partial<Omit<User, 'id'>>): Promise<void>;
     deleteOneUser(userId: number): Promise<void>;
     deleteAllUsers() : Promise<void>;
 }
@@ -22,7 +24,8 @@ export class UserService implements UserServiceInterface {
     async createUser(user: UserDTO): Promise<User> {
         try { 
             const userToCreate = new User(user);
-            await validateAllCredentials(userToCreate);
+            await validateUserExistence(userToCreate);
+            await validateUserFields(userToCreate);
             return await this.userRepository.createUser(userToCreate); }
         catch (error: any) { 
             if (error instanceof InvalidCredentialsError || error instanceof UserAlreadyExistsError) { throw error; }
@@ -71,6 +74,24 @@ export class UserService implements UserServiceInterface {
             if (error instanceof InvalidCredentialsError || error instanceof NotFoundError) { throw error; }
             else { throw new Error("Error trying to get users by role!"); }
         }
+    }
+
+    async patchUser(userId: number, updates: Partial<Omit<User, 'id'>>): Promise<void> {
+
+        if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
+        else if ((await this.getAllUsers()).length === 0) { throw new NotFoundError('No users found!'); }
+        else if (updates.role !== undefined) { updates.role = updates.role.toLocaleUpperCase() as Role; }
+        
+        try {
+            const user = await this.getUserById(userId);
+            if (updates.role !== undefined && updates.role.trim() === "") { throw new InvalidCredentialsError('The role must be either ADMINISTRATOR or COMMON!'); }
+            else if (updates.email && await this.getUserByEmail(updates.email)) { throw new UserAlreadyExistsError(`This email '${ updates.email }' is already in use!`); }
+            else if (await validateUserFields({ ...user, ...updates })) { await this.userRepository.patchUser(userId, updates); }
+        } catch (error) { throw error; }
+    }
+
+    async getAmountOfUsers(): Promise<number> {
+        throw new Error("Method not implemented.");
     }
 
     async deleteOneUser(userId: number): Promise<void> {

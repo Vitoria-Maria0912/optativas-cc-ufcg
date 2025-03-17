@@ -10,6 +10,7 @@ export interface UserRepositoryInterface {
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
     getTokenByUserEmail(userEmail: string): Promise<Login>;
+    patchUser(idUser: number, updates: Partial<Omit<User, 'id'>>): Promise<void>;
     deleteOneUser(userId: number): Promise<void>;
     deleteAllUsers() : Promise<void>;
 }
@@ -30,20 +31,8 @@ export class UserRepository implements UserRepositoryInterface {
     }
     
     async registerUser(userId: number, email: string, password: string): Promise<User> {
-        const { id } = await this.prisma.login.create({
-            data: { password : password, email : email, }
-        });
-        
-        return await this.prisma.user.update({ 
-            where: { id: userId },
-            data: {
-                login : { 
-                    connect: {
-                        id: id,
-                    }
-                }
-            }
-        });
+        await this.prisma.login.create({data: { password : password, email : email, }});
+        return await this.getUserById(userId);
     }
     
     async getUserById(userId: number): Promise<User> {
@@ -75,6 +64,11 @@ export class UserRepository implements UserRepositoryInterface {
         return await this.prisma.user.findMany(
             { select: { id: true, role: true, name: true, email: true } }
         ); 
+    }
+
+    async patchUser(idUser: number, updates: Partial<Omit<User, 'id'>>): Promise<void> {
+        const { plannings, ...userUpdates } = updates;
+        await this.prisma.user.update({ where: { id: idUser }, data: userUpdates });
     }
 
     async deleteOneUser(idUser: number): Promise<void> {

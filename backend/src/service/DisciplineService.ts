@@ -79,7 +79,6 @@ export class DisciplineService implements DisciplineServiceInterface {
         return await this.disciplineRepository.getAmountOfDisciplines();
     }
     
-
     async getAllDisciplines(offset: number, limit: number): Promise<{disciplines: DisciplineDTO[], total: number}> {
         
         const {disciplines, total} = await this.disciplineRepository.getAllDisciplines(offset, limit);

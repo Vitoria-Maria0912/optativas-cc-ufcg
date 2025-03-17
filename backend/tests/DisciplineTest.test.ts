@@ -12,7 +12,9 @@ describe('DisciplineController', () => {
         await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123" });
         token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdm@example.com", password: "loginAdm123" })).body.login.token;
     });
+
     afterEach(async () => { await request(app).delete('/protected/disciplines').set("Authorization", `Bearer ${token}`) });
+    
     afterAll(async () => { closeServer(); await prismaClient.$disconnect(); });
 
     describe("CreateDiscipline should return 201 and a new discipline", () => {
@@ -142,9 +144,9 @@ describe('DisciplineController', () => {
         });
 
         const testCases = [
-            { name: "should return 'Discipline created successfully!'", data: { description: "" }, expected: "Discipline created successfully!" , code: 201 },
-            { name: "should return 'Discipline created successfully!'", data: { pre_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
-            { name: "should return 'Discipline created successfully!'", data: { post_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
+            { name: "'Discipline created successfully!'", data: { description: "" }, expected: "Discipline created successfully!" , code: 201 },
+            { name: "'Discipline created successfully!'", data: { pre_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
+            { name: "'Discipline created successfully!'", data: { post_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "web ii" }, expected: "A discipline with this name 'web ii' already exists!", code: 409 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "Web II" }, expected: "A discipline with this name 'Web II' already exists!", code: 409 },
             // { name: "error 'Discipline with this acronym already exists!'", data: { acronym: "Web II" }, expected: "A discipline with this acronym 'Web II' already exists!", code: 409 },
