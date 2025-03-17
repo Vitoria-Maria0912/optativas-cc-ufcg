@@ -149,7 +149,7 @@ describe('DisciplineController', () => {
             { name: "'Discipline created successfully!'", data: { post_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "web ii" }, expected: "A discipline with this name 'web ii' already exists!", code: 409 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "Web II" }, expected: "A discipline with this name 'Web II' already exists!", code: 409 },
-            // { name: "error 'Discipline with this acronym already exists!'", data: { acronym: "Web II" }, expected: "A discipline with this acronym 'Web II' already exists!", code: 409 },
+            { name: "error 'Discipline with this acronym already exists!'", data: { acronym: "Web II" }, expected: "A discipline with this acronym 'Web II' already exists!", code: 409 },
             { name: "error 'name should not contains only numbers!'", data: { name: "12345" }, expected: "Discipline's name '12345' is invalid, should not contains only numbers!", code: 400 },
             { name: "error 'acronym should not contains only numbers!'", data: { acronym: "123" }, expected: "Discipline's acronym '123' is invalid, should not contains only numbers!", code: 400 },
             { name: "error 'professor should not contains only numbers!'", data: { professor: "" }, expected: "Discipline created successfully!", code: 201 },
@@ -340,6 +340,88 @@ describe('DisciplineController', () => {
             }).set("Authorization", `Bearer ${token}`);
 
             const response = await request(app).get('/disciplines/getByName/1');
+
+            expect(response.body.message).toEqual("Discipline not found!");
+            expect(response.status).toBe(404);
+        });
+    });
+
+    describe("GetOneDisciplineByAcronym should return 200 and the discipline", () => {
+
+        test("getOneDisciplineByAcronym should return 'No disciplines found!'", async () => {
+
+            const response = await request(app).get('/disciplines/getByAcronym/TC');
+
+            expect(response.body).toEqual({ message: 'No disciplines found!' });
+            expect(response.status).toBe(404);
+        });
+
+        test('getOneDisciplineByAcronym should return a single discipline', async () => {
+
+            await request(app).post('/protected/disciplines').send({
+                id: 1,
+                name: 'Web II',
+                acronym: 'Web II',
+                type: 'OPTATIVE',
+                available: true,
+                description: 'Backend for web development',
+                pre_requisites: [],
+                post_requisites: [],
+                professor: 'Glauber',
+                schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+            }).set("Authorization", `Bearer ${token}`);
+
+            const response = await request(app).get('/disciplines/getByAcronym/Web%20II');
+
+            expect(response.body).toEqual({
+                message: "Discipline was found successfully!",
+                discipline: {
+                    id: 1,
+                    name: 'Web II',
+                    acronym: 'Web II',
+                    type: 'OPTATIVE',
+                    available: true,
+                    description: 'Backend for web development',
+                    pre_requisites: [],
+                    post_requisites: [],
+                    professor: 'Glauber',
+                    schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+                },
+            });
+            expect(response.status).toBe(200);
+        });
+
+        test('getOneDisciplineByAcronym should return 404 if discipline is not found', async () => {
+
+            await request(app).post('/protected/disciplines').send({
+                id: 1,
+                name: 'Web II',
+                acronym: 'Web II',
+                type: 'OPTATIVE',
+                description: 'Backend for web development',
+                professor: 'Glauber',
+                schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+            }).set("Authorization", `Bearer ${token}`);
+
+            const response = await request(app).get('/disciplines/getByAcronym/Princípios%20Dev%20Web');
+
+            expect(response.body.message).toEqual("Discipline not found!");
+            expect(response.status).toBe(404);
+        });
+
+        test('getOneDisciplineByAcronym should return 404 if discipline is not found', async () => {
+
+            await request(app).post('/protected/disciplines').send({
+                id: 1,
+                name: 'Web II',
+                acronym: 'Web II',
+                type: 'OPTATIVE',
+                description: 'Backend for web development',
+                professor: 'Glauber',
+                schedule: 'Segunda (8h-10h), Quarta (10h-12h)',
+            }).set("Authorization", `Bearer ${token}`);
+
+            const response = await request(app).get('/disciplines/getByAcronym/1');
 
             expect(response.body.message).toEqual("Discipline not found!");
             expect(response.status).toBe(404);
