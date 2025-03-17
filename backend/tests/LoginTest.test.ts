@@ -4,25 +4,33 @@ import request from 'supertest';
 
 describe('LoginController', () => {
 
-    const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDYsInJvbGUiOiJBRE1JTklTVFJBVE9SIiwibmFtZSI6IkFsaWNlIEpvaG5zb24iLCJlbWFpbCI6ImFsaWNlQGV4YW1wbGUuY29tIiwibG9naW5JZCI6bnVsbCwiaWF0IjoxNzM2MDQ3ODUzfQ.W9CnU-tu1E_bNvaimZW0aKwpQd-dkpisBZLvEnhuFaM"
-    
-    afterEach(async () => { await request(app).delete('/protected/users').set("Authorization", `Bearer ${ TOKEN }`) });
-    afterEach( async () => { await (new PrismaClient).login.deleteMany() });
+    const prismaClient = new PrismaClient();
+    let token: string;
 
-    afterAll(async () => { closeServer(); await (new PrismaClient).$disconnect(); });
+    beforeAll( async () => {
+        await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
+        await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123" });
+        token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdm@example.com", password: "loginAdm123" })).body.login.token;
+    });       
+
+    afterAll(async () => { 
+        await request(app).delete('/protected/users').set("Authorization", `Bearer ${ token }`); 
+        await prismaClient.login.deleteMany(); 
+        closeServer(); await prismaClient.$disconnect(); 
+    });
 
     describe("CreateLogin should return `User '${ email }' registered successfully!`", () => {
 
         test("should register an ADMINISTRATOR user successfully", async () => {
 
-            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
+            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdmTest@example.com"});
 
             const response = await request(app).post("/auth/login").send({
-                email: "loginAdm@example.com",
+                email: "loginAdmTest@example.com",
                 password: "loginAdm123",
             });
     
-            expect(response.body.message).toBe("User 'loginAdm@example.com' registered successfully!");
+            expect(response.body.message).toBe("User 'loginAdmTest@example.com' registered successfully!");
             expect(response.status).toBe(201);
         });
     
@@ -132,34 +140,34 @@ describe('LoginController', () => {
 
         test("should return a token when a valid email is provided", async () => {
 
-            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
+            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdmTest@example.com"});
 
-            await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123", });
+            await request(app).post("/auth/login").send({ email: "loginAdmTest@example.com", password: "loginAdm123", });
 
             const response = await request(app).post("/login/getTokenByUserEmail").send({
-                email: "loginAdm@example.com",
+                email: "loginAdmTest@example.com",
                 password: "loginAdm123",
             });
 
-            expect(response.body.message).toEqual("Login for user 'loginAdm@example.com' was found successfully!")
+            expect(response.body.message).toEqual("Login for user 'loginAdmTest@example.com' was found successfully!")
             expect(response.body.login).toHaveProperty("token");
             expect(response.status).toBe(200);
         });
 
-        // test("should return a token when a valid email is provided", async () => {
+        test("should return 'Password is incorrect!' when a incorrect password is provided", async () => {
 
-        //     await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "wrongPassword@example.com"});
+            await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "wrongPassword@example.com"});
 
-        //     await request(app).post("/auth/login").send({ email: "wrongPassword@example.com", password: "loginAdm123", });
+            await request(app).post("/auth/login").send({ email: "wrongPassword@example.com", password: "loginAdm123", });
 
-        //     const response = await request(app).post("/login/getTokenByUserEmail").send({
-        //         email: "wrongPassword@example.com",
-        //         password: "Adm123",
-        //     });
+            const response = await request(app).post("/login/getTokenByUserEmail").send({
+                email: "wrongPassword@example.com",
+                password: "Adm123",
+            });
 
-        //     expect(response.body.message).toEqual("Password is incorrect!")
-        //     expect(response.status).toBe(400);
-        // });
+            expect(response.body.message).toEqual("Password is incorrect!")
+            expect(response.status).toBe(400);
+        });
     
         test("should return 404 if credentials are incorrect", async () => {
             const response = await request(app).post("/login/getTokenByUserEmail").send({
@@ -178,6 +186,15 @@ describe('LoginController', () => {
             });
     
             expect(response.body).toEqual({ message: "This email 'invalid-email' is invalid, should be like 'name@example.com'!" });
+            expect(response.status).toBe(400);
+        });
+
+        test("should return 400 if email is missing", async () => {
+            const response = await request(app).post("/login/getTokenByUserEmail").send({
+                password: "password123",
+            });
+    
+            expect(response.body).toEqual({ message: "Email is required!" });
             expect(response.status).toBe(400);
         });
     

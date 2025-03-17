@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3001;
 export const JWT_SECRET = process.env.JWT_SECRET || 'default-secret';
 
 const server = app.listen(PORT, () => {
-    exec('xdg-open http://localhost:8080/api-docs')
+    // exec('xdg-open http://localhost:8080/api-docs')
     console.log(`Server is running on port ${PORT}` + '\n' +
                 `Swagger in http://localhost:${PORT}/api-docs`);
 });
@@ -53,6 +53,7 @@ app.get('/protected/users', (request: Request, response: Response) => {userContr
 app.get('/protected/users/getById/:id', (request: Request, response: Response) => {userController.getUserById(request, response)});
 app.get('/protected/users/getByEmail/:email', (request: Request, response: Response) => {userController.getUserByEmail(request, response)});
 app.get('/protected/users/getByRole/:role', (request: Request, response: Response) => {userController.getUserByRole(request, response)});
+app.patch('/users/:id', (request: Request, response: Response) => {userController.patchUser(request,response)});
 app.delete('/protected/users', (request: Request, response: Response) => {userController.deleteAllUsers(request,response)});
 app.delete('/users/:id', (request: Request, response: Response) => {userController.deleteOneUser(request,response)});
 

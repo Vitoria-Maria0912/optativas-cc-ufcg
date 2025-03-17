@@ -18,10 +18,6 @@ export class UserDTO implements UserInterface {
     @IsAlphanumeric()
     public name: string;
 
-    @IsNotEmpty()
-    @IsInstance(Login)
-    public login: Login;
-
     @IsString()
     @IsNotEmpty()
     @Contains('@')
@@ -32,12 +28,11 @@ export class UserDTO implements UserInterface {
     @IsOptional()
     public plannings: Planning[];
     
-    constructor(id: number, role: Role, name: string, plannings:Planning[], email: string, login: Login) {
+    constructor(id: number, role: Role, name: string, plannings:Planning[], email: string) {
         this.id = id;
         this.role = role;
         this.name = name;
         this.plannings = plannings;
         this.email = email;
-        this.login = login;
     }
 }
