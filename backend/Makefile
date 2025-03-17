@@ -10,3 +10,11 @@ prisma:
 	npx prisma generate
 	npx prisma migrate dev --name $(name)
 
+discipline-tests:
+	npm run test tests/DisciplineTest.test.ts
+
+user-tests:
+	npm run test tests/UserTest.test.ts
+
+login-tests:
+	npm run test tests/LoginTest.test.ts
