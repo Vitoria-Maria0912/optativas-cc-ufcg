@@ -5,7 +5,7 @@ import { Login } from "../model/Login";
 export interface UserRepositoryInterface {
     createUser(user: User): Promise<User>;
     registerUser(userId: number, email: string, password: string): Promise<User>;
-    getAllUsers() : Promise<User[]>;
+    getAllUsers(offset: number, limit: number) : Promise<{users: User[], total: number}>;
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
     getUserByRole(userRole: Role): Promise<User[]>;
@@ -13,12 +13,17 @@ export interface UserRepositoryInterface {
     patchUser(idUser: number, updates: Partial<Omit<User, 'id'>>): Promise<void>;
     deleteOneUser(userId: number): Promise<void>;
     deleteAllUsers() : Promise<void>;
+    getAmountOfUsers(): Promise<number>;
 }
 
 export class UserRepository implements UserRepositoryInterface {
     
     private prisma: PrismaClient = new PrismaClient();
     
+    async getAmountOfUsers(): Promise<number> {
+        return await this.prisma.user.count();
+    }
+
     async createUser(user: User): Promise<User> {
         return await this.prisma.user.create({
             data: {
@@ -60,10 +65,16 @@ export class UserRepository implements UserRepositoryInterface {
         return await this.prisma.login.findFirstOrThrow({ where: { email: { equals: userEmail, mode: 'insensitive'} } });
     }
 
-    async getAllUsers(): Promise<User[]> { 
-        return await this.prisma.user.findMany(
-            { select: { id: true, role: true, name: true, email: true } }
-        ); 
+    async getAllUsers(offset: number, limit: number): Promise<{users: User[], total: number}> { 
+        const [users, total] = await Promise.all([
+            this.prisma.user.findMany({
+                skip: offset,
+                take: limit,
+                select: { id: true, role: true, name: true, email: true }
+            }),
+            this.prisma.discipline.count()
+        ]);
+        return {users, total}
     }
 
     async patchUser(idUser: number, updates: Partial<Omit<User, 'id'>>): Promise<void> {

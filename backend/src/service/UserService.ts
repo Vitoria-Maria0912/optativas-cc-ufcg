@@ -7,7 +7,7 @@ import { InvalidCredentialsError, NotFoundError, UserAlreadyExistsError } from "
 
 export interface UserServiceInterface {
     createUser(user: UserDTO): Promise<User>;
-    getAllUsers(): Promise<User[]>;
+    getAllUsers(offset: number, limit: number): Promise<{users: User[], total: number}>;
     getAmountOfUsers(): Promise<number>
     getUserById(userId: number): Promise<User>;
     getUserByEmail(userEmail: string): Promise<User>;
@@ -33,10 +33,10 @@ export class UserService implements UserServiceInterface {
         }
     }
 
-    async getAllUsers(): Promise<User[]> { 
-        const users = await this.userRepository.getAllUsers(); 
+    async getAllUsers(offset: number, limit: number): Promise<{users: User[], total: number}> { 
+        const {users, total} = await this.userRepository.getAllUsers(offset, limit); 
         if (users.length === 0) { throw new NotFoundError('No users found!'); }
-        return users;
+        return {users, total};
     }
         
     async getUserById(userId: number): Promise<User> {
@@ -79,7 +79,7 @@ export class UserService implements UserServiceInterface {
     async patchUser(userId: number, updates: Partial<Omit<User, 'id'>>): Promise<void> {
 
         if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
-        else if ((await this.getAllUsers()).length === 0) { throw new NotFoundError('No users found!'); }
+        else if ((await this.getAmountOfUsers()) === 0) { throw new NotFoundError('No users found!'); }
         else if (updates.role !== undefined) { updates.role = updates.role.toLocaleUpperCase() as Role; }
         
         try {
@@ -90,21 +90,21 @@ export class UserService implements UserServiceInterface {
         } catch (error) { throw error; }
     }
 
-    async getAmountOfUsers(): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-
     async deleteOneUser(userId: number): Promise<void> {
 
-        if ((await this.getAllUsers()).length === 0) { throw new NotFoundError('No users found!'); }
+        if ((await this.getAmountOfUsers()) === 0) { throw new NotFoundError('No users found!'); }
         if (isNaN( userId )) { throw new InvalidCredentialsError("User ID must be a number!"); }
 
         try { await this.userRepository.deleteOneUser(userId); }
         catch (error : any) { throw new NotFoundError(`User with ID '${ userId }' not found!`); }         
     }
 
+    async getAmountOfUsers(): Promise<number> {
+        return await this.userRepository.getAmountOfUsers();
+    }
+
     async deleteAllUsers(): Promise<void> {
-        if ((await this.getAllUsers()).length === 0) {
+        if ((await this.getAmountOfUsers()) === 0) {
             throw new NotFoundError('No users found!');
         }
         await this.userRepository.deleteAllUsers();    

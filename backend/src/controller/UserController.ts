@@ -71,8 +71,16 @@ export class UserController {
     async getAllUsers(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;
+
+        let page = parseInt(request.query.page as string) || 1;
+        let limit = parseInt(request.query.limit as string) || 10;
+        
+        page = Math.max(page, 1);
+        limit = Math.max(limit, 1);
+        
+        const offset = (page - 1) * limit;
         try {
-            const users = await this.userService.getAllUsers();
+            const users = await this.userService.getAllUsers(offset, limit);
             responseBody = { message: "Users were found successfully!", users};
             codeResponse = 200;
         } catch (error: any) {
