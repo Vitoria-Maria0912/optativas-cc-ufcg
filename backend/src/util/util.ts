@@ -97,7 +97,7 @@ export const validateDisciplineExistence = async (discipline: Discipline) => {
     
     if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ discipline.name }' already exists!`); }
     
-    // try { existingDisciplineAcronym = await disciplineService.getOneDisciplineByAcronym(discipline.acronym); } catch (error) {}
+    try { existingDisciplineAcronym = await disciplineService.getOneDisciplineByAcronym(discipline.acronym); } catch (error) {}
 
     if (existingDisciplineAcronym) { throw new DisciplineAlreadyRegisteredError(`A discipline with this acronym '${ discipline.acronym }' already exists!`); }
 }
