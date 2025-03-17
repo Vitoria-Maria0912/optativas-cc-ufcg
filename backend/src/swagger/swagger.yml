@@ -276,6 +276,19 @@ paths:
     
     get:
       summary: Returns a list of all users
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of users per page
       tags:
         - User routes
       security:
@@ -710,6 +723,19 @@ paths:
       summary: Returns a list of all disciplines
       tags:
         - Discipline routes
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of disciplines per page
       responses:
         200:
           description: All disciplines were returned successfully
