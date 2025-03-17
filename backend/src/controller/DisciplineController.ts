@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { DisciplineService, DisciplineServiceInterface } from '../service/DisciplineService';
+import { Type } from '@prisma/client';
 
 export class DisciplineController {
 
@@ -9,7 +10,13 @@ export class DisciplineController {
         var codeResponse: number;
         var responseBody: object;
         try {
-            const discipline = request.body;
+            const discipline = { ...request.body, 
+                                    type: request.body.type ?? Type.OBRIGATORY, 
+                                    available: request.body.available ?? true,
+                                    professor: request.body.professor ?? "Not specified",
+                                    schedule: request.body.schedule ?? "Not specified",
+                                    description: request.body.description ?? ''
+            };
             await this.disciplineService.createDiscipline(discipline);
             responseBody = { message: "Discipline created successfully!", discipline};
             codeResponse = 201;
@@ -99,12 +106,43 @@ export class DisciplineController {
     async getAllDisciplines(request: Request, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;
+
+        let page = parseInt(request.query.page as string) || 1;
+        let limit = parseInt(request.query.limit as string) || 10;
+        
+        page = Math.max(page, 1);
+        limit = Math.max(limit, 1);
+        
+        const offset = (page - 1) * limit;
+
         try {
-            const disciplines = await this.disciplineService.getAllDisciplines();
-            responseBody = { message: "Disciplines were found successfully!", disciplines};
+            const {disciplines, total} = await this.disciplineService.getAllDisciplines(offset, limit);
+            responseBody = { message: "Disciplines were found successfully!",
+                             disciplines,
+                             pagination: {
+                                total,
+                                page,
+                                limit,
+                                totalPages: Math.ceil(total / limit)
+                            }};
             codeResponse = 200;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to get all disciplines!" : error.message};
+            codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
+        }
+        return response.status(codeResponse).json(responseBody)
+    }
+
+    async getOneDisciplineByAcronym(request: Request, response: Response): Promise<Response>  {
+        var codeResponse: number;
+        var responseBody: object;
+        try {
+            const { acronym } = request.params;
+            const discipline = await this.disciplineService.getOneDisciplineByAcronym(acronym);
+            responseBody = { message: "Discipline was found successfully!", discipline};
+            codeResponse = 200;
+        } catch (error: any) {
+            responseBody = { message: (!error.message) ? "Error trying to get one discipline!" : error.message};
             codeResponse = error.statusCode && !isNaN(error.statusCode) ? error.statusCode : 400;
         }
         return response.status(codeResponse).json(responseBody)

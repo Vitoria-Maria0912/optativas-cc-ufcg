@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import { UserRepository } from './../repository/UserRepository';
 import { UserService } from './UserService';
 import { User } from "../model/User";
-import { validateLoginCredentials } from '../util/util';
+import { comparePassword, validateLoginCredentials } from '../util/util';
 import { AuthenticationError, InvalidCredentialsError } from '../errorHandler/ErrorHandler';
 
 export interface AuthServiceInterface {
@@ -55,16 +55,17 @@ export class AuthService implements AuthServiceInterface {
     async getTokenByUserEmail(user: User, password: string): Promise<{ email: string; token: string }> {
 
         if (!password) { throw new InvalidCredentialsError('Password is required!'); }
-        // else if (user.password != password) { throw new InvalidCredentialsError('Password is incorrect!'); }   
-
+        
         try { 
             const login = await this.userRepository.getTokenByUserEmail(user.email); 
+            if (!(await comparePassword(password, login.password))) { throw new InvalidCredentialsError('Password is incorrect!'); }   
             const token = this.generateToken(user);
-
+            
             return { email: login.email, token };
         }
         catch (error : any) { 
-            if (error.code === "P2025") { throw new AuthenticationError(`This user '${ user.email }' doesn't have a login!`); }
+            if (error instanceof InvalidCredentialsError) { throw new InvalidCredentialsError(error.message); }
+            else if (error.code === "P2025") { throw new AuthenticationError(`This user '${ user.email }' doesn't have a login!`); }
             else { throw new Error(`Error trying to get this user '${ user.email }' login!`); }
         }
     }

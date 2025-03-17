@@ -97,9 +97,9 @@ components:
           items:
             type: string
             example: D1
-        teacher:
+        professor:
           type: string
-          example: Teacher0
+          example: Professor0
         schedule:
           type: string
           example: Schedule0
@@ -276,6 +276,19 @@ paths:
     
     get:
       summary: Returns a list of all users
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of users per page
       tags:
         - User routes
       security:
@@ -710,6 +723,19 @@ paths:
       summary: Returns a list of all disciplines
       tags:
         - Discipline routes
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number for pagination
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of disciplines per page
       responses:
         200:
           description: All disciplines were returned successfully
@@ -748,6 +774,42 @@ paths:
         required: true
         schema:
           type: integer
+      responses:
+        200:
+          description: Discipline was found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Discipline was found successfully!"
+                  discipline:
+                    $ref: '#/components/schemas/DisciplineInterface'
+
+        404:
+          description: Try to get a discipline by its id that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Discipline not found!"
+
+  /disciplines/getByAcronym/{acronym}:
+    get:
+      summary: Returns a discipline by its acronym
+      tags:
+        - Discipline routes
+      parameters:
+      - in: path
+        name: acronym
+        required: true
+        schema:
+          type: string
       responses:
         200:
           description: Discipline was found successfully
