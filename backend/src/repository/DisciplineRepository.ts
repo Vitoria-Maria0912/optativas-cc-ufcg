@@ -11,6 +11,8 @@ export interface DisciplineRepositoryInterface {
     getOneDisciplineByName(disciplineName: string): Promise<DisciplineDTO>;
     getAllDisciplines(offset: number, limit: number): Promise<{disciplines: Discipline[], total: number}>;
     getAmountOfDisciplines(): Promise<number>;
+    getOneDisciplineByAcronym(disciplineAcronym: string): Promise<DisciplineDTO>;
+
 } 
 
 export class DisciplineRepository implements DisciplineRepositoryInterface {
@@ -74,5 +76,10 @@ export class DisciplineRepository implements DisciplineRepositoryInterface {
 
     async getAmountOfDisciplines(): Promise<number> {
         return await this.prisma.discipline.count();
+    }
+
+    async getOneDisciplineByAcronym(disciplineAcronym: string): Promise<DisciplineDTO> {
+
+        return await this.prisma.discipline.findFirstOrThrow({ where: {acronym: {equals: disciplineAcronym, mode: "insensitive"} }})
     }
 }

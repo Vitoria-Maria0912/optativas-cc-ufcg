@@ -65,6 +65,7 @@ app.post('/login/getTokenByUserEmail', (request: Request, response: Response) =>
 app.get('/disciplines', (request: Request, response: Response) => {disciplineController.getAllDisciplines(request,response)});
 app.get('/disciplines/getByID/:id', (request: Request, response: Response) => {disciplineController.getOneDisciplineByID(request,response)});
 app.get('/disciplines/getByName/:name', (request: Request, response: Response) => {disciplineController.getOneDisciplineByName(request,response)});
+app.get('/disciplines/getByAcronym/:acronym', (req, res) => {disciplineController.getOneDisciplineByAcronym(req, res)});
 app.post('/protected/disciplines', (request: Request, response: Response) => {disciplineController.createDiscipline(request,response)});
 app.patch('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.patchDiscipline(request,response)});
 app.delete('/protected/disciplines/:id', (request: Request, response: Response) => {disciplineController.deleteOneDiscipline(request,response)});
