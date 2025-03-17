@@ -773,6 +773,42 @@ paths:
                     type: string
                     example: "Discipline not found!"
 
+  /disciplines/getByAcronym/{acronym}:
+    get:
+      summary: Returns a discipline by its acronym
+      tags:
+        - Discipline routes
+      parameters:
+      - in: path
+        name: acronym
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Discipline was found successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Discipline was found successfully!"
+                  discipline:
+                    $ref: '#/components/schemas/DisciplineInterface'
+
+        404:
+          description: Try to get a discipline by its id that does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Discipline not found!"
+
   /disciplines/getByName/{name}:
     get:
       summary: Returns a discipline by its name
