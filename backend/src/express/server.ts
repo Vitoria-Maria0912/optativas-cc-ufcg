@@ -1,15 +1,14 @@
 import { Request, Response, NextFunction } from "express";
-import express from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import { DisciplineController } from '../controller/DisciplineController';
-import { PlanningController } from '../controller/PlanningController';
-import { setupSwagger } from "../swagger/swagger";
-import { exec } from 'child_process';
 import { UserController } from "../controller/UserController";
 import { AuthController } from "../controller/AuthController";
+import { PlanningController } from '../controller/PlanningController';
+import { DisciplineController } from '../controller/DisciplineController';
+import { setupSwagger } from "../swagger/swagger";
 import { isAdministrator } from "../util/util";
+import bodyParser from 'body-parser';
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
 const app = express();
 
@@ -72,19 +71,19 @@ app.delete('/protected/disciplines/:id', (request: Request, response: Response) 
 app.delete('/protected/disciplines', (request: Request, response: Response) => {disciplineController.deleteAllDisciplines(request,response)});
 
 // Planning Routes
-app.post("/planning", asyncHandler(
+app.post("/plannings", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.createPlanning(req, res)
 ));
-app.put("/planning", asyncHandler(
+app.put("/plannings", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.updatePlanning(req, res)
 ));
-app.get("/planning", asyncHandler(
+app.get("/plannings", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.getPlanning(req, res)
 ));
-app.get("/planning/:id", asyncHandler(
+app.get("/plannings/:id", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.getOnePlanning(req, res)
 ));

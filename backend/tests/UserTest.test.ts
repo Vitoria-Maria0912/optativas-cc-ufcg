@@ -198,9 +198,8 @@ describe('UserController', () => {
             test(`patchUser should return ${ name }`, async () => {
 
                 const response = await request(app)
-                    .patch(`/users/${ userId }`)
-                    .send(data)
-                    .set("Authorization", `Bearer ${ tokenCommon }`);
+                                .patch(`/users/${ userId }`)
+                                .send(data).set("Authorization", `Bearer ${ tokenCommon }`);
 
                 expect(response.body.message).toEqual(expected);
                 expect(response.status).toBe(code);
