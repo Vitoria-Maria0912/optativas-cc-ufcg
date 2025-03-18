@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { Discipline } from "../model/Discipline";
-import { Planning } from "../model/Planning";
 import { Period } from "../model/Period";
 
 export interface PeriodRepositoryInterface {

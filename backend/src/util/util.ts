@@ -46,6 +46,8 @@ export const validateUserExistence = async (user: User) => {
 
 export const validateUserFields = async (user: User): Promise<boolean> => {
 
+    user.role = user.role.toUpperCase() as Role;
+
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }
 
     if (!stringOnlyNumbers.test(user.name)) { throw new InvalidCredentialsError('Name cannot contain only numbers!'); }

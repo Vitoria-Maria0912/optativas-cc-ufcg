@@ -8,9 +8,9 @@ describe('DisciplineController', () => {
     let token: string;
 
     beforeAll( async () => {
-        await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
-        await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123" });
-        token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdm@example.com", password: "loginAdm123" })).body.login.token;
+        await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdmDiscipline@example.com"});
+        await request(app).post("/auth/login").send({ email: "loginAdmDiscipline@example.com", password: "loginAdm123" });
+        token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdmDiscipline@example.com", password: "loginAdm123" })).body.login.token;
     });
 
     afterEach(async () => { await request(app).delete('/protected/disciplines').set("Authorization", `Bearer ${token}`) });

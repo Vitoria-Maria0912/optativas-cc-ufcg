@@ -116,7 +116,7 @@ export class DisciplineController {
         const offset = (page - 1) * limit;
 
         try {
-            const {disciplines, total} = await this.disciplineService.getAllDisciplines(offset, limit);
+            const { disciplines, total } = await this.disciplineService.getAllDisciplines(offset, limit);
             responseBody = { message: "Disciplines were found successfully!",
                              disciplines,
                              pagination: {

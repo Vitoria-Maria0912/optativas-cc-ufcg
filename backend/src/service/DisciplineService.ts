@@ -3,6 +3,7 @@ import { DisciplineRepository, DisciplineRepositoryInterface } from "../reposito
 import { validateDisciplineExistence, validateDisciplineFields } from "../util/util";
 import { DisciplineDTO } from "../dtos/DisciplineDTO";
 import { Discipline } from "../model/Discipline";
+import { Type } from "@prisma/client";
 
 export interface DisciplineServiceInterface {
     createDiscipline(disciplineDTO:  DisciplineDTO): Promise<DisciplineDTO>;
@@ -50,14 +51,14 @@ export class DisciplineService implements DisciplineServiceInterface {
     }
 
     async patchDiscipline(idDiscipline: number, updates: Partial<Omit<Discipline, 'id'>>): Promise<void> {
-        if ((await this.getAmountOfDisciplines()) === 0) {
-            throw new NotFoundError('No disciplines found!');
-        }
+        if (isNaN( idDiscipline )) { throw new InvalidFieldError("Discipline ID must be a number!"); }
+        else if ((await this.getAmountOfDisciplines()) === 0) { throw new NotFoundError('No disciplines found!'); }
+        else if (updates.type !== undefined) { updates.type = updates.type.toLocaleUpperCase() as Type; }
+        
         try {
             const discipline = await this.getOneDisciplineByID(idDiscipline);
-            if(await validateDisciplineFields(discipline)){
-                await this.disciplineRepository.patchDiscipline(idDiscipline, updates);
-            }
+            if (updates.type !== undefined && updates.type.trim() === "") { throw new InvalidFieldError("Type cannot be empty!"); }
+            else if (await validateDisciplineFields(discipline)){ await this.disciplineRepository.patchDiscipline(idDiscipline, updates); }
         } catch (error) { throw error; }
     }
 
@@ -84,8 +85,8 @@ export class DisciplineService implements DisciplineServiceInterface {
     async getAllDisciplines(offset: number, limit: number): Promise<{disciplines: DisciplineDTO[], total: number}> {
         
         const {disciplines, total} = await this.disciplineRepository.getAllDisciplines(offset, limit);
-
         if (disciplines.length === 0) { throw new NotFoundError('No disciplines found!'); }
+
         return {disciplines, total};
     }
 
