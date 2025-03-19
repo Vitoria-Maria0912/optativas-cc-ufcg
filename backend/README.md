@@ -48,7 +48,7 @@ Para executar o projeto utilizando o podman, siga o tutorial contido [aqui](back
    Isso iniciará o servidor em modo de desenvolvimento. Você poderá acessar a aplicação em `http://localhost:8080`.
 
 ## Executando o backend com o podman
-Para executar o backend com podman siga as etapas contidas no seguinte arquivo: [podman](backend/PODMAN.md)
+Para executar o backend com podman siga as etapas contidas no seguinte arquivo: [podman](PODMAN.md)
 
 
 ## Executanto os testes
