@@ -1,13 +1,14 @@
-import { PrismaClient, Role, Type } from '@prisma/client';
+import { Role, Type } from '@prisma/client';
 import app, { closeServer } from '../src/express/server';
+
 import request from 'supertest';
+import prismaClient from '../src/util/util';
 
 describe('DisciplineController', () => {
 
-    const prismaClient = new PrismaClient();
     let token: string;
 
-    beforeAll( async () => {
+    beforeAll( async () => { 
         await request(app).post("/users").send({ role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdmDiscipline@example.com"});
         await request(app).post("/auth/login").send({ email: "loginAdmDiscipline@example.com", password: "loginAdm123" });
         token = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdmDiscipline@example.com", password: "loginAdm123" })).body.login.token;
@@ -147,9 +148,9 @@ describe('DisciplineController', () => {
             { name: "'Discipline created successfully!'", data: { description: "" }, expected: "Discipline created successfully!" , code: 201 },
             { name: "'Discipline created successfully!'", data: { pre_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
             { name: "'Discipline created successfully!'", data: { post_requisites: [] }, expected: "Discipline created successfully!", code: 201 },
+            { name: "'Discipline created successfully!'", data: { acronym: "Web II" }, expected: "Discipline created successfully!", code: 201 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "web ii" }, expected: "A discipline with this name 'web ii' already exists!", code: 409 },
             { name: "error 'Discipline with this name already exists!'", data: { name: "Web II" }, expected: "A discipline with this name 'Web II' already exists!", code: 409 },
-            { name: "error 'Discipline with this acronym already exists!'", data: { acronym: "Web II" }, expected: "A discipline with this acronym 'Web II' already exists!", code: 409 },
             { name: "error 'name should not contains only numbers!'", data: { name: "12345" }, expected: "Discipline's name '12345' is invalid, should not contains only numbers!", code: 400 },
             { name: "error 'acronym should not contains only numbers!'", data: { acronym: "123" }, expected: "Discipline's acronym '123' is invalid, should not contains only numbers!", code: 400 },
             { name: "error 'professor should not contains only numbers!'", data: { professor: "" }, expected: "Discipline created successfully!", code: 201 },
@@ -262,6 +263,41 @@ describe('DisciplineController', () => {
             expect(response.status).toBe(404);
             expect(response.body).toEqual({ message: 'No disciplines found!' });
         });
+
+        const testCases = [
+            { name: "Discipline's field updated successfully!", data: { pre_requisites: [], post_requisites: [] }, expected: "Discipline's field updated successfully!", code: 200 },
+            { name: "error 'Invalid type'", data: { type: "INVALID_TYPE" }, expected: "Discipline's type must be either OBRIGATORY or OPTATIVE!", code: 400 },
+            { name: "error 'Invalid availability'", data: { available: "notBoolean" }, expected: "Discipline's availability must be a boolean!", code: 400 },
+            { name: "error 'Empty name'", data: { name: "" }, expected: "Discipline name is required!", code: 400 },
+            { name: "error 'Empty acronym'", data: { acronym: "" }, expected: "Discipline acronym is required!", code: 400 },
+            { name: "error 'Empty schedule'", data: { schedule: "" }, expected: "Schedule cannot be empty!", code: 400 },
+            { name: "error 'Empty description'", data: { description: "" }, expected: "Description cannot be empty!", code: 400 },
+            { name: "error 'Empty professor name'", data: { professor: "" }, expected: "Professor name cannot be empty!", code: 400 },
+            { name: "error 'Empty type for discipline'", data: { type: "" }, expected: "Type cannot be empty!", code: 400 },
+            { name: "error 'Empty availability'", data: { available: null }, expected: "Discipline's availability must be a boolean!", code: 400 },
+            { name: "error 'Duplicate name'", data: { name: "Existing Discipline" }, expected: "A discipline with this name 'Existing Discipline' already exists!", code: 409 },
+            { name: "error 'Duplicate name with different case'", data: { name: "existing discipline" }, expected: "A discipline with this name 'existing discipline' already exists!", code: 409 },
+            { name: "error 'Numeric-only name'", data: { name: "123456" }, expected: "Discipline's name '123456' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'Numeric-only acronym'", data: { acronym: "123" }, expected: "Discipline's acronym '123' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'Numeric-only professor name'", data: { professor: "98765" }, expected: "Discipline's professor '98765' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'Numeric-only description'", data: { description: "12345" }, expected: "Discipline's description '12345' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'Numeric-only schedule'", data: { schedule: "123456" }, expected: "Discipline's schedule '123456' is invalid, should not contains only numbers!", code: 400 },
+            { name: "error 'Nonexistent pre-requisite'", data: { pre_requisites: ["FAKE101"] }, expected: "A pre requisite 'FAKE101' is invalid, should be a discipline name!", code: 400 },
+            { name: "error 'Nonexistent post-requisite'", data: { post_requisites: ["FAKE102"] }, expected: "A post requisite 'FAKE102' is invalid, should be a discipline name!", code: 400 },
+        ];
+        
+        for (const { name, data, expected, code } of testCases) {
+            test(`patchDiscipline should return ${ name }`, async () => {
+                
+                await request(app).post('/protected/disciplines').send({ id: 0, name: "Arquitetura de Software", acronym: "ArqSof", type: "OPTATIVE"}).set("Authorization", `Bearer ${ token }`);
+                const response = await request(app)
+                                .patch(`/protected/disciplines/0`)
+                                .send(data).set("Authorization", `Bearer ${ token }`);
+        
+                expect(response.body.message).toEqual(expected);
+                expect(response.status).toBe(code);
+            });
+        };
     });
 
     describe("GetOneDisciplineByName should return 200 and the discipline", () => {

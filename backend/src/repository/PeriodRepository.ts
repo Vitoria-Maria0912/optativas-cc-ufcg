@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { Period } from "../model/Period";
+import prismaClient from "../util/util";
 
 export interface PeriodRepositoryInterface {
     createPeriod(period: Period): Promise<Period>;
@@ -7,11 +7,10 @@ export interface PeriodRepositoryInterface {
 }
 
 export class PeriodRepository implements PeriodRepositoryInterface {
-    private prisma: PrismaClient = new PrismaClient();
 
     async createPeriod(period: any): Promise<Period> {
 
-        const createdPeriod = await this.prisma.period.create({
+        const createdPeriod = await prismaClient.period.create({
             data: {
                 name: period.name,
                 disciplines: period.disciplines.length > 0
@@ -25,7 +24,7 @@ export class PeriodRepository implements PeriodRepositoryInterface {
     }
     
     async updatePeriod(period: any): Promise<Period> {    
-        const existingPeriod = await this.prisma.period.findUnique({
+        const existingPeriod = await prismaClient.period.findUnique({
             where: { id: period.id },
             include: { disciplines: true }
         });
@@ -36,7 +35,7 @@ export class PeriodRepository implements PeriodRepositoryInterface {
     
         const disconnectDisciplines = existingDisciplineIds.filter((id: number) => !period.disciplines.includes(id));
     
-        const updatedPeriod = await this.prisma.period.update({
+        const updatedPeriod = await prismaClient.period.update({
             where: { id: period.id },
             data: {
                 name: period.name,

@@ -1,9 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import { Discipline } from "../model/Discipline";
 import { Planning } from "../model/Planning";
-import { Period } from "../model/Period";
 import { PeriodDTO } from "../dtos/PeriodDTO";
-import { PlanningDTO } from "../dtos/PlanningDTO";
+import prismaClient from "../util/util";
 
 export interface PlanningRepositoryInterface {
     createPlanning(planning: Planning): Promise<Planning>;
@@ -15,10 +12,9 @@ export interface PlanningRepositoryInterface {
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
-    private prisma: PrismaClient = new PrismaClient();
     
     async createPlanning(planning: Planning): Promise<Planning> {
-        const createdPlanning = await this.prisma.planning.create({
+        const createdPlanning = await prismaClient.planning.create({
             data: {
                 name: planning.name,
                 periods: { create: []},
@@ -34,12 +30,12 @@ export class PlanningRepository implements PlanningRepositoryInterface {
     }
     
     async addPeriods(planningId: number, periodIds: []): Promise<Planning> {
-        await this.prisma.period.updateMany({
+        await prismaClient.period.updateMany({
             where: { id: { in: periodIds } },
             data: { planningId: planningId }
         });
         
-        const updatedPlanning = await this.prisma.planning.findUnique({
+        const updatedPlanning = await prismaClient.planning.findUnique({
             where: { id: planningId },
             include: { periods: { include: { disciplines: true } } }
         });
@@ -57,7 +53,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
     }
     
     async updateName(planningId: number, newName: string): Promise<Planning> {
-        const updatedPlanning = await this.prisma.planning.update({
+        const updatedPlanning = await prismaClient.planning.update({
             where: { id: planningId },
             data: { name: newName },
             include: { periods: { include: { disciplines: true } } }
@@ -76,7 +72,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
     }
     
     async getAll(): Promise<Planning[]> {
-        const allPlannings = await this.prisma.planning.findMany({
+        const allPlannings = await prismaClient.planning.findMany({
             include: {
                 periods: { include: { disciplines: true } },
             },
@@ -91,7 +87,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
     }    
     
     async getOneById(planningId: number): Promise<Planning> {
-        const planning = await this.prisma.planning.findUnique({
+        const planning = await prismaClient.planning.findUnique({
             where: { id: planningId },
             include: {
                 periods: { include: { disciplines: true } },
@@ -110,7 +106,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
     }
     
     async getOneByName(name: string): Promise<Planning | null> {
-        const planning = await this.prisma.planning.findUnique({
+        const planning = await prismaClient.planning.findUnique({
             where: { name: name },
             include: {
                 periods: { include: { disciplines: true } },

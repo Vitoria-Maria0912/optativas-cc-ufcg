@@ -1,10 +1,10 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import app, { closeServer } from '../src/express/server';
 import request from 'supertest';
+import prismaClient from '../src/util/util';
 
 describe('UserController', () => {
 
-    const prismaClient = new PrismaClient();
     let tokenAdm: string;
     let tokenCommon: string;
 

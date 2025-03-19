@@ -7,8 +7,11 @@ run:
 	npm run dev
 
 prisma:
-	npx prisma generate
+	npx prisma generate 
 	npx prisma migrate dev --name $(name)
+
+test-all:
+	npm run test
 
 discipline-tests:
 	npm run test tests/DisciplineTest.test.ts

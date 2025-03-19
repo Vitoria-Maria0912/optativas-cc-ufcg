@@ -1,15 +1,14 @@
 import { Request, Response, NextFunction } from "express";
+import { DisciplineController } from '../controller/DisciplineController';
+import { PlanningController } from '../controller/PlanningController';
+import { setupSwagger } from "../swagger/swagger";
+import { UserController } from "../controller/UserController";
+import { AuthController } from "../controller/AuthController";
+import { isAdministrator } from "../util/util";
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { DisciplineController } from '../controller/DisciplineController';
-import { PlanningController } from '../controller/PlanningController';
-import { setupSwagger } from "../swagger/swagger";
-import { exec } from 'child_process';
-import { UserController } from "../controller/UserController";
-import { AuthController } from "../controller/AuthController";
-import { isAdministrator } from "../util/util";
 
 const app = express();
 
