@@ -7,12 +7,15 @@ Para executar o projeto utilizando o podman, siga o tutorial contido [aqui](back
 1. **Clone o Repositório**
 
    Primeiro, você precisará clonar o repositório do projeto. Execute o seguinte comando:
-
    ```bash
    git clone https://github.com/Vitoria-Maria0912/optativas-cc-ufcg.git
    ```
+   **Entre no diretório backend:**
 
-
+   ```sh
+   cd backend/
+   ```
+   
 2. **Instale as Dependências**
 
    ```bash
@@ -75,3 +78,17 @@ Depois execute os testes em si:
 .\run-tests.bat
 ```
 
+### Execução dos Testes
+
+
+```sh
+make user-tests
+```
+
+```sh
+make login-tests
+```
+
+```sh
+make discipline-tests
+```
