@@ -80,8 +80,8 @@ export class UserController {
         
         const offset = (page - 1) * limit;
         try {
-            const users = await this.userService.getAllUsers(offset, limit);
-            responseBody = { message: "Users were found successfully!", users};
+            const { users, total } = await this.userService.getAllUsers(offset, limit);
+            responseBody = { message: "Users were found successfully!", users, total};
             codeResponse = 200;
         } catch (error: any) {
             responseBody = { message: (!error.message) ? "Error trying to get all users!" : error.message};

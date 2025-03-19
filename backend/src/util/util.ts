@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Role, Type } from "@prisma/client";
+import { PrismaClient, Role, Type } from "@prisma/client";
 import { JWT_SECRET } from "../express/server";
 import { UserService } from './../service/UserService';
 import { User, UserInterface } from '../model/User';
@@ -11,6 +11,9 @@ import { DisciplineService } from '../service/DisciplineService';
 
 const stringOnlyNumbers = new RegExp('^(?!\\d+$).+');
 const stringNumbersAndLetters = new RegExp('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$')
+
+const prismaClient = new PrismaClient();
+export default prismaClient;
 
 export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
     return await bcrypt.compare(password, hashPassword);
@@ -45,6 +48,8 @@ export const validateUserExistence = async (user: User) => {
 }
 
 export const validateUserFields = async (user: User): Promise<boolean> => {
+
+    user.role = user.role.toUpperCase() as Role;
 
     if (!user.name) { throw new InvalidCredentialsError('Name is required!'); }
 
@@ -86,20 +91,16 @@ export const validateLoginCredentials = async (user: User, email: string, passwo
     return true;
 }
 
-export const validateDisciplineExistence = async (discipline: Discipline) => {
+export const validateDisciplineExistence = async (disciplineName: string): Promise<boolean> => {
 
     const disciplineService = new DisciplineService();
 
     let existingDisciplineName = null;
-    let existingDisciplineAcronym = null;
 
-    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) {}
+    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(disciplineName); } catch (error) {}
     
-    if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ discipline.name }' already exists!`); }
-    
-    try { existingDisciplineAcronym = await disciplineService.getOneDisciplineByAcronym(discipline.acronym); } catch (error) {}
-
-    if (existingDisciplineAcronym) { throw new DisciplineAlreadyRegisteredError(`A discipline with this acronym '${ discipline.acronym }' already exists!`); }
+    if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ disciplineName }' already exists!`); }
+    return true;
 }
 
 export const validateDisciplineFields = async (discipline: Discipline): Promise<boolean> => {
@@ -127,6 +128,8 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
 
     if (discipline.description && !stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
 
+    if (discipline.schedule && !stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
+
     for (const disciplineName of discipline.pre_requisites || []) {
         if (!disciplineName) { throw new InvalidFieldError('A pre requisite cannot be an empty word!'); }
         else if (!existingDisciplineName) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
@@ -137,5 +140,23 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
         else if (!existingDisciplineName) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
 
+    return true;
+}
+
+export const validateDisciplineFieldsForUpdate = async (updates: Partial<Omit<Discipline, 'id'>>): Promise<boolean> => {
+    if (updates.name && (await validateDisciplineExistence(updates.name))){ throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ updates.name }' already exists!`); }
+    if (updates.available !== undefined && updates.available === null) { throw new InvalidFieldError("Discipline's availability must be a boolean!"); }
+    if (updates.professor !== undefined && updates.professor.trim() === "") { throw new InvalidFieldError("Professor name cannot be empty!"); }
+    if (updates.schedule !== undefined && updates.schedule.trim() === "") { throw new InvalidFieldError("Schedule cannot be empty!"); }
+    if (updates.description !== undefined && updates.description.trim() === "") { throw new InvalidFieldError("Description cannot be empty!"); }
+    if (updates.type !== undefined && updates.type.trim() === "") { throw new InvalidFieldError("Type cannot be empty!"); }
+    
+    for (const disciplineName of updates.pre_requisites || []) {
+        if ((await validateDisciplineExistence(disciplineName))) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+    }
+    
+    for (const disciplineName of updates.post_requisites || []) {
+        if ((await validateDisciplineExistence(disciplineName))) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+    }
     return true;
 }

@@ -1,10 +1,10 @@
-import { Role, PrismaClient } from '@prisma/client';
+import { Role } from '@prisma/client';
 import app, { closeServer } from '../src/express/server';
 import request from 'supertest';
+import prismaClient from '../src/util/util';
 
 describe('LoginController', () => {
 
-    const prismaClient = new PrismaClient();
     let token: string;
 
     beforeAll( async () => {

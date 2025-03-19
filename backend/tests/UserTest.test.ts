@@ -1,21 +1,21 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import app, { closeServer } from '../src/express/server';
 import request from 'supertest';
+import prismaClient from '../src/util/util';
 
 describe('UserController', () => {
 
-    const prismaClient = new PrismaClient();
     let tokenAdm: string;
     let tokenCommon: string;
 
     beforeAll(async () => {
-        await request(app).post("/users").send({ id: 1, role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdm@example.com"});
-        await request(app).post("/auth/login").send({ email: "loginAdm@example.com", password: "loginAdm123" });
-        tokenAdm = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdm@example.com", password: "loginAdm123" })).body.login.token;
+        await request(app).post("/users").send({ id: 1, role: Role.ADMINISTRATOR, name: "Login ADM", email: "loginAdmUser@example.com"});
+        await request(app).post("/auth/login").send({ email: "loginAdmUser@example.com", password: "loginAdm123" });
+        tokenAdm = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginAdmUser@example.com", password: "loginAdm123" })).body.login.token;
         
-        await request(app).post("/users").send({ id: 2, role: Role.COMMON, name: "Login Common", email: "loginCommon@example.com"});
-        await request(app).post("/auth/login").send({ email: "loginCommon@example.com", password: "loginCommon123" });
-        tokenCommon = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginCommon@example.com", password: "loginCommon123" })).body.login.token;
+        await request(app).post("/users").send({ id: 2, role: Role.COMMON, name: "Login Common", email: "loginCommonUser@example.com"});
+        await request(app).post("/auth/login").send({ email: "loginCommonUser@example.com", password: "loginCommon123" });
+        tokenCommon = (await request(app).post("/login/getTokenByUserEmail").send({ email: "loginCommonUser@example.com", password: "loginCommon123" })).body.login.token;
     });    
 
     afterAll(async () => { 
@@ -186,7 +186,7 @@ describe('UserController', () => {
             { name: "'User with ID '${ id }' was updated successfully!'", userId: 2, data: { role: "common" }, expected: "User with ID '2' was updated successfully!", code: 200 },
             { name: "'Try update with empty email!'", userId: 2, data: { email: "" }, expected: "Email is required!", code: 400 },
             { name: "'Try update with invalid email!'", userId: 2, data: { email: "invalid_email" }, expected: "This email 'invalid_email' is invalid, should be like 'name@example.com'!", code: 400 },
-            { name: "'Try update with repeted email!'", userId: 2, data: { email: "loginAdm@example.com" }, expected: "This email 'loginAdm@example.com' is already in use!", code: 409 },
+            { name: "'Try update with repeted email!'", userId: 2, data: { email: "loginAdmUser@example.com" }, expected: "This email 'loginAdmUser@example.com' is already in use!", code: 409 },
             { name: "'Try update with an empty name!'", userId: 1, data: { name: "" }, expected: "Name is required!", code: 400 },
             { name: "'Try update with a only numbers name!'", userId: 1, data: { name: "397582" }, expected: "Name cannot contain only numbers!", code: 400 },
             { name: "'Try update with empty role!'", userId: 1, data: { role: "" }, expected: "The role must be either ADMINISTRATOR or COMMON!", code: 400 },
