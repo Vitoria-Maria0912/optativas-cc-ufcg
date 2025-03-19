@@ -6,6 +6,12 @@ Este projeto utiliza Podman para gerenciar containers e Prisma para interagir co
 
 ### Construção da Imagem
 
+**Entre no diretório backend:**
+
+```sh
+cd backend/
+```
+
 **Execute o comando abaixo para construir a imagem do backend:**
 
 ```sh
@@ -87,3 +93,17 @@ make login-tests
 make discipline-tests
 ```
 
+### Execução dos Testes
+
+
+```sh
+make user-tests
+```
+
+```sh
+make login-tests
+```
+
+```sh
+make discipline-tests
+```
