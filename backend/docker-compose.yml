@@ -13,5 +13,21 @@
         driver: json-file
         options:
           max-size: 100m
+    
+    db_tests:
+      image: postgres
+      container_name: optatives_cc_ufcg_tests
+      volumes:
+        - pg_test_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_PASSWORD: cc_ufcg123
+      ports:
+        - 5433:5432
+      logging:
+        driver: json-file
+        options:
+          max-size: 100m
+
   volumes:
     pgdata:
+    pg_test_data:
