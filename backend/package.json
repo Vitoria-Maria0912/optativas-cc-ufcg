@@ -33,6 +33,7 @@
     "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "dotenv-cli": "^8.0.0",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "swagger-jsdoc": "^6.2.8",
@@ -48,7 +49,11 @@
     "dev": "ts-node-dev src/express/server.ts",
     "build": "npx tsc",
     "clean": "rimraf ../backend/dist",
-    "test": "npm run clean && jest"
+    "test": "npm run clean && jest",
+    "test:discipline": "dotenv -e .env.test -- npm run test tests/DisciplineTest.test.ts",
+    "test:user": "dotenv -e .env.test -- npm run test tests/UserTest.test.ts",
+    "test:login": "dotenv -e .env.test -- npm run test tests/LoginTest.test.ts",
+    "test:all": "npm run test:discipline && npm run test:user && npm run test:login"
   },
   "keywords": [],
   "author": "",

@@ -1,96 +1,81 @@
-# Backend Development with Podman and Prisma
+# Backend
 
-Este projeto utiliza Podman para gerenciar containers e Prisma para interagir com o banco de dados PostgreSQL.
+## Passos para Rodar o Projeto
 
-## Configuração e Execução
+Para executar o projeto utilizando o podman, siga o tutorial contido [aqui](backend/README.md)
 
-### Construção da Imagem
+1. **Clone o Repositório**
 
-**Entre no diretório backend:**
+   Primeiro, você precisará clonar o repositório do projeto. Execute o seguinte comando:
+   ```bash
+   git clone https://github.com/Vitoria-Maria0912/optativas-cc-ufcg.git
+   ```
+   **Entre no diretório backend:**
 
+   ```sh
+   cd backend/
+   ```
+   
+2. **Instale as Dependências**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configuração do Prisma**
+
+   Certifique-se de que você tenha um arquivo `.env` configurado com as credenciais do banco de dados. Um exemplo de configuração pode ser:
+
+   ```env
+   DATABASE_URL="postgresql://postgres:cc_ufcg123@localhost:5432/optatives_cc_ufcg?schema=public"
+   ```
+
+4. **Migrate o Banco de Dados**
+
+   Após a configuração, você precisa aplicar as migrações do Prisma. Execute o seguinte comando:
+
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+
+   Isso criará as tabelas necessárias no banco de dados com base no seu esquema Prisma.
+
+5. **Rodar a Aplicação**
+
+   Agora, você pode iniciar a aplicação. Execute:
+
+   ```bash
+   npm run dev
+   ```
+
+   Isso iniciará o servidor em modo de desenvolvimento. Você poderá acessar a aplicação em `http://localhost:8080`.
+
+## Executando o backend com o podman
+Para executar o backend com podman siga as etapas contidas no seguinte arquivo: [podman](PODMAN.md)
+
+
+## Executanto os testes
+
+### Máquinas Linux
+Primeiro rode o comando para fazer o setup dos testes:
 ```sh
-cd backend/
+make setup-tests
 ```
 
-**Execute o comando abaixo para construir a imagem do backend:**
-
+Depois execute os testes em si:
 ```sh
-podman build -t backend-code .
+make test-all
 ```
 
-### Execução do Container Backend
-
+### Máquinas Windows
+Primeiro rode o comando para fazer o setup dos testes:
 ```sh
-podman run -d --name backend-container --privileged -p 8080:8080 -v $XDG_RUNTIME_DIR/podman/podman.sock:/run/podman/podman.sock backend-code
+.\setup-tests.bat
 ```
 
-**Para acessar o container em execução:**
-
+Depois execute os testes em si:
 ```sh
-podman exec -it backend-container sh
-```
-
-### Configuração do Banco de Dados PostgreSQL
-
-**Criação do volume para persistência de dados:**
-
-```sh
-podman volume create pgdata
-```
-
-**Execução do container PostgreSQL:**
-
-```sh
-podman run -d \
-  --name optatives_cc_ufcg \
-  --restart always \
-  -p 5432:5432 \
-  -e POSTGRES_PASSWORD=cc_ufcg123 \
-  -v pgdata:/var/lib/postgresql/data \
-  docker.io/library/postgres:latest
-```
-
-### Configuração do Prisma
-
-**Geração dos artefatos do Prisma:**
-
-```sh
-npx prisma generate
-```
-
-**Aplicação das migrações ao banco de dados:**
-
-```sh
-npx prisma migrate dev
-```
-
-Agora o ambiente está configurado e pronto para uso!
-
-**Execute o projeto:**
-
-```sh
-npm run start
-```
-
-**Execute todos os testes:**
-
-```sh
-npm run test
-```
-
-**Execute os testes por entidade:**
-
-- ### *User*
-```sh
-make discipline-tests 
-```
-- ### *Login*
-```sh
-make login-tests
-```
-- ### *Discipline*
-```sh
-make discipline-tests
+.\run-tests.bat
 ```
 
 ### Execução dos Testes
