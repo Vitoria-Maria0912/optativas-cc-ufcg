@@ -1,0 +1,16 @@
+
+.drop-area {
+    transition: all ease 0.3s;
+    width: 200px;
+    height: 20px;
+}
+
+.drop-area-over {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0px;
+    background-color: #4b4d4e;
+}
