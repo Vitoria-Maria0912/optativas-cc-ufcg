@@ -19,23 +19,36 @@ const Planning = ({ }) => {
         })
 
     return (
-        <div className="planning">
-            {Object.keys(cards).map(period => (
-                <div id={period} className="period">
-                    <DropZone targetPeriod={period} index={0} setCards={setCards} />
-                    {cards[period].map((card, index) => (
-                        <React.Fragment>
-                            <Card card={card} period={period} />
-                            <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
-                        </React.Fragment>
-                    ))}
-                    <div className="plus-icon plus-icon-discipline">
-                        <PlusCircleOutlined />
+        <div>
+            <div className="planning-header">
+                <select className="planning-select" name="planning-name">
+                    <option className="planning-select-child" value="Planning 1">Planning 1</option>
+                    <option className="planning-select-child" value="Planning 2">Planning 2</option>
+                    <option className="planning-select-child" value="Planning 3">Planning 3</option>
+                </select>
+            </div>
+            <div className="planning">
+                {Object.keys(cards).map(period => (
+                    <div id={period} className="period">
+                        <DropZone targetPeriod={period} index={0} setCards={setCards} />
+                        {cards[period].map((card, index) => (
+                            <React.Fragment>
+                                <Card card={card} period={period} />
+                                <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
+                            </React.Fragment>
+                        ))}
+                        <div className="plus-icon plus-icon-discipline">
+                            <PlusCircleOutlined />
+                        </div>
                     </div>
+                ))}
+                <div className="plus-icon">
+                    <PlusCircleOutlined />
                 </div>
-            ))}
-            <div className="plus-icon">
-                <PlusCircleOutlined />
+            </div>
+            <div id="button-wrapper" >
+                <button className="planning-button">Editar</button>
+                <button className="planning-button">Salvar novo</button>
             </div>
         </div>
     )
