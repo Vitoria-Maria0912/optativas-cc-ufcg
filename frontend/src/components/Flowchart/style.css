@@ -1,7 +1,6 @@
 .flowchart {
     display: flex;
     flex-wrap: nowrap;
-    height: 500px;
     width: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -11,8 +10,7 @@
     margin: 20px 0px;
     margin-right: 10px;
     display: inline-block;
-    width: 120px;
-    height: 500px;
+    width: 250px;
     border: 1px solid #ebebeb;
     padding: 5px;
 }

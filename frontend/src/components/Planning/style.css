@@ -1,8 +1,6 @@
-.flowchart {
+.planning {
     display: flex;
     flex-wrap: nowrap;
-    height: 500px;
-    width: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
 }
@@ -11,8 +9,32 @@
     margin: 20px 0px;
     margin-right: 10px;
     display: inline-block;
-    width: 120px;
-    height: 500px;
     border: 1px solid #ebebeb;
-    padding: 5px;
+    padding: 5px 10px;
 }
+
+.plus-icon{
+    padding: 0px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+.plus-icon > span{
+    cursor: pointer;
+}
+
+.plus-icon > span:hover{
+    opacity: 0.8;
+}
+
+.plus-icon-discipline{
+    display: flex;
+    align-self: end;
+}
+
+.period-disciplines {
+    
+}
+

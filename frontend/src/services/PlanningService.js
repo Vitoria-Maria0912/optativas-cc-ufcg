@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import { Route, Routes } from 'react-router-dom';
-import Planning from '../components/Flowchart';
+import Planning from '../components/Planning';
 
 const PlanningService = () => {
 

@@ -8,6 +8,7 @@ import UserService from './services/UserService.js';
 import DisciplineService from './services/DisciplineService.js';
 import PlanningService from './services/PlanningService.js';
 import LoginService from './services/LoginService.js';
+import Planning from './components/Planning/index.js';
 
 const App = () => {
 
@@ -47,7 +48,7 @@ const App = () => {
                 <Menu.Item key="25" onClick={() => navigate('/disciplines/getAll')}>Visualizar todas as disciplinas</Menu.Item>
               </SubMenu>
               <SubMenu key="planning" icon={<BookOutlined />} title="Planejamento">
-                <Menu.Item key="31" onClick={() => navigate('/planning/create')}>Criar planejamento</Menu.Item>
+                <Menu.Item key="31" onClick={() => navigate('/planning')}>Criar planejamento</Menu.Item>
                 <Menu.Item key="32" onClick={() => navigate('/planning/save')}>Salvar planejamento</Menu.Item>
                 <Menu.Item key="34" onClick={() => navigate('/planning/delete')}>Apagar planejamento</Menu.Item>
                 <Menu.Item key="33" onClick={() => navigate('/planning/update')}>Editar planejamento</Menu.Item>
@@ -65,7 +66,7 @@ const App = () => {
                     <Route path="/users" element={<UserService/>} />
                     <Route path="/auth/login" exact element={<LoginService/>} />
                     <Route path="/disciplines" element={<DisciplineService/>} />
-                    <Route path="/planning" exact element={<PlanningService/>} />
+                    <Route path="/planning" element={<Planning/>} />
                 </Routes>
             </Content>
             <Footer style={{ textAlign: 'center' }}>Trilharei - Computação UFCG © 2025 Created by UFCG alumni</Footer>
