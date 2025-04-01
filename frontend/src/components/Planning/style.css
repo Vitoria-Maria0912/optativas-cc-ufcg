@@ -1,0 +1,77 @@
+.planning {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.period {
+    margin: 20px 0px;
+    margin-right: 10px;
+    display: inline-block;
+    border: 1px solid #ebebeb;
+    padding: 5px 10px;
+}
+
+.plus-icon{
+    padding: 0px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+}
+
+.plus-icon > span{
+    cursor: pointer;
+}
+
+.plus-icon > span:hover{
+    opacity: 0.8;
+}
+
+.plus-icon-discipline{
+    display: flex;
+    align-self: end;
+}
+
+#button-wrapper{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    width: 420px !important;
+    justify-content: space-between;
+}
+
+#button-wrapper .planning-button {
+    width: 200px;
+    height: 50px;
+    background-color: #d9643a;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+#button-wrapper .planning-button:hover{
+    background-color: #b45430;
+}
+
+.planning-header{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.planning-header .planning-select, .planning-header .planning-select-child {
+    width: 200px;
+    height: 50px;
+    padding: 0px 20px;
+    color: white;
+    background-color: #d9643a;
+    font-weight: bold;
+}
+
+.planning-header .planning-select-child{
+    background-color: white;
+    color: gray;
+}
+
