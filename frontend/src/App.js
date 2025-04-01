@@ -4,11 +4,12 @@ import { Menu, Layout } from 'antd';
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Home, About } from './components/Layout/CenterMain.js'
 import './style.css';
-import UserService from './services/UserService.js';
+// import UserService from './services/UserService.js';
 import DisciplineService from './services/DisciplineService.js';
 import PlanningService from './services/PlanningService.js';
 import LoginService from './services/LoginService.js';
 import Planning from './components/Planning/index.js';
+import UserService from './services/UserService.js';
 
 const App = () => {
 
@@ -63,10 +64,10 @@ const App = () => {
                 <Routes>
                     <Route path="/" exact element={<Home/>} />
                     <Route path="/about" exact element={<About/>} />
-                    <Route path="/users" element={<UserService/>} />
+                    <Route path="/users/*" element={<UserService/>} />
                     <Route path="/auth/login" exact element={<LoginService/>} />
-                    <Route path="/disciplines" element={<DisciplineService/>} />
-                    <Route path="/planning" element={<Planning/>} />
+                    <Route path="/disciplines/*" element={<DisciplineService/>} />
+                    <Route path="/planning/*" element={<PlanningService/>} />
                 </Routes>
             </Content>
             <Footer style={{ textAlign: 'center' }}>Trilharei - Computação UFCG © 2025 Created by UFCG alumni</Footer>

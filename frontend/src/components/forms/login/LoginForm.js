@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { createLoginRoute } from '../../../routes/LoginRoutes.js';
-import '../style.css';
+import { createLoginRoute } from '../../../routes/LoginRoutes';
+import './style.css';
 
 const CreateLogin = () => {
     const [email, setEmail] = useState("");
@@ -9,14 +9,14 @@ const CreateLogin = () => {
     const [password, setPassword] = useState("");
 
     const handleLogin = async (event) => {
-
         event.preventDefault();
       
         try {
           const response = await createLoginRoute({ email, password });
-          alert(response?.data?.message);
+          alert(response.data.message);
+          // navigate to planning page 
 
-        } catch (error) { alert("Error: " + (error.response?.data?.message || "Server is not running!")); }
+        } catch (error) { alert("Error: " + (error.response?.data?.message ?? "Server is not running!")); }
     };
       
     return (
@@ -27,7 +27,7 @@ const CreateLogin = () => {
                 <input type='text' value={username} placeholder={'username'} onChange={e => setUsername(e.target.value)}></input>
                 <label>Email:</label>
                 <MailOutlined className='input-icon'/>
-                <input type='email' value={email} placeholder='example@ccc.ufcg.edu.br' onChange={e => setEmail(e.target.value)}></input>
+                <input type='text' value={email} placeholder='example@ccc.ufcg.edu.br' onChange={e => setEmail(e.target.value)}></input>
                 <label>Senha:</label>
                 <LockOutlined className='input-icon'/>
                 <input type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></input>

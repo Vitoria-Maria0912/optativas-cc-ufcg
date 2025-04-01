@@ -1,0 +1,47 @@
+.register-form label {
+    margin: 0 50% 0 50%;
+    margin-bottom: 0;
+    padding: 15px;
+    color: #d9643a;
+    font-weight: 600;
+}
+
+.option-class {
+    margin: 0 0 0 62%;
+}
+
+.option-class select {
+    padding: 3px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #d9643a;
+}
+
+.register-form input {
+    margin: 0 50% 15px 30%;
+    width: 50%;
+    padding-left: 30px;
+    color: #b45430;
+}
+
+.register-form button {
+    margin: 20px 40% 0 50%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #d9643a;
+}
+
+.register-form button:hover {
+    cursor: pointer;
+    background-color: #b45430;
+}
+
+.input-icon {
+    position: relative;
+    color: #aaa;
+    left: 30.9%;
+    top: 18px;
+}
