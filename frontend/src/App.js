@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HomeOutlined, UserOutlined, BookOutlined, UsbOutlined, BulbOutlined, LinkOutlined } from '@ant-design/icons';
 import { Menu, Layout } from 'antd';
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { Home, About } from './components/layout/CenterMain.js'
+import { Home, About } from './components/Layout/CenterMain.js'
 import './style.css';
 import UserService from './services/UserService.js';
 import DisciplineService from './services/DisciplineService.js';

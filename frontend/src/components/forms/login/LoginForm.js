@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import '../style.css';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import '../style.css';
 
 const CreateLogin = () => {
     const [email, setEmail] = useState("");
@@ -13,11 +13,14 @@ const CreateLogin = () => {
         <div>
             <div className='login-header'>
                 <form onSubmit={handleCreate} className='login-form'>
-                    <label icon={<UserOutlined />}>Nome:</label>
-                    <input type='text' value={username} placeholder='username' onChange={e => setUsername(e.target.value)}></input>
-                    <label icon={<MailOutlined />}>Email:</label>
+                    <label>Nome:</label> 
+                    <UserOutlined className='input-icon'/>
+                    <input type='text' value={username} placeholder={'username'} onChange={e => setUsername(e.target.value)}></input>
+                    <label>Email:</label>
+                    <MailOutlined className='input-icon'/>
                     <input type='email' value={email} placeholder='example@ccc.ufcg.edu.br' onChange={e => setEmail(e.target.value)}></input>
-                    <label icon={<LockOutlined />}>Senha:</label>
+                    <label>Senha:</label>
+                    <LockOutlined className='input-icon'/>
                     <input type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></input>
                     <button type='submit'>Criar login</button>
                 </form>
