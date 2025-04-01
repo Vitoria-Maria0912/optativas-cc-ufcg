@@ -9,35 +9,30 @@ const CreateLogin = () => {
     const [password, setPassword] = useState("");
 
     const handleLogin = async (event) => {
+
         event.preventDefault();
       
         try {
           const response = await createLoginRoute({ email, password });
           alert(response?.data?.message);
 
-        } catch (error) {
-          alert("Error: " + (error.response?.data?.message || "Unkounwn error"));
-        }
-      };
+        } catch (error) { alert("Error: " + (error.response?.data?.message || "Server is not running!")); }
+    };
       
-
     return (
-        <div>
-            <div className='login-header'>
-                <form onSubmit={handleLogin} className='login-form'>
-                    <label>Nome:</label> 
-                        <UserOutlined className='input-icon'/>
-                        <input type='text' value={username} placeholder={'username'} onChange={e => setUsername(e.target.value)}></input>
-                    <label>Email:</label>
-                    <MailOutlined className='input-icon'/>
-                    <input type='email' value={email} placeholder='example@ccc.ufcg.edu.br' onChange={e => setEmail(e.target.value)}></input>
-                    <label>Senha:</label>
-                    <LockOutlined className='input-icon'/>
-                    <input type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></input>
-                    <button type='submit'>Criar login</button>
-                </form>
-
-            </div>
+        <div className='login-header'>
+            <form onSubmit={handleLogin} className='login-form'>
+                <label>Nome:</label> 
+                <UserOutlined className='input-icon'/>
+                <input type='text' value={username} placeholder={'username'} onChange={e => setUsername(e.target.value)}></input>
+                <label>Email:</label>
+                <MailOutlined className='input-icon'/>
+                <input type='email' value={email} placeholder='example@ccc.ufcg.edu.br' onChange={e => setEmail(e.target.value)}></input>
+                <label>Senha:</label>
+                <LockOutlined className='input-icon'/>
+                <input type='password' value={password} placeholder='password' onChange={e => setPassword(e.target.value)}></input>
+                <button type='submit'>Criar login</button>
+            </form>
         </div>
     );
 };

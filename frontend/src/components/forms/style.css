@@ -1,16 +1,15 @@
-.login-form > label {
+.login-form label {
     margin: 0 50% 0 50%;
-    padding: 7px;
-    display: flex;
+    margin-bottom: 0;
+    padding: 15px;
     color: #d9643a;
     font-weight: 600;
 }
 
-.login-form  input {
-    margin: 0 50% 0 30%;
+.login-form input {
+    margin: 0 50% 15px 30%;
     width: 50%;
-    display: flex;
-    padding: 0 30px;
+    padding-left: 30px;
     color: #d9643a;
 }
 
@@ -29,8 +28,8 @@
 }
 
 .input-icon {
-    position: absolute;
-    margin: 2px 0 0 265px;
+    position: relative;
     color: #aaa;
-    left:  24.3%;
+    left: 30.9%;
+    top: 18px;
 }
