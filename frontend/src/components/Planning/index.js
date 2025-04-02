@@ -3,6 +3,7 @@ import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
 import { PlusCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb } from "antd";
 
 
 const Planning = ({ }) => {
@@ -19,13 +20,20 @@ const Planning = ({ }) => {
         })
 
     return (
-        <div>
-            <div className="planning-header">
-                <select className="planning-select" name="planning-name">
-                    <option className="planning-select-child" value="Planning 1">Planning 1</option>
-                    <option className="planning-select-child" value="Planning 2">Planning 2</option>
-                    <option className="planning-select-child" value="Planning 3">Planning 3</option>
-                </select>
+        <div className="planning-wrapper">
+            <div className="planning-header-wrapper">
+                <Breadcrumb>
+                    <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    <Breadcrumb.Item>Fluxograma</Breadcrumb.Item>
+                </Breadcrumb>
+                <div className="planning-header">
+                    <select className="planning-select" name="planning-name" >
+                        <option className="planning-select-child" value="Planning 1">Planejamento 1</option>
+                        <option className="planning-select-child" value="Planning 2">Planejamento 2</option>
+                        <option className="planning-select-child" value="Planning 3">Planejamento 3</option>
+                    </select>
+                    <span class="custom-arrow"></span>
+                </div>
             </div>
             <div className="planning">
                 {Object.keys(cards).map(period => (
