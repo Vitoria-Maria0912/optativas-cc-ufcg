@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createDisciplineRoute } from '../../../routes/DisciplineRoutes';
 
 const DisciplineCreateForm = ({ onSubmit }) => {
   const [form, setForm] = useState({
@@ -54,13 +55,18 @@ const DisciplineCreateForm = ({ onSubmit }) => {
     setForm({ ...form, post_requisites: updatedPostRequisites });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(form);
+    try {
+      const response = await createDisciplineRoute(form);
+      alert(response.data.message);
+    } catch (error) {
+      // alert(error.response.data.message);      
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="create-discipline-form">
       <input name="name" placeholder="Name" value={form.name} onChange={handleChange} />
       <input name="acronym" placeholder="Acronym" value={form.acronym} onChange={handleChange} />
       <input name="description" placeholder="Description" value={form.description} onChange={handleChange} /><br></br><br></br>
@@ -89,7 +95,9 @@ const DisciplineCreateForm = ({ onSubmit }) => {
         {showSchedule && ( <input name="schedule" placeholder="Schedule" value={form.schedule} 
                           onChange={(e) => {setForm({ ...form, schedule: e.target.value })}} /> )}
       </label>
-      <br></br><br></br>
+      
+      {/* <br></br><br></br> */}
+      
       <label>
         Type : 
         <select name="type" value={form.type} onChange={handleChange}>
@@ -104,9 +112,9 @@ const DisciplineCreateForm = ({ onSubmit }) => {
           <option value="NO">No</option>
         </select>
       </label>
-      <br></br><br></br>
+      {/* <br></br><br></br>  */}
 
-      <button style={{cursor: 'pointer'}} type="button" onClick={addPreRequisiteField}>Add Pre requisite </button>
+      <button style={{cursor: 'pointer', backgroundColor: '#d9643a'}} type="button" onClick={addPreRequisiteField}>Add Pre requisite </button>
 
       <div style={{ display: showPreRequisites ? 'block' : 'none'}}> {form.pre_requisites.map((preReq, index) => (
         <div key={index}>
@@ -136,8 +144,6 @@ const DisciplineCreateForm = ({ onSubmit }) => {
         ))}
       </div>
         
-      <br></br><br></br>
-
       <button type="submit" style={{cursor: 'pointer', alignItems:'center'}}>Save Discipline</button>
     </form>
   );

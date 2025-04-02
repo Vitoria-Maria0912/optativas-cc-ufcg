@@ -18,7 +18,10 @@ export const Home = () => {
 export const About = () => {
     return (
         <div>
-            <h1>About</h1>
+            <Breadcrumb>
+                <Breadcrumb.Item>Home</Breadcrumb.Item>
+                <Breadcrumb.Item>About</Breadcrumb.Item>
+            </Breadcrumb>
             <div id="about">
                 <p>Este projeto visa facilitar o planejamento de disciplinas do curso de Ciência da Computação da UFCG, permitindo a visualização de disciplinas obrigatórias e optativas, incluindo informações como disponibilidade de professores e requisitos.
                     Administradores podem gerenciar o catálogo de disciplinas por meio de funcionalidades de CRUD.</p>

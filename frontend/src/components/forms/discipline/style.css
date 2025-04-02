@@ -1,0 +1,5 @@
+.create-discipline-form button {
+    cursor: 'pointer';
+    align-items:'center';
+    background-color: #d9643a !important;
+}
