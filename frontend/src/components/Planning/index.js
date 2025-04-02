@@ -24,7 +24,7 @@ const Planning = ({ }) => {
             <div className="planning-header-wrapper">
                 <Breadcrumb>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>Fluxograma</Breadcrumb.Item>
+                    <Breadcrumb.Item>Planejamento</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="planning-header">
                     <select className="planning-select" name="planning-name" >

@@ -1,5 +1,6 @@
 import React from "react";
 import "./style.css"
+import Icon, { DeleteOutlined } from "@ant-design/icons";
 
 const Card = ({card, period}) => {
     const handleDragStart = e => {
@@ -10,6 +11,7 @@ const Card = ({card, period}) => {
     return (
         <div className="card"
             draggable onDragStart={e => handleDragStart(e)}>
+            <DeleteOutlined />
             <h3 className="title">{card}</h3>
         </div>
     )
