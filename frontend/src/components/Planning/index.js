@@ -2,25 +2,62 @@ import React, { useState } from "react"
 import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { Breadcrumb } from "antd";
-
+import { AudioOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb, Modal, Space } from "antd";
+import Search from "antd/es/input/Search";
 
 const Planning = ({ }) => {
+    const suffix = (
+        <AudioOutlined
+          style={{
+            fontSize: 16,
+            color: '#1677ff',
+          }}
+        />
+      );
+    const onSearch = (value, _e, info) =>
+        console.log(info === null || info === void 0 ? void 0 : info.source, value);
+
     const [cards, setCards] = useState({
-            periodo1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
-            periodo2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
-            periodo3: ["C2", "EDA", "LEDA", "Lógica", "Linear"],
-            periodo4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
-            periodo5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
-            periodo6: ["AS", "ATAL", "Concorrente", "Optativa", "Optativa"],
-            periodo7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
-            periodo8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
-            periodo9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
-        })
+        periodo1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
+        periodo2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
+        periodo3: ["C2", "EDA", "LEDA", "Lógica", "Linear"],
+        periodo4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
+        periodo5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
+        periodo6: ["AS", "ATAL", "Concorrente", "Optativa", "Optativa"],
+        periodo7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
+        periodo8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
+        periodo9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
+    })
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     return (
         <div className="planning-wrapper">
+            <Modal className="discipline-modal" title="Selecione a disciplina" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <Space direction="vertical">
+                    <Search placeholder="Disciplina" onSearch={onSearch} style={{ width: 200 }} />
+                </Space>
+                {Object.keys(cards).map(period => (
+                    <div>
+                        <DropZone targetPeriod={period} index={0} setCards={setCards} />
+                        {cards[period].map((card, index) => (
+                            <React.Fragment>
+                                <Card card={card} period={period} />
+                                <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
+                            </React.Fragment>
+                        ))}
+                    </div>
+                ))}
+            </Modal>
             <div className="planning-header-wrapper">
                 <Breadcrumb>
                     <Breadcrumb.Item>Home</Breadcrumb.Item>
@@ -32,7 +69,8 @@ const Planning = ({ }) => {
                         <option className="planning-select-child" value="Planning 2">Planejamento 2</option>
                         <option className="planning-select-child" value="Planning 3">Planejamento 3</option>
                     </select>
-                    <span class="custom-arrow"></span>
+                    <span class="custom-arrow">
+                    </span>
                 </div>
             </div>
             <div className="planning">
@@ -46,7 +84,9 @@ const Planning = ({ }) => {
                             </React.Fragment>
                         ))}
                         <div className="plus-icon plus-icon-discipline">
-                            <PlusCircleOutlined />
+                            <button className="button-show-modal" onClick={showModal}>
+                                <PlusCircleOutlined />
+                            </button>
                         </div>
                     </div>
                 ))}
