@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
+import "./style.css"
 
-const Flowchart = ({ }) => {
+const Flowchart = () => {
     const [cards, setCards] = useState({
         periodo1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
         periodo2: ["P2", "LP2", "FMCC2", "C1", "Economia"],

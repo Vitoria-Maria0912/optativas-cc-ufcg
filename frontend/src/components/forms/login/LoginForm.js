@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { createLoginRoute } from '../../../routes/LoginRoutes';
 import './style.css';
@@ -8,6 +9,8 @@ const CreateLogin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const handleLogin = async (event) => {
         event.preventDefault();
       
@@ -15,6 +18,7 @@ const CreateLogin = () => {
           const response = await createLoginRoute({ email, password });
           alert(response.data.message);
           // navigate to planning page 
+          navigate('/planning');
 
         } catch (error) { alert("Error: " + (error.response?.data?.message ?? "Server is not running!")); }
     };

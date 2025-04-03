@@ -1,5 +1,124 @@
-.create-discipline-form button {
-    cursor: 'pointer';
-    align-items:'center';
+.create-discipline-form label {
+    margin: 0 50% 0 50%;
+    color: #d9643a;
+    font-weight: 600;
+}
+
+.create-discipline-form input {
+    width: 50%;
+    margin: 0 50% 15px 30%;
+    padding-left: 30px;
+    color: #b45430;
+}
+
+.create-discipline-form select {
+    min-width: 10%;
+    padding: 10px;
+    margin: 0 50% 15px 50%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #d9643a;
+}
+
+.create-discipline-form label select {
+    color: #ffffff;
     background-color: #d9643a !important;
+}
+
+.create-discipline-form button {
+    /* width: 50% !important; */
+    margin: 20px 40% 0 50%;
+    padding: 10px;
+    width: 130px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #d9643a;
+}
+
+.create-discipline-form button:hover {
+    cursor: pointer;
+    background-color: #b45430;
+}
+
+.create-discipline-form #available-label {
+    position: absolute;
+    top: 15.7%;
+    left: 60.2%;
+}
+
+.create-discipline-form #type-label {
+    position: absolute;
+    top: 15.7%;
+    left: 70%;
+}
+
+.create-discipline-form #professor-label {
+    position: absolute;
+    top: 36.2%;
+    left: 12%;
+    align-items: center;
+}
+
+.create-discipline-form #professor-label input { 
+    width: 300px; 
+    margin-top: 40px; 
+}
+
+.create-discipline-form #schedule-label {
+    position: absolute;
+    top: 55%;
+    left: 12%;
+}
+
+.create-discipline-form #schedule-label input { 
+    width: 300px; 
+    margin-top: 40px; 
+}
+
+.create-discipline-form #description-label textarea {
+    resize: none;
+    margin: 0 50% 0px 30%;
+    width: 50%;
+    padding: 10px;
+    color: #d9643a
+}
+
+.create-discipline-form .plus-icon-req {
+    position: relative;
+    cursor: pointer;
+    left: 2.5%;
+    top: 46.5px;
+    z-index: 2;
+    color: rgb(255, 255, 255);
+}
+
+.remove-req {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    bottom: 40px;
+    right: 48%;
+    cursor: pointer;  /* Mantém a interação de clique */
+    width: 0 !important;
+    height: 0 !important;
+    align-items: center;
+}
+
+.trash-icon {
+    color: rgb(0, 0, 0); 
+    opacity: 50%;
+    font-size: 1px; 
+}
+
+
+.create-discipline-form .form-group label, input, textarea {
+    display: flex;
+    margin: 15px 0 0 15px !important;
+}
+
+.create-discipline-form .pre-req-div, .post-req-div {
+    position: relative;
+    top: 70%;
+    right: 48.5%;
 }
