@@ -7,7 +7,7 @@
     overflow-y: hidden;
 }
 
-.period {
+.flowchart .period {
     margin: 20px 0px;
     margin-right: 10px;
     display: inline-block;
@@ -15,6 +15,6 @@
     padding: 5px;
 }
 
-.card .title {
+.flowchart .card .title {
     font-size: 20px !important;
 }

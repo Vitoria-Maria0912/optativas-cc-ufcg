@@ -11,16 +11,18 @@ const Planning = ({ }) => {
     const onSearch = (value, _e, info) =>
         console.log(info === null || info === void 0 ? void 0 : info.source, value);
 
+    const [currentPeriod, setCurrentPeriod] = useState(null)
+
     const [cards, setCards] = useState({
-        periodo1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
-        periodo2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
-        periodo3: ["C2", "EDA", "LEDA", "Lógica", "Linear"],
-        periodo4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
-        periodo5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
-        periodo6: ["AS", "ATAL", "Concorrente", "Optativa", "Optativa"],
-        periodo7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
-        periodo8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
-        periodo9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
+        1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
+        2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
+        3: ["C2", "EDA", "LEDA", "Lógica", "Linear"],
+        4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
+        5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
+        6: ["AS", "ATAL", "Concorrente", "Optativa", "Optativa"],
+        7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
+        8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
+        9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
     })
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
@@ -33,6 +35,39 @@ const Planning = ({ }) => {
         setIsModalOpen(false);
     };
 
+    const handleCardDelete = (period, card) => {
+        setCards(prevCards => {
+            return {
+                ...prevCards,
+                [period]: prevCards[period].filter(c => c != card)
+            }
+        })
+    }
+
+    const handleSelectPeriod = (period) => {
+        setCurrentPeriod(period)
+    }
+
+    const handleAddDiscipline = (card) => {
+        setCards(prevCards => {
+            return {
+                ...prevCards,
+                [currentPeriod]: [...prevCards[currentPeriod], card]
+            }
+        })
+        setIsModalOpen(false);
+    }
+
+    const handleAddPeriod = () => {
+        setCards(prevCards => {
+            return {
+                ...prevCards,
+                [Math.max(...Object.keys(prevCards)) + 1]: []
+            }
+
+        })
+    }
+
     return (
         <div className="planning-wrapper">
             <Modal className="discipline-modal" title="Selecione a disciplina" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
@@ -41,7 +76,7 @@ const Planning = ({ }) => {
                 </Space>
                 <div className="select-cards">
                     {Object.values(cards).flat().map(card => (
-                        <Card card={card} />
+                        <Card card={card} handleAddDiscipline={() => handleAddDiscipline(card)} />
                     ))}
                 </div>
             </Modal>
@@ -60,19 +95,19 @@ const Planning = ({ }) => {
                         <DropZone targetPeriod={period} index={0} setCards={setCards} />
                         {cards[period].map((card, index) => (
                             <React.Fragment>
-                                <Card card={card} period={period} />
+                                <Card card={card} period={period} canDelete={true} handleCardDelete={(_) => handleCardDelete(period, card)} />
                                 <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
                             </React.Fragment>
                         ))}
                         <div className="plus-icon plus-icon-discipline">
                             <button className="button-show-modal" onClick={showModal}>
-                                <PlusCircleOutlined />
+                                <PlusCircleOutlined onClick={() => handleSelectPeriod(period)} />
                             </button>
                         </div>
                     </div>
                 ))}
                 <div className="plus-icon">
-                    <PlusCircleOutlined />
+                    <PlusCircleOutlined onClick={handleAddPeriod} />
                 </div>
             </div>
             <div id="button-wrapper" >
