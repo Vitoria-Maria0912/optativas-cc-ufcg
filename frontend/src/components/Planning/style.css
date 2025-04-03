@@ -84,21 +84,8 @@
 }
 
 .planning-header {
-    background-color: red;
     position: relative;
     display: inline-block;
-}
-
-.planning-select {
-    width: 200px;
-    height: 50px;
-    padding: 0px 20px;
-    color: white;
-    background-color: #d9643a;
-    font-weight: bold;
-    border: none;
-    appearance: none;
-    -webkit-appearance: none;
 }
 
 .custom-arrow {

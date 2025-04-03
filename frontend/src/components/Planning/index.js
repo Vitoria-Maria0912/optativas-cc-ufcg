@@ -2,19 +2,12 @@ import React, { useState } from "react"
 import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
-import { AudioOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Modal, Space } from "antd";
 import Search from "antd/es/input/Search";
+import Select from "../Select";
 
 const Planning = ({ }) => {
-    const suffix = (
-        <AudioOutlined
-          style={{
-            fontSize: 16,
-            color: '#1677ff',
-          }}
-        />
-      );
     const onSearch = (value, _e, info) =>
         console.log(info === null || info === void 0 ? void 0 : info.source, value);
 
@@ -49,9 +42,7 @@ const Planning = ({ }) => {
                 <div className="select-cards">
                     {Object.values(cards).flat().map(card => (
                         <Card card={card} />
-                    ))
-
-                    }
+                    ))}
                 </div>
             </Modal>
             <div className="planning-header-wrapper">
@@ -60,13 +51,7 @@ const Planning = ({ }) => {
                     <Breadcrumb.Item>Planejamento</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="planning-header">
-                    <select className="planning-select" name="planning-name" >
-                        <option className="planning-select-child" value="Planning 1">Planejamento 1</option>
-                        <option className="planning-select-child" value="Planning 2">Planejamento 2</option>
-                        <option className="planning-select-child" value="Planning 3">Planejamento 3</option>
-                    </select>
-                    <span class="custom-arrow">
-                    </span>
+                    <Select/>
                 </div>
             </div>
             <div className="planning">
