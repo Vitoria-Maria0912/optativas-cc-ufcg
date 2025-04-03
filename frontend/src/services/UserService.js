@@ -1,22 +1,24 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
-import { Route, Routes } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router-dom';
+import Register from '../components/forms/user/UserCreateForm';
 
 const UserService = () => {
 
   return (
     <div>
-        {/* <Breadcrumb>
+        <Breadcrumb>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>Usuários</Breadcrumb.Item>
-        </Breadcrumb> */}
+        </Breadcrumb>
         <Routes>
-            <Route path="/auth/login" element={<></>} />
-            <Route path="/create" element={ <></> }/> 
-            <Route path="/delete" element={ <></> }/>
-            <Route path="/update" element={ <></> }/> 
-            <Route path="/getOne" element={ <></> }/>
-            <Route path="/getAll" element={ <></> }/>
+            <Route path="create" element={ <Register/> }/> 
+            <Route path="delete" element={ <></> }/>
+            <Route path="update" element={ <></> }/> 
+            <Route path="getOne" element={ <></> }/>
+            <Route path="getAll" element={ <></> }/>
         </Routes>
+        <Outlet />
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
+import "./style.css"
 
-const Flowchart = ({ }) => {
+const Flowchart = () => {
     const [cards, setCards] = useState({
         periodo1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
         periodo2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
@@ -14,7 +14,7 @@ const Flowchart = ({ }) => {
         periodo7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
         periodo8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
         periodo9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
-    })
+    });
 
     return (
         <div className="flowchart">
@@ -26,12 +26,11 @@ const Flowchart = ({ }) => {
                             <Card card={card} period={period} />
                             <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
                         </React.Fragment>
-                    ))}
-                </div>
-            ))}
+                ))}
+            </div>
+        ))}
         </div>
     )
 }
 
 export default Flowchart;
-
