@@ -46,17 +46,13 @@ const Planning = ({ }) => {
                 <Space direction="vertical">
                     <Search placeholder="Disciplina" onSearch={onSearch} style={{ width: 200 }} />
                 </Space>
-                {Object.keys(cards).map(period => (
-                    <div>
-                        <DropZone targetPeriod={period} index={0} setCards={setCards} />
-                        {cards[period].map((card, index) => (
-                            <React.Fragment>
-                                <Card card={card} period={period} />
-                                <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
-                            </React.Fragment>
-                        ))}
-                    </div>
-                ))}
+                <div className="select-cards">
+                    {Object.values(cards).flat().map(card => (
+                        <Card card={card} />
+                    ))
+
+                    }
+                </div>
             </Modal>
             <div className="planning-header-wrapper">
                 <Breadcrumb>

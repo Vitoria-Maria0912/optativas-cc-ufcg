@@ -116,8 +116,12 @@
 
 .ant-modal-content {
     height: 70vh !important;
-    padding: unset 150px !important;
-    overflow-y: scroll;
+    /* padding: unset 150px !important; */
+    /* overflow-y: scroll; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .ant-modal-content, .ant-modal-title {
@@ -131,12 +135,22 @@
     padding: 20px 0px !important;
 }
 
+.ant-modal-close{
+    margin: 20px !important;
+}
+
+
 .ant-modal-close-x{
     color: white !important;
 }
 
 .ant-modal-footer{
     display: none !important;
+}
+
+.ant-input-wrapper {
+    margin-bottom: 20px !important;
+    width: 310px;
 }
 
 .ant-input, .ant-input:hover{
@@ -152,4 +166,18 @@
     border: none !important;
     color: gray !important;
 }
+
+.select-cards{
+    width: 300px;
+    height: 400px;
+    overflow-y: scroll;
+    color: white !important;
+}
+
+.select-cards .card {
+    margin: 10px 0px !important;
+    width: 280px !important;
+}
+
+
 
