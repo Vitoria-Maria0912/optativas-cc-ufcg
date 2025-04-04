@@ -167,8 +167,7 @@
     width: 280px !important;
 }
 
-/* .planning .period {
-    justify-content: center !important;
-    min-width: 240px;
-} */
+.planning .period {
+    min-height: 700px;
+}
 

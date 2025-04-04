@@ -18,6 +18,7 @@ export interface PlanningServiceInterface {
     createPlanning(planningData: any): Promise<PlanningDTO>;
     updatePlanning(planningData: any): Promise<PlanningDTO>;
     getPlanning(): Promise<PlanningDTO[]>;
+    getDefaultPlanning(email: String): Promise<PlanningDTO[]>;
     getOnePlanning(id: number): Promise<PlanningDTO>;
 }
 
@@ -172,7 +173,21 @@ export class PlanningService implements PlanningServiceInterface {
     
             return new PlanningDTO(id, planning.userId, planning.name, periods);
         });
-    } 
+    }
+    
+    async getDefaultPlanning(email: string): Promise<PlanningDTO[]> {
+        const plannings = await this.planningRepository.getAllByEmail(email);
+        
+        return plannings.map(planning => {
+            const id = planning.id ?? 0; 
+            const periods = planning.periods?.map(period => {
+                const periodId = period.id ?? 0; 
+                return new PeriodDTO(periodId, period.name, period.planningId ?? 0, period.disciplines || []);
+            }) ?? []; 
+    
+            return new PlanningDTO(id, planning.userId, planning.name, periods);
+        });
+    }
     
     async getOnePlanning(id: number): Promise<PlanningDTO> {
         const planning = await this.planningRepository.getOneById(id);

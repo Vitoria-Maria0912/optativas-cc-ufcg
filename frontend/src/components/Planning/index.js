@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import "./style.css"
 import Card from "../Card";
 import DropZone from "../DropZone";
@@ -6,24 +6,45 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Modal, Space } from "antd";
 import Search from "antd/es/input/Search";
 import Select from "../Select";
+import { getDefaultPlanning } from "../../routes/LoginRoutes";
+
+import {defaultPlanning} from "../util"
 
 const Planning = ({ }) => {
+
+    const [cards, setCards] = useState(defaultPlanning)
+
+    useEffect(() => {
+        const getData = async () => {
+            const response = await getDefaultPlanning();
+            try {
+                const planning = response.data.planning
+                if (planning.length > 0){
+                    const defaultPlanning = planning[0]
+                    const data = {}
+                    defaultPlanning.periods.forEach(period => {
+                        const disciplinas = period.disciplines.map(discipline => discipline.acronym)
+                        
+                        data[period.name] = disciplinas 
+                    })
+                    console.log(data)
+                    setCards(data)
+                }
+            } catch (e){
+                console.log(e)
+            }
+        }
+
+        getData()
+
+    },[])
+
+    
     const onSearch = (value, _e, info) =>
         console.log(info === null || info === void 0 ? void 0 : info.source, value);
 
     const [currentPeriod, setCurrentPeriod] = useState(null)
 
-    const [cards, setCards] = useState({
-        1: ["P1", "LP1", "FMCC1", "IC", "Direito"],
-        2: ["P2", "LP2", "FMCC2", "C1", "Economia"],
-        3: ["C2", "EDA", "LEDA", "Lógica", "Linear"],
-        4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
-        5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
-        6: ["AS", "ATAL", "Concorrente", "Optativa", "Optativa"],
-        7: ["Compila", "Metodologia", "Optativa", "Optativa", "Optativa"],
-        8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
-        9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
-    })
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
         setIsModalOpen(true);

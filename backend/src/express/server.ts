@@ -9,6 +9,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+
 
 const app = express();
 
@@ -83,6 +85,31 @@ app.get("/planning", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.getPlanning(req, res)
 ));
+
+interface AuthenticatedRequest extends Request {
+    user?: { email: string, role?: string };
+}
+
+app.get("/planning/default", asyncHandler(
+    (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ error: "Token não fornecido" });
+        }
+
+        try {
+            const token = authHeader.split(" ")[1];
+            const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+            
+            req.user = decoded;
+
+            return planningController.getDefaultPlanning(req, res);
+        } catch (error: any) {
+            return res.status(401).json({ error: "Token inválido ou expirado." });
+        }
+    }
+));
+
 app.get("/planning/:id", asyncHandler(
     (req: Request, res: Response, next: NextFunction) => 
         planningController.getOnePlanning(req, res)
