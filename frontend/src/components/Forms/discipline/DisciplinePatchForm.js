@@ -27,7 +27,6 @@ const DisciplinePatchForm = () => {
       
     } catch (error) { 
       const data = error.response.data;
-      console.log(data)
       alert("Error: " + (data.error ?? data.message ?? "Server is not running!")); 
     }
   }  
@@ -190,7 +189,7 @@ const DisciplinePatchForm = () => {
             </div>
           ))}
         </div>
-        <button type="submit">Save discipline</button>
+        <button style={{ margin: 17, display: 'flex', marginTop: 100, justifyContent: 'center' }} type="submit">Save discipline</button>
       </form>
     </div>
 

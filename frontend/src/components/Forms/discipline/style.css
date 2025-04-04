@@ -89,7 +89,7 @@
     position: absolute;
     margin-left: 55%;
     width: 300px;
-    height: 44%;
+    height: 322px;
     top: 13.8%;
     border: 1px solid #ccc;
     padding: 5px;
@@ -110,7 +110,9 @@
 }
 
 .create-discipline-form .pre-req, .post-req {
-    height: 0% !important;
+    /* height: 0% !important; */
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
 }
 
 .create-discipline-form .pre-req input,
