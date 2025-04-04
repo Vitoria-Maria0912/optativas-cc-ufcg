@@ -86,13 +86,14 @@
 .create-discipline-form .form-group-2 {
     display: grid;
     grid-template-rows: 0fr 0fr;
-    background-color: rgb(255, 255, 255);
+    background-color:#343535;
     position: absolute;
     margin-left: 55%;
     width: 300px;
-    height: 42%;
+    height: 44%;
     top: 13.8%;
-    border: 2px solid #ccc;
+    border: 1px solid #ccc;
+    padding: 5px;
     border-radius: 4px;
 }
 
