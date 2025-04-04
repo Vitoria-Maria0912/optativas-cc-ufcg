@@ -1,5 +1,4 @@
 .flowchart {
-    zoom: 59%;
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
@@ -7,12 +6,23 @@
     overflow-y: hidden;
 }
 
-.period {
+.flowchart .period {
+    width: 195px;
     margin: 20px 0px;
     margin-right: 10px;
     display: inline-block;
     border: 1px solid #ebebeb;
     padding: 5px;
+}
+
+.flowchart .card {
+    width: 175px;
+    height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #d9643a;
+    cursor: pointer;
 }
 
 .card .title {
