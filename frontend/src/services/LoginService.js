@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import { Route, Routes } from 'react-router-dom';
-import CreateLogin from '../components/forms/login/LoginForm';
+import CreateLogin from '../components/Forms/login/LoginForm';
 
 const LoginService = () => {
 

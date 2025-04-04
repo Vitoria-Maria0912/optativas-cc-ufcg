@@ -62,7 +62,7 @@
     justify-content: center;
     position: relative;
     bottom: 44px;
-    right: 48%;
+    right: 48.8%;
     cursor: pointer; 
     width: 0 !important;
     height: 0 !important;
@@ -106,9 +106,7 @@
 }
 
 .create-discipline-form .pre-req-button, .post-req-button {
-    position: relative;
-    top: 70%;
-    right: 48.5%;
+    margin: 20px 0 0 16px !important;
 }
 
 .create-discipline-form .pre-req, .post-req {
@@ -120,5 +118,4 @@
     width: 48.8%;
     padding-block: 4px;
     margin-bottom: 0 !important;
-    
 }
