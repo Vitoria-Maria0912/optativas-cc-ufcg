@@ -22,7 +22,7 @@ const DisciplineCreateForm = () => {
     try {
       const response = await createDisciplineRoute(form);
       alert(response.data.message);
-    } catch (error) { alert("Error: " + (error.response?.data?.error ?? "Server is not running!")); }
+    } catch (error) { alert("Error: " + (error.response.data.message ?? "Server is not running!")); }
   };
 
   const handleChange = (e) => {
@@ -83,56 +83,57 @@ const DisciplineCreateForm = () => {
         </div>
       </div>
 
-      <div id='available-label'>
-        <label>
-          Disponível: {" "}
-          <select name="available" value={form.available} onChange={handleChange}>
-            <option value="YES">Sim</option>
-            <option value="NO">Não</option>
-          </select>
-        </label>
-      </div>
+      <div className="form-group-2">
+          
+        <div id='available-label'>
+          <label>
+            Disponível: {" "}
+            <select name="available" value={form.available} onChange={handleChange}>
+              <option value="YES">Sim</option>
+              <option value="NO">Não</option>
+            </select>
+          </label>
+        </div>
 
-      <div id='type-label'>
-        <label>
-          Tipo: {" "} 
-          <select name="type" value={form.type} onChange={handleChange}>
-            <option value="OBRIGATORY">Obrigatória</option>
-            <option value="OPTATIVE">Optativa</option>
-          </select>
-        </label>
-      </div>
+        <div id='type-label'>
+          <label>
+            Tipo: {" "} 
+            <select name="type" value={form.type} onChange={handleChange}>
+              <option value="OBRIGATORY">Obrigatória</option>
+              <option value="OPTATIVE">Optativa</option>
+            </select>
+          </label>
+        </div>
 
-      <label id='professor-label'>
-        Professor: {" "}
-        <select name="professor" value={form.professor} onChange={(e) => { handleChange(e);
-            setShowProfessor(e.target.value !== "Undefined");
-          }}>
-        <option value="Undefined">Indefinido</option>
-        <option value="">Outro</option>
-        </select>
-        {showProfessor && ( <input name="professor" placeholder="professor" value={form.professor} 
-                          onChange={(e) => {setForm({ ...form, professor: e.target.value })}} /> )}
-      </label>
-
-      <label id='schedule-label'>
-        Horário: {" "} 
-        <select style={{ display: 'flex'}} name="schedule" value={form.schedule} onChange={(e) => {handleChange(e); 
-           setShowSchedule(e.target.value !== "Undefined")
-        }}>
+        <label id='professor-label'>
+          Professor: {" "}
+          <select name="professor" onChange={(e) => { handleChange(e);
+                                                      setShowProfessor(e.target.value !== "Undefined");
+            }}>
           <option value="Undefined">Indefinido</option>
-          <option value="">Outro</option>
-        </select>
-        {showSchedule && ( <input name="schedule" placeholder="schedule" value={form.schedule} 
-                          onChange={(e) => {setForm({ ...form, schedule: e.target.value })}} /> )}
-      </label>
+          <option value=''>Outro</option>
+          </select>
+          {showProfessor && ( <input name="professor" placeholder="professor" value={form.professor} 
+                            onChange={(e) => {setForm({ ...form, professor: e.target.value })}} /> )}
+        </label>
 
-      
+        <label id='schedule-label'>
+          Horário: {" "} 
+          <select name="schedule" onChange={(e) => { handleChange(e); 
+                                                     setShowSchedule(e.target.value !== "Undefined")
+          }}>
+            <option value="Undefined">Indefinido</option>
+            <option value="">Outro</option>
+          </select>
+          {showSchedule && ( <input name="schedule" placeholder="schedule" value={form.schedule} 
+                            onChange={(e) => {setForm({ ...form, schedule: e.target.value })}} /> )}
+        </label>
+      </div>
 
-      <button className='pre-req-div' type="button" style={{paddingLeft: '0px', paddingRight: '0px'}} onClick={addPreRequisiteField}><PlusCircleOutlined/> Pré requisitos</button>
+      <button className='pre-req-button' type="button" onClick={addPreRequisiteField}><PlusCircleOutlined/> Pré requisitos</button>
 
       <div style={{ display: showPreRequisites ? 'block' : 'none'}}> {form.pre_requisites.map((preReq, index) => (
-        <div key={index}>
+        <div className='pre-req' key={index}>
             <input
               type="text"
               placeholder="Pre requisite"
@@ -147,10 +148,10 @@ const DisciplineCreateForm = () => {
         ))}
       </div>
 
-      <button className='post-req-div' type="button" style={{paddingLeft: '0px', paddingRight: '0px'}} onClick={addPostRequisiteField}><PlusCircleOutlined/> Pós requisitos</button>
+      <button className='post-req-button' type="button" onClick={addPostRequisiteField}><PlusCircleOutlined/> Pós requisitos</button>
 
-      <div style={{ display: showPostRequisites ? 'block' : 'none' }}> {form.post_requisites.map((postReq, index) => (
-          <div key={index}>
+      <div style={{ display: showPostRequisites ? 'block' : 'none'}}> {form.post_requisites.map((postReq, index) => (
+          <div className="post-req" key={index}>
             <input
               type="text"
               placeholder="Post requisite"
@@ -164,7 +165,6 @@ const DisciplineCreateForm = () => {
           </div>
         ))}
       </div>
-        
       <button type="submit">Save discipline</button>
     </form>
   );

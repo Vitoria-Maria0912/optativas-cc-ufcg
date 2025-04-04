@@ -11,22 +11,12 @@
     color: #b45430;
 }
 
-.create-discipline-form select {
-    min-width: 10%;
-    padding: 10px;
-    margin: 0 50% 15px 50%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #d9643a;
-}
-
 .create-discipline-form label select {
     color: #ffffff;
     background-color: #d9643a !important;
 }
 
 .create-discipline-form button {
-    /* width: 50% !important; */
     margin: 20px 40% 0 50%;
     padding: 10px;
     width: 130px;
@@ -41,45 +31,19 @@
     background-color: #b45430;
 }
 
-.create-discipline-form #available-label {
-    position: absolute;
-    top: 15.7%;
-    left: 60.2%;
-}
-
-.create-discipline-form #type-label {
-    position: absolute;
-    top: 15.7%;
-    left: 70%;
-}
-
-.create-discipline-form #professor-label {
-    position: absolute;
-    top: 36.2%;
-    left: 12%;
-    align-items: center;
-}
-
+.create-discipline-form #schedule-label input,
 .create-discipline-form #professor-label input { 
-    width: 300px; 
-    margin-top: 40px; 
-}
-
-.create-discipline-form #schedule-label {
-    position: absolute;
-    top: 55%;
-    left: 12%;
-}
-
-.create-discipline-form #schedule-label input { 
-    width: 300px; 
-    margin-top: 40px; 
+    margin: 0 0 0 0 !important;
+    width: 100%; 
+    height: 25px;
+    left: 90%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .create-discipline-form #description-label textarea {
     resize: none;
     margin: 0 50% 0px 30%;
-    width: 50%;
     padding: 10px;
     color: #d9643a
 }
@@ -93,32 +57,68 @@
     color: rgb(255, 255, 255);
 }
 
-.remove-req {
+.create-discipline-form .remove-req {
     display: flex;
     justify-content: center;
     position: relative;
-    bottom: 40px;
+    bottom: 44px;
     right: 48%;
-    cursor: pointer;  /* Mantém a interação de clique */
+    cursor: pointer; 
     width: 0 !important;
     height: 0 !important;
     align-items: center;
 }
 
-.trash-icon {
+.create-discipline-form .trash-icon {
+    position: absolute;
     color: rgb(0, 0, 0); 
     opacity: 50%;
     font-size: 1px; 
 }
 
-
+.create-discipline-form .form-group { width: 600px; }
+.create-discipline-form .form-group input, textarea { width: 100%; }
 .create-discipline-form .form-group label, input, textarea {
     display: flex;
     margin: 15px 0 0 15px !important;
 }
 
-.create-discipline-form .pre-req-div, .post-req-div {
+.create-discipline-form .form-group-2 {
+    display: grid;
+    grid-template-rows: 0fr 0fr;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    margin-left: 55%;
+    width: 300px;
+    height: 42%;
+    top: 13.8%;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.create-discipline-form .form-group-2 label { margin: 0 0 0 0; }
+
+.create-discipline-form .form-group-2 select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.create-discipline-form .pre-req-button, .post-req-button {
     position: relative;
     top: 70%;
     right: 48.5%;
+}
+
+.create-discipline-form .pre-req, .post-req {
+    height: 0% !important;
+}
+
+.create-discipline-form .pre-req input,
+.create-discipline-form .post-req input {
+    width: 48.8%;
+    padding-block: 4px;
+    margin-bottom: 0 !important;
+    
 }

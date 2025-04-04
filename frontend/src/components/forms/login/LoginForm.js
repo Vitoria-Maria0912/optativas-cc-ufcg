@@ -16,11 +16,12 @@ const CreateLogin = () => {
       
         try {
           const response = await createLoginRoute({ email, password });
+          localStorage.setItem("token", response.data.token);
           alert(response.data.message);
           // navigate to planning page 
           navigate('/planning');
 
-        } catch (error) { alert("Error: " + (error.response?.data?.message ?? "Server is not running!")); }
+        } catch (error) { alert("Error: " + (error.response.data.message ?? "Server is not running!")); }
     };
       
     return (
