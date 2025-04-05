@@ -14,9 +14,9 @@ const InputItem = ({ inputType, placeholder, icon, data, setData }) => (
     </div>
 );
 
-const Input = ({ label, inputType, placeholder, icon, data, setData }) => {
-    const shouldRenderTwoInputs = inputType === "password";
-    
+const Input = ({ label, inputType, placeholder, icon, data, setData, duplicatedPass=true }) => {
+    const shouldRenderTwoInputs = (duplicatedPass && inputType === "password");
+
     let first, second, setFirst, setSecond;
     if (Array.isArray(data)) {
         [first, second] = data

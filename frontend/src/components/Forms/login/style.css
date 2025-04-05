@@ -1,4 +1,4 @@
-.login-form label {
+/* .login-form label {
     margin: 0 50% 0 50%;
     margin-bottom: 0;
     padding: 15px;
@@ -32,4 +32,40 @@
     color: #aaa;
     left: 30.6%;
     top: 18px;
+} */
+
+.login-wrapper {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
 }
+
+.login {
+    padding-top: 50px;
+}
+
+.login h1{
+    font-size: 50px;
+}
+
+.login button {
+    margin-top: 20px;
+    width: 100%;
+    height: 50px;
+    background-color: #D9643A;
+    color: #E5E5E5;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.input-error {
+    color: rgb(221, 1, 1);
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+}
+
+

@@ -5,6 +5,7 @@ import './style.css';
 
 import Input from "../../Input"
 import { useNotificationApi } from "../../Alert"
+import { createLoginRoute } from '../../../routes/LoginRoutes';
 
 const Register = () => {
     const notification = useNotificationApi();
@@ -31,7 +32,7 @@ const Register = () => {
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            setError("O e-mail informado não é válido.");
+            setError("O e-mail informado não é válido");
             return;
         }
 
@@ -42,13 +43,13 @@ const Register = () => {
 
         try {
             const response = await createUserRoute({ name, email, password });
+            await createLoginRoute({ email, password });
             notification.success({
                 message: 'Sucesso!',
                 description: response.data.message,
             });
             resetValues()
         } catch (error) {
-            console.log(error)
             const data = error.response.data;
             notification.error({
                 message: "Error!",
