@@ -1,6 +1,6 @@
 .ant-dropdown-trigger {
     display: flex !important;
-    width: 200px !important;
+    width: 250px !important;
     height: 50px !important;
     padding: 0px 20px !important;
     color: white !important;
@@ -12,17 +12,17 @@
 .ant-dropdown-trigger .ant-space {
     display: flex;
     justify-content: space-between;
-    width: 200px !important;
+    width: 250px !important;
     height: 50px !important;   
 }
 
 .ant-dropdown-menu-item {
+    max-width: 250px !important;
     margin: 3px 0px !important;
     background-color: #D9D9D9 !important;
-    width: 100% !important;
     height: 30px !important;
     border-radius: 0px !important;
-    color: rgb(28, 28, 28) !important;
+    color: gray !important;
 }
 
 .ant-dropdown-menu-item:hover {

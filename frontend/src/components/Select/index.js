@@ -3,38 +3,11 @@ import { CaretDownOutlined, DownOutlined, SmileOutlined } from '@ant-design/icon
 import { Dropdown, Space } from 'antd';
 import "./style.css"
 
-const items = [
-  {
-    key: '1',
-    label: (
-      <a rel="noopener noreferrer" href="#">
-        Planejamento 1
-      </a>
-    ),
-  },
-  {
-    key: '2',
-    label: (
-      <a rel="noopener noreferrer" href="#">
-        Planejamento 2
-      </a>
-    ),
-  },
-  {
-    key: '3',
-    label: (
-      <a rel="noopener noreferrer" href="#">
-        Planejamento 3
-      </a>
-    ),
-  },
-];
-
-const Select = () => (
-  <Dropdown menu={{ items }}>
+const Select = ({ items }) => (
+  <Dropdown menu={ {items: items} }>
     <a onClick={e => e.preventDefault()}>
       <Space>
-        Planejamento 1
+        {items.find(item => item.key == "0")["name"]}
         <CaretDownOutlined />
       </Space>
     </a>

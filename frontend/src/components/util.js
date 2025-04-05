@@ -9,3 +9,15 @@ export const defaultPlanning = {
     8: ["P1", "Português", "Optativa", "Optativa", "Optativa"],
     9: ["P2", "TCC", "Optativa", "Optativa", "Optativa"],
 }
+
+export const defaultSelect = [
+    {
+        name: "Planejamento padrão",
+        key: '0',
+        label: (
+            <a rel="noopener noreferrer" href="#">
+                Planejamento padrão
+            </a>
+        ),
+    }
+];

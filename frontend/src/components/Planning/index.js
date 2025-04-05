@@ -8,38 +8,57 @@ import Search from "antd/es/input/Search";
 import Select from "../Select";
 import { getDefaultPlanning } from "../../routes/LoginRoutes";
 
-import {defaultPlanning} from "../util"
+import { defaultPlanning, defaultSelect } from "../util"
 
 const Planning = ({ }) => {
 
     const [cards, setCards] = useState(defaultPlanning)
+    const [select, setSelect] = useState(defaultSelect)
+
+    const updateSelect = (planning) => {
+        const newSelect = planning.map(planning => {
+            return {
+                "key": planning.id,
+                "name": planning.name,
+                "label": (
+                    <a rel="noopener noreferrer" href="#">
+                        {planning.name}
+                    </a>
+                )
+            }
+        })
+        setSelect(_ => [
+            ...defaultSelect,
+            ...newSelect
+        ])
+    }
 
     useEffect(() => {
         const getData = async () => {
             const response = await getDefaultPlanning();
             try {
                 const planning = response.data.planning
-                if (planning.length > 0){
+                if (planning.length > 0) {
                     const defaultPlanning = planning[0]
                     const data = {}
                     defaultPlanning.periods.forEach(period => {
                         const disciplinas = period.disciplines.map(discipline => discipline.acronym)
-                        
-                        data[period.name] = disciplinas 
+
+                        data[period.name] = disciplinas
                     })
-                    console.log(data)
                     setCards(data)
+                    updateSelect(planning)
                 }
-            } catch (e){
+            } catch (e) {
                 console.log(e)
             }
         }
 
         getData()
 
-    },[])
+    }, [])
 
-    
+
     const onSearch = (value, _e, info) =>
         console.log(info === null || info === void 0 ? void 0 : info.source, value);
 
@@ -107,7 +126,7 @@ const Planning = ({ }) => {
                     <Breadcrumb.Item>Planejamento</Breadcrumb.Item>
                 </Breadcrumb>
                 <div className="planning-header">
-                    <Select/>
+                    <Select items={select} />
                 </div>
             </div>
             <div className="planning">
