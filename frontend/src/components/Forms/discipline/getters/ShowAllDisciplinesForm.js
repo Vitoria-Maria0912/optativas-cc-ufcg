@@ -32,8 +32,7 @@ const ShowAllDisciplinesForm =  () => {
     if (window.confirm(`Tem certeza que deseja deletar ${ acronym }?`)) {
       try {
         const response = await deleteDisciplineRoute(id);
-        alert(response.message);
-        fetchDisciplines();
+        alert(response.data.message);
       } catch (error) { 
         const data = error.response.data;
         alert("Error: " + (data.error ?? data.message ?? "Server is not running!")); 
