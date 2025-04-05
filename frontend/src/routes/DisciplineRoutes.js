@@ -11,5 +11,5 @@ export const putDisciplineRoute = async (id, data) => axios.put(`${API_URL_PROTE
 export const getOneDisciplineByIDRoute = async (id) => axios.get(`${API_URL}/getByID/${id}`);
 export const getOneDisciplineByNameRoute = async (name) => axios.get(`${API_URL}/getByName/${encodeURIComponent(name)}`);
 export const getOneDisciplineByAcronymRoute = async (acronym) => axios.get(`${API_URL}/getByAcronym/${encodeURIComponent(acronym)}`);
-export const getAllDisciplinesRoute = async () => axios.get(API_URL);
+export const getAllDisciplinesRoute = async () => axios.get(`${API_URL}?page=1&limit=1000`);
 

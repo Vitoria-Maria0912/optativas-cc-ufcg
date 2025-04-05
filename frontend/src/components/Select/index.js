@@ -3,11 +3,11 @@ import { CaretDownOutlined, DownOutlined, SmileOutlined } from '@ant-design/icon
 import { Dropdown, Space } from 'antd';
 import "./style.css"
 
-const Select = ({ items }) => (
+const Select = ({ items, current }) => (
   <Dropdown menu={ {items: items} }>
     <a onClick={e => e.preventDefault()}>
       <Space>
-        {items.find(item => item.key == "0")["name"]}
+        {current}
         <CaretDownOutlined />
       </Space>
     </a>
