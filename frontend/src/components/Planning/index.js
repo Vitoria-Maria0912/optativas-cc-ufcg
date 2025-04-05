@@ -24,6 +24,7 @@ const Planning = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const updateSelect = (plannings) => {
+        console.log(plannings)
         const items = plannings.map((planning) => ({
             key: planning.id,
             name: planning.name,
@@ -164,16 +165,18 @@ const Planning = () => {
 
     const handleCreatePlanning = async () => {
         try {
+            const maxId = plannings.reduce((max, p) => Math.max(max, p.id), 0);
             const newPlanning = {
-                name: `${currentPlanning.name} (cópia)`,
+                name: `Planning ${maxId + 1}`,
                 periods: currentPlanning.periods.map((period, i) => ({
                     name: `${i + 1}`, 
                     disciplines: period.disciplines.map(d => d.id),
                 })),
             };
 
+            
             const response = await createPlanning(newPlanning);
-            const createdPlanning = response.data.planning;
+            const createdPlanning = response.data.createdPlanning;
 
             const updatedPlannings = [...plannings, createdPlanning];
             setPlannings(updatedPlannings);
@@ -185,6 +188,7 @@ const Planning = () => {
                 description: "Novo planejamento criado com sucesso.",
             });
         } catch (e) {
+            console.log(e)
             console.error(e);
             notification.error({
                 message: "Erro!",
