@@ -7,7 +7,7 @@
 }
 
 .login-form input {
-    margin: 0 50% 15px 30%;
+    margin: 0 50% 15px 30% !important;
     width: 50%;
     padding-left: 30px;
     color: #d9643a;

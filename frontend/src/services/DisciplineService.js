@@ -1,7 +1,10 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import { Outlet, Route, Routes } from 'react-router-dom';
-import DisciplineCreateForm from '../components/forms/discipline/DisciplineCreateForm.js';
+import DisciplineCreateForm from '../components/Forms/discipline/DisciplineCreateForm.js';
+import DisciplinePatchForm from '../components/Forms/discipline/DisciplinePatchForm.js';
+import ShowOneDiscipline from '../components/Forms/discipline/ShowOneDisciplineForm.js';
+import ShowAllDisciplinesForm from '../components/Forms/discipline/ShowAllDisciplinesForm.js';
 
 const DisciplineService = () => {
 
@@ -14,9 +17,9 @@ const DisciplineService = () => {
         <Routes>
             <Route path="/create" element={ <DisciplineCreateForm/> }/> 
             <Route path="/delete" element={ <></> }/>
-            <Route path="/update" element={ <></> }/> 
-            <Route path="/getOne" element={ <></> }/>
-            <Route path="/getAll" element={ <></> }/>
+            <Route path="/update" element={ <DisciplinePatchForm/> }/> 
+            <Route path="/getOne" element={ <ShowOneDiscipline/> }/>
+            <Route path="/getAll" element={ <ShowAllDisciplinesForm/> }/>
         </Routes>
         <Outlet/>
     </div>

@@ -14,7 +14,10 @@ const Register = () => {
             const response = await createUserRoute({ name, email, role });
             alert(response.data.message);
             
-        } catch (error) { alert("Error: " + (error.response.data.message ?? "Server is not running!")); }
+        } catch (error) { 
+            const data = error.response.data;
+            alert("Error: " + (data.error ?? data.message ?? "Server is not running!")); 
+        }
     }
 
     return (

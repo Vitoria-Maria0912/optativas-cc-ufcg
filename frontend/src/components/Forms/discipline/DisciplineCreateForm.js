@@ -22,7 +22,10 @@ const DisciplineCreateForm = () => {
     try {
       const response = await createDisciplineRoute(form);
       alert(response.data.message);
-    } catch (error) { alert("Error: " + (error.response.data.message ?? "Server is not running!")); }
+    } catch (error) { 
+      const data = error.response.data;
+      alert("Error: " + (data.error ?? data.message ?? "Server is not running!")); 
+    }
   };
 
   const handleChange = (e) => {
@@ -165,7 +168,7 @@ const DisciplineCreateForm = () => {
           </div>
         ))}
       </div>
-      <button type="submit">Save discipline</button>
+      <button style={{ margin: 17 }} type="submit">Save discipline</button>
     </form>
   );
 };

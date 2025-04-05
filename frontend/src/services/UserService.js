@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import { Outlet, Route, Routes } from 'react-router-dom';
-import Register from '../components/forms/user/UserCreateForm';
+import Register from '../components/Forms/user/UserCreateForm';
 
 const UserService = () => {
 
