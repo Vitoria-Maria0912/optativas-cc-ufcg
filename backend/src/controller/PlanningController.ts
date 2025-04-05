@@ -10,11 +10,13 @@ export class PlanningController {
 
     private planningService: PlanningServiceInterface = new PlanningService();
 
-    async createPlanning(request: Request, response: Response): Promise<Response>  {
+    async createPlanning(request: AuthenticatedRequest, response: Response): Promise<Response>  {
         var codeResponse: number;
         var responseBody: object;
         try {
             const planning = request.body;
+            const userEmail = request.user?.email;
+            planning["userEmail"] = userEmail;
             const createdPlanning = await this.planningService.createPlanning(planning);
             responseBody = { message: "Planning created!", createdPlanning};
             codeResponse = 201;

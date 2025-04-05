@@ -8,12 +8,43 @@ import { AuthenticationError, DisciplineAlreadyRegisteredError, InvalidCredentia
 import { Discipline } from '../model/Discipline';
 import { isBoolean } from 'class-validator';
 import { DisciplineService } from '../service/DisciplineService';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 const stringOnlyNumbers = new RegExp('^(?!\\d+$).+');
 const stringNumbersAndLetters = new RegExp('^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$')
 
 const prismaClient = new PrismaClient();
 export default prismaClient;
+
+export const verifyTokenMiddleware: RequestHandler = (
+    req,
+    res,
+    next
+) => {
+    const authHeader = req.headers.authorization;
+
+    // console.log(req)
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ message: "Token não fornecido" });
+        return;
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+        (req as AuthenticatedRequest).user = decoded as any;
+        next();
+    } catch (err) {
+        res.status(401).json({ message: "Token inválido" });
+    }
+};
+
+
+export interface AuthenticatedRequest extends Request {
+    user?: { email: string, role?: string };
+}
 
 export const comparePassword = async (password: string, hashPassword: string): Promise<boolean> => {
     return await bcrypt.compare(password, hashPassword);
@@ -43,8 +74,8 @@ export const validateUserExistence = async (user: User) => {
 
     const userService = new UserService();
     let existingUser = null;
-    try { existingUser = await userService.getUserByEmail(user.email); } catch (error) {}
-    if (existingUser) { throw new UserAlreadyExistsError(`This email '${ user.email }' is already in use!`); }
+    try { existingUser = await userService.getUserByEmail(user.email); } catch (error) { }
+    if (existingUser) { throw new UserAlreadyExistsError(`This email '${user.email}' is already in use!`); }
 }
 
 export const validateUserFields = async (user: User): Promise<boolean> => {
@@ -60,9 +91,9 @@ export const validateUserFields = async (user: User): Promise<boolean> => {
     if (user.name.length > 50) { throw new InvalidCredentialsError('Name is too long, should be at most 50 characters!'); }
 
     if (!user.email) { throw new InvalidCredentialsError('Email is required!'); }
-    
+
     if (!user.email.includes('@')) { throw new InvalidCredentialsError(`This email '${user.email}' is invalid, should be like 'name@example.com'!`); }
-    
+
     if (!stringOnlyNumbers.test(user.email)) { throw new InvalidCredentialsError('Email cannot contains only numbers!'); }
 
     if (user.email.length < 15) { throw new InvalidCredentialsError('Email is too short, should be at least 15 characters!'); }
@@ -97,9 +128,9 @@ export const validateDisciplineExistence = async (disciplineName: string): Promi
 
     let existingDisciplineName = null;
 
-    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(disciplineName); } catch (error) {}
-    
-    if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ disciplineName }' already exists!`); }
+    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(disciplineName); } catch (error) { }
+
+    if (existingDisciplineName) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${disciplineName}' already exists!`); }
     return true;
 }
 
@@ -108,7 +139,7 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
     const disciplineService = new DisciplineService();
     let existingDisciplineName = null;
 
-    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) {}
+    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) { }
 
     if (!discipline.name) { throw new InvalidFieldError('Discipline name is required!'); }
 
@@ -123,7 +154,7 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
     if (!stringOnlyNumbers.test(discipline.acronym)) { throw new InvalidFieldError(`Discipline's acronym '${discipline.acronym}' is invalid, should not contains only numbers!`); }
 
     if (discipline.professor && !stringOnlyNumbers.test(discipline.professor)) { throw new InvalidFieldError(`Discipline's professor '${discipline.professor}' is invalid, should not contains only numbers!`); }
-    
+
     if (discipline.description && !stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
 
     if (discipline.description && !stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
@@ -134,7 +165,7 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
         if (!disciplineName) { throw new InvalidFieldError('A pre requisite cannot be an empty word!'); }
         else if (!existingDisciplineName) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
-    
+
     for (const disciplineName of discipline.post_requisites || []) {
         if (!disciplineName) { throw new InvalidFieldError('A post requisite cannot be an empty word!'); }
         else if (!existingDisciplineName) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
@@ -144,17 +175,17 @@ export const validateDisciplineFields = async (discipline: Discipline): Promise<
 }
 
 export const validateDisciplineFieldsForUpdate = async (updates: Partial<Omit<Discipline, 'id'>>): Promise<boolean> => {
-    if (updates.name && (await validateDisciplineExistence(updates.name))){ throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${ updates.name }' already exists!`); }
+    if (updates.name && (await validateDisciplineExistence(updates.name))) { throw new DisciplineAlreadyRegisteredError(`A discipline with this name '${updates.name}' already exists!`); }
     if (updates.available !== undefined && updates.available === null) { throw new InvalidFieldError("Discipline's availability must be a boolean!"); }
     if (updates.professor !== undefined && updates.professor.trim() === "") { throw new InvalidFieldError("Professor name cannot be empty!"); }
     if (updates.schedule !== undefined && updates.schedule.trim() === "") { throw new InvalidFieldError("Schedule cannot be empty!"); }
     if (updates.description !== undefined && updates.description.trim() === "") { throw new InvalidFieldError("Description cannot be empty!"); }
     if (updates.type !== undefined && updates.type.trim() === "") { throw new InvalidFieldError("Type cannot be empty!"); }
-    
+
     for (const disciplineName of updates.pre_requisites || []) {
         if ((await validateDisciplineExistence(disciplineName))) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
-    
+
     for (const disciplineName of updates.post_requisites || []) {
         if ((await validateDisciplineExistence(disciplineName))) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
