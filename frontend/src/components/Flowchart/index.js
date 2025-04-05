@@ -27,8 +27,8 @@ const Flowchart = () => {
                             <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
                         </React.Fragment>
                 ))}
-            </div>
-        ))}
+                </div>
+            ))}
         </div>
     )
 }

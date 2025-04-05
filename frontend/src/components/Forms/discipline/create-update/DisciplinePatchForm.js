@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Trash2 } from 'lucide-react';
-import { getOneDisciplineByAcronymRoute, getOneDisciplineByNameRoute, patchDisciplineRoute } from '../../../routes/DisciplineRoutes';
+import { getOneDisciplineByAcronymRoute, getOneDisciplineByNameRoute, patchDisciplineRoute } from '../../../../routes/DisciplineRoutes';
 
 const DisciplinePatchForm = () => {
 
   const [form, setForm] = useState({
+    id: 0,
     type: 'OBRIGATORY',
     name: '',
     acronym: '',
@@ -23,6 +24,7 @@ const DisciplinePatchForm = () => {
   const getOneDiscipline = async (input) => { 
     try {
       const discipline = (await getDisciplineByAcronym(input.target.value)) ?? (await getDisciplineByName(input.target.value));
+      alert(discipline.message);
       setForm(discipline);
       
     } catch (error) { 
@@ -34,7 +36,7 @@ const DisciplinePatchForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = (await patchDisciplineRoute(form)).data;
+      const response = (await patchDisciplineRoute(form.id)).data;
       alert(response.message);
     } catch (error) { 
       const data = error.response.data;

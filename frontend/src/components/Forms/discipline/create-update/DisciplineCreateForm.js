@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createDisciplineRoute } from '../../../routes/DisciplineRoutes';
+import { createDisciplineRoute } from '../../../../routes/DisciplineRoutes';
 import { PlusCircleOutlined } from '@ant-design/icons';
 import { Trash2 } from 'lucide-react';
 import './style.css'
