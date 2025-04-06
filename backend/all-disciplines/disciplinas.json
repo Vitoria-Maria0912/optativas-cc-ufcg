@@ -1,0 +1,426 @@
+[
+  {
+    "id": 0,
+    "name": "DIREITO E CIDADANIA",
+    "type": "OBRIGATORY",
+    "acronym": "D&C",
+    "available": true,
+    "description": "DIREITO E CIDADANIA",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 1,
+    "name": "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO I",
+    "type": "OBRIGATORY",
+    "acronym": "FMCC1",
+    "available": true,
+    "description": "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO I",
+    "pre_requisites": [],
+    "post_requisites": [
+      "CÁLCULO DIFERENCIAL E INTEGRAL I",
+      "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO II",
+      "TEORIA DOS GRAFOS"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "INTRODUÇÃO À COMPUTAÇÃO",
+    "type": "OBRIGATORY",
+    "acronym": "IC",
+    "available": true,
+    "description": "INTRODUÇÃO À COMPUTAÇÃO",
+    "pre_requisites": [
+    ],
+    "post_requisites": [
+      "ORGANIZAÇÃO E ARQUIT. DE COMPUTADORES",
+      "REDES DE COMPUTADORES"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "LABORATÓRIO DE PROGRAMAÇÃO I",
+    "type": "OBRIGATORY",
+    "acronym": "LP1",
+    "available": true,
+    "description": "LABORATÓRIO DE PROGRAMAÇÃO I",
+    "pre_requisites": [
+    ],
+    "post_requisites": [
+      "LABORATÓRIO DE PROGRAMAÇÃO II",
+      "PROGRAMAÇÃO II"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "PROGRAMAÇÃO I",
+    "type": "OBRIGATORY",
+    "acronym": "P1",
+    "available": true,
+    "description": "PROGRAMAÇÃO I",
+    "pre_requisites": [],
+    "post_requisites": [
+      "LABORATÓRIO DE PROGRAMAÇÃO II",
+      "PROGRAMAÇÃO II"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "CÁLCULO DIFERENCIAL E INTEGRAL I",
+    "type": "OBRIGATORY",
+    "acronym": "C1",
+    "available": true,
+    "description": "CÁLCULO DIFERENCIAL E INTEGRAL I",
+    "pre_requisites": [
+      "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO I"
+    ],
+    "post_requisites": [
+      "CÁLCULO DIFERENCIAL E INTEGRAL II"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "ECONOMIA",
+    "type": "OBRIGATORY",
+    "acronym": "EC",
+    "available": true,
+    "description": "ECONOMIA",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 7,
+    "name": "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO II",
+    "type": "OBRIGATORY",
+    "acronym": "FMCC2",
+    "available": true,
+    "description": "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO II",
+    "pre_requisites": [
+      "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO I"
+    ],
+    "post_requisites": [
+      "ÁLGEBRA LINEAR I",
+      "LÓGICA PARA COMPUTAÇÃO"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "LABORATÓRIO DE PROGRAMAÇÃO II",
+    "type": "OBRIGATORY",
+    "acronym": "LP2",
+    "available": true,
+    "description": "LABORATÓRIO DE PROGRAMAÇÃO II",
+    "pre_requisites": [
+      "PROGRAMAÇÃO I",
+      "LABORATÓRIO DE PROGRAMAÇÃO I"
+    ],
+    "post_requisites": [
+      "LAB.DE ESTRUTURAS DE DADOS E ALGORITMOS",
+      "ESTRUTURAS DE DADOS E ALGORITMOS",
+      "PARADIGMAS DE LINGUAGEM DE PROGRAMAÇÃO",
+      "TEORIA DOS GRAFOS",
+      "ENGENHARIA DE SOFTWARE"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "PROGRAMAÇÃO II",
+    "type": "OBRIGATORY",
+    "acronym": "P2",
+    "available": true,
+    "description": "PROGRAMAÇÃO II",
+    "pre_requisites": [
+      "PROGRAMAÇÃO I",
+      "LABORATÓRIO DE PROGRAMAÇÃO I"
+    ],
+    "post_requisites": [
+      "LAB.DE ESTRUTURAS DE DADOS E ALGORITMOS",
+      "ESTRUTURAS DE DADOS E ALGORITMOS",
+      "PARADIGMAS DE LINGUAGEM DE PROGRAMAÇÃO",
+      "TEORIA DOS GRAFOS",
+      "ENGENHARIA DE SOFTWARE"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "ÁLGEBRA LINEAR I",
+    "type": "OBRIGATORY",
+    "acronym": "Linear",
+    "available": true,
+    "description": "ÁLGEBRA LINEAR I",
+    "pre_requisites": [
+      "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO II"
+    ],
+    "post_requisites": []
+  },
+  {
+    "id": 11,
+    "name": "CÁLCULO DIFERENCIAL E INTEGRAL II",
+    "type": "OBRIGATORY",
+    "acronym": "C2",
+    "available": true,
+    "description": "CÁLCULO DIFERENCIAL E INTEGRAL II",
+    "pre_requisites": [
+      "CÁLCULO DIFERENCIAL E INTEGRAL I"
+    ],
+    "post_requisites": [
+      "INTRODUÇÃO À PROBABILIDADE"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "ESTRUTURAS DE DADOS E ALGORITMOS",
+    "type": "OBRIGATORY",
+    "acronym": "EDA",
+    "available": true,
+    "description": "ESTRUTURAS DE DADOS E ALGORITMOS",
+    "pre_requisites": [
+      "PROGRAMAÇÃO II",
+      "LABORATÓRIO DE PROGRAMAÇÃO II"
+    ],
+    "post_requisites": [
+      "BANCO DE DADOS I",
+      "PROJETO DE SOFTWARE",
+      "ANÁLISE E TÉCNICA DE ALGORITMOS"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "LAB.DE ESTRUTURAS DE DADOS E ALGORITMOS",
+    "type": "OBRIGATORY",
+    "acronym": "LEDA",
+    "available": true,
+    "description": "LAB.DE ESTRUTURAS DE DADOS E ALGORITMOS description",
+    "pre_requisites": [
+      "PROGRAMAÇÃO II",
+      "LABORATÓRIO DE PROGRAMAÇÃO II"
+    ],
+    "post_requisites": [
+      "PROJETO DE SOFTWARE"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "LÓGICA PARA COMPUTAÇÃO",
+    "type": "OBRIGATORY",
+    "acronym": "LPC",
+    "available": true,
+    "description": "LÓGICA PARA COMPUTAÇÃO",
+    "pre_requisites": [
+      "FUND DE MATEMÁTICA P/ C.DA COMPUTAÇÃO II"
+    ],
+    "post_requisites": [
+      "TEORIA DA COMPUTAÇÃO"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "BANCO DE DADOS I",
+    "type": "OBRIGATORY",
+    "acronym": "BD1",
+    "available": true,
+    "description": "BANCO DE DADOS I",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 16,
+    "name": "INTRODUÇÃO À PROBABILIDADE",
+    "type": "OBRIGATORY",
+    "acronym": "PROB",
+    "available": true,
+    "description": "INTRODUÇÃO À PROBABILIDADE",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 17,
+    "name": "ORGANIZAÇÃO E ARQUIT. DE COMPUTADORES",
+    "type": "OBRIGATORY",
+    "acronym": "OAC",
+    "available": true,
+    "description": "ORGANIZAÇÃO E ARQUIT. DE COMPUTADORES description",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 18,
+    "name": "PARADIGMAS DE LINGUAGEM DE PROGRAMAÇÃO",
+    "type": "OBRIGATORY",
+    "acronym": "PLP",
+    "available": true,
+    "description": "PARADIGMAS DE LINGUAGEM DE PROGRAMAÇÃO",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 19,
+    "name": "TEORIA DA COMPUTAÇÃO",
+    "type": "OBRIGATORY",
+    "acronym": "TC",
+    "available": true,
+    "description": "TEORIA DA COMPUTAÇÃO",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 20,
+    "name": "TEORIA DOS GRAFOS",
+    "type": "OBRIGATORY",
+    "acronym": "Grafos",
+    "available": true,
+    "description": "TEORIA DOS GRAFOS",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 21,
+    "name": "ENGENHARIA DE SOFTWARE",
+    "type": "OBRIGATORY",
+    "acronym": "ES",
+    "available": true,
+    "description": "ENGENHARIA DE SOFTWARE",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 22,
+    "name": "ESTATÍSTICA APLICADA",
+    "type": "OBRIGATORY",
+    "acronym": "Estatística",
+    "available": true,
+    "description": "ESTATÍSTICA APLICADA",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 23,
+    "name": "INTELIGÊNCIA ARTIFICIAL",
+    "type": "OBRIGATORY",
+    "acronym": "IA",
+    "available": true,
+    "description": "INTELIGÊNCIA ARTIFICIAL",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 24,
+    "name": "PROJETO DE SOFTWARE",
+    "type": "OBRIGATORY",
+    "acronym": "Psoft",
+    "available": true,
+    "description": "PROJETO DE SOFTWARE",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 25,
+    "name": "REDES DE COMPUTADORES",
+    "type": "OBRIGATORY",
+    "acronym": "redes",
+    "available": true,
+    "description": "REDES DE COMPUTADORES",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 26,
+    "name": "SISTEMAS OPERACIONAIS",
+    "type": "OBRIGATORY",
+    "acronym": "SO",
+    "available": true,
+    "description": "SISTEMAS OPERACIONAIS",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 27,
+    "name": "ANÁLISE DE SISTEMAS",
+    "type": "OBRIGATORY",
+    "acronym": "AS",
+    "available": true,
+    "description": "ANÁLISE DE SISTEMAS",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 28,
+    "name": "ANÁLISE E TÉCNICA DE ALGORITMOS",
+    "type": "OBRIGATORY",
+    "acronym": "ATAL",
+    "available": true,
+    "description": "ANÁLISE E TÉCNICA DE ALGORITMOS",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 29,
+    "name": "PROGRAMAÇÃO CONCORRENTE",
+    "type": "OBRIGATORY",
+    "acronym": "PC",
+    "available": true,
+    "description": "PROGRAMAÇÃO CONCORRENTE",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 30,
+    "name": "COMPILADORES",
+    "type": "OBRIGATORY",
+    "acronym": "Compiladores",
+    "available": true,
+    "description": "COMPILADORES",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 31,
+    "name": "METODOLOGIA CIENTÍFICA",
+    "type": "OBRIGATORY",
+    "acronym": "Metodologia",
+    "available": true,
+    "description": "METODOLOGIA CIENTÍFICA",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 32,
+    "name": "LÍNGUA PORTUGUESA",
+    "type": "OBRIGATORY",
+    "acronym": "PT",
+    "available": true,
+    "description": "LÍNGUA PORTUGUESA description",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 33,
+    "name": "PROJETO EM COMPUTAÇÃO I",
+    "type": "OBRIGATORY",
+    "acronym": "PJ1",
+    "available": true,
+    "description": "PROJETO EM COMPUTAÇÃO I",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 34,
+    "name": "PROJETO EM COMPUTAÇÃO II",
+    "type": "OBRIGATORY",
+    "acronym": "PJ2",
+    "available": true,
+    "description": "PROJETO EM COMPUTAÇÃO II",
+    "pre_requisites": [],
+    "post_requisites": []
+  },
+  {
+    "id": 35,
+    "name": "TRABALHO DE CONCLUSÃO DE CURSO",
+    "type": "OBRIGATORY",
+    "acronym": "TCC",
+    "available": true,
+    "description": "TRABALHO DE CONCLUSÃO DE CURSO description",
+    "pre_requisites": [],
+    "post_requisites": []
+  }
+]
