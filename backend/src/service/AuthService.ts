@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { JWT_SECRET } from '../express/server';
-import { PrismaClient } from '@prisma/client';
 import { UserRepository } from './../repository/UserRepository';
 import { UserService } from './UserService';
 import { User } from "../model/User";
-import { comparePassword, validateLoginCredentials } from '../util/util';
+import prismaClient, { comparePassword, validateLoginCredentials } from '../util/util';
 import { AuthenticationError, InvalidCredentialsError } from '../errorHandler/ErrorHandler';
 
 export interface AuthServiceInterface {
@@ -21,8 +20,6 @@ export class AuthService implements AuthServiceInterface {
     private userRepository = new UserRepository();
 
     private userService = new UserService();
-
-    private prismaClient = new PrismaClient();
 
     async createLogin(emailLogin: string, passwordLogin: string): Promise<string> {
         try {
@@ -41,7 +38,7 @@ export class AuthService implements AuthServiceInterface {
     
     async registerUser(userId: number, emailLogin: string, passwordLogin: string): Promise<User> {
         try { 
-            const login = await this.prismaClient.login.findUnique({ where: { email: emailLogin } });
+            const login = await prismaClient.login.findUnique({ where: { email: emailLogin } });
 
             if (login) { throw new AuthenticationError(`A user with email '${ emailLogin }' is already registered!`); }
             else { return await this.userRepository.registerUser(userId, emailLogin, passwordLogin); }
