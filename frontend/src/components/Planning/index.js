@@ -11,6 +11,7 @@ import { getAllDisciplinesRoute } from "../../routes/DisciplineRoutes";
 import { useNotificationApi } from "../Alert";
 import { useNavigate } from "react-router-dom";
 import { createPlanning, putPlanning } from "../../routes/PlanningRoutes";
+import { v4 as uuidv4 } from 'uuid';
 
 const Planning = () => {
     const notification = useNotificationApi();
@@ -30,7 +31,12 @@ const Planning = () => {
             name: planning.name,
             label: (
                 <a
-                    onClick={() => setCurrentPlanning(planning)}
+                    onClick={() => {
+                        setCurrentPlanning({
+                        ...planning,
+                        periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                    });
+                    }}
                     rel="noopener noreferrer"
                     href="#"
                 >
@@ -54,10 +60,76 @@ const Planning = () => {
 
                 if (allPlannings.length > 0) {
                     setPlannings(allPlannings);
-                    setCurrentPlanning(allPlannings[0]);
+
+                    setCurrentPlanning({
+                        ...allPlannings[0],
+                        periods: [...allPlannings[0].periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                    });
+
                     updateSelect(allPlannings);
+                    console.log(currentPlanning)
+                } else {
+                    const defaultPeriodStructure = {
+                        1: ["P1", "LP1", "FMCC1", "IC", "D&C"],
+                        2: ["P2", "LP2", "FMCC2", "C1", "EC"],
+                        3: ["C2", "EDA", "LEDA", "LPC", "Linear"],
+                        4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
+                        5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
+                        6: ["AS", "ATAL", "PC"],
+                        7: ["Compiladores", "Metodologia"],
+                        8: ["PJ1", "PT"],
+                        9: ["PJ2", "TCC"],
+                    };
+
+                    const buildInitialPeriods = () => {
+                        return Object.entries(defaultPeriodStructure).map(([periodNumber, disciplineNames]) => {
+                            const foundDisciplines = disciplineNames.map((name) =>
+                                allDisciplines.find((d) => d.acronym === name)
+                            ).filter(Boolean);
+
+                            return {
+                                name: periodNumber,
+                                disciplines: foundDisciplines.map((d) => d.id),
+                            };
+                        });
+                    };
+
+                    const newPlanning = {
+                        name: `${Date.now()}`,
+                        periods: buildInitialPeriods(),
+                    };
+
+
+                    try {
+                        const response = await createPlanning(newPlanning);
+                        const createdPlanning = response.data.createdPlanning;
+
+
+                        setPlannings([createdPlanning]);
+                        setCurrentPlanning({
+                            ...createdPlanning,
+                            periods: [...createdPlanning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                        });
+    
+                        updateSelect([createdPlanning]);
+
+                        notification.success({
+                            message: "Planejamento criado!",
+                            description: "Criamos um planejamento inicial para você começar.",
+                        });
+                    } catch (err) {
+                        if (err.status == 409) {
+                            return
+                        }
+                        console.error(err);
+                        notification.error({
+                            message: "Erro!",
+                            description: "Não foi possível criar um planejamento inicial.",
+                        });
+                    }
                 }
             } catch (e) {
+                console.log(e)
                 if (e.status === 401) {
                     notification.error({
                         message: "Erro!",
@@ -169,19 +241,21 @@ const Planning = () => {
             const newPlanning = {
                 name: `Planning ${maxId + 1}`,
                 periods: currentPlanning.periods.map((period, i) => ({
-                    name: `${i + 1}`, 
+                    name: `${i + 1}`,
                     disciplines: period.disciplines.map(d => d.id),
                 })),
             };
 
-            
             const response = await createPlanning(newPlanning);
             const createdPlanning = response.data.createdPlanning;
 
             const updatedPlannings = [...plannings, createdPlanning];
             setPlannings(updatedPlannings);
             updateSelect(updatedPlannings);
-            setCurrentPlanning(createdPlanning);
+            setCurrentPlanning({
+                ...createdPlanning,
+                periods: [...createdPlanning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+            });
 
             notification.success({
                 message: "Sucesso!",

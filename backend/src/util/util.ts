@@ -135,40 +135,46 @@ export const validateDisciplineExistence = async (disciplineName: string): Promi
 }
 
 export const validateDisciplineFields = async (discipline: Discipline): Promise<boolean> => {
-
+    
     const disciplineService = new DisciplineService();
-    let existingDisciplineName = null;
+    
+    const checkPrerequisite = async (preRequisite: any) : Promise<Boolean> => {
+        try {
+            await disciplineService.getOneDisciplineByName(preRequisite.trim());
+            return true
+        } catch (e) {
+            return false
+        }
+    }
 
-    try { existingDisciplineName = await disciplineService.getOneDisciplineByName(discipline.name); } catch (error) { }
-
+        
     if (!discipline.name) { throw new InvalidFieldError('Discipline name is required!'); }
-
+    
     if (!discipline.acronym) { throw new InvalidFieldError('Discipline acronym is required!'); }
-
+    
     if (discipline.type && discipline.type !== Type.OBRIGATORY && discipline.type !== Type.OPTATIVE) { throw new InvalidFieldError("Discipline's type must be either OBRIGATORY or OPTATIVE!"); }
 
     if (discipline.available && !isBoolean(discipline.available)) { throw new InvalidFieldError("Discipline's availability must be a boolean!"); }
 
     if (!stringOnlyNumbers.test(discipline.name)) { throw new InvalidFieldError(`Discipline's name '${discipline.name}' is invalid, should not contains only numbers!`); }
-
+    
     if (!stringOnlyNumbers.test(discipline.acronym)) { throw new InvalidFieldError(`Discipline's acronym '${discipline.acronym}' is invalid, should not contains only numbers!`); }
-
+    
     if (discipline.professor && !stringOnlyNumbers.test(discipline.professor)) { throw new InvalidFieldError(`Discipline's professor '${discipline.professor}' is invalid, should not contains only numbers!`); }
-
+    
     if (discipline.description && !stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
-
+    
     if (discipline.description && !stringOnlyNumbers.test(discipline.description)) { throw new InvalidFieldError(`Discipline's description '${discipline.description}' is invalid, should not contains only numbers!`); }
-
     if (discipline.schedule && !stringOnlyNumbers.test(discipline.schedule)) { throw new InvalidFieldError(`Discipline's schedule '${discipline.schedule}' is invalid, should not contains only numbers!`); }
-
+    
     for (const disciplineName of discipline.pre_requisites || []) {
         if (!disciplineName) { throw new InvalidFieldError('A pre requisite cannot be an empty word!'); }
-        else if (!existingDisciplineName) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+        else if (!(await checkPrerequisite(disciplineName))) { throw new InvalidFieldError(`A pre requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
 
     for (const disciplineName of discipline.post_requisites || []) {
         if (!disciplineName) { throw new InvalidFieldError('A post requisite cannot be an empty word!'); }
-        else if (!existingDisciplineName) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
+        else if (!(await checkPrerequisite(disciplineName))) { throw new InvalidFieldError(`A post requisite '${disciplineName}' is invalid, should be a discipline name!`); }
     }
 
     return true;
