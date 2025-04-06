@@ -29,27 +29,31 @@ const Planning = () => {
     const hasFetched = useRef(false);
 
     const updateSelect = (plannings) => {
-        const items = plannings.map((planning, index) => ({
-            key: planning.id,
-            name: `Planejamento ${index + 1}`,
-            label: (
-                <a
-                    onClick={() => {
-                        setCurrentPlanning({
-                            ...planning,
-                            name: `Planejamento ${index + 1}`,
-                            periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
-                        });
-                    }}
-                    rel="noopener noreferrer"
-                    href="#"
-                >
-                    {planning.name}
-                </a>
-            ),
-        }));
+        const items = [...plannings]
+            .sort((a, b) => a.id - b.id) // <-- Ordena só por garantia
+            .map((planning, index) => ({
+                key: planning.id,
+                name: `Planejamento ${index + 1}`,
+                label: (
+                    <a
+                        onClick={() => {
+                            setCurrentPlanning({
+                                ...planning,
+                                name: `Planejamento ${index + 1}`,
+                                periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                            });
+                        }}
+                        rel="noopener noreferrer"
+                        href="#"
+                    >
+                        {planning.name}
+                    </a>
+                ),
+            }));
+
         setSelect(items);
     };
+
 
     useEffect(() => {
         if (hasFetched.current) return;
@@ -66,10 +70,13 @@ const Planning = () => {
                 console.log(allPlannings)
 
                 if (allPlannings.length > 0) {
-                    const renamedPlannings = allPlannings.map((p, index) => ({
-                        ...p,
-                        name: `Planejamento ${index + 1}`
-                    }));
+                    const renamedPlannings = allPlannings
+                        .map((p, index) => ({
+                            ...p,
+                            name: `Planejamento ${index + 1}`
+                        }))
+                        .sort((a, b) => a.id - b.id);
+
 
                     setPlannings(renamedPlannings);
 
@@ -231,9 +238,9 @@ const Planning = () => {
 
             await putPlanning(formattedPlanning);
 
-            const updatedPlannings = plannings.map((p) =>
-                p.id === formattedPlanning.id ? { ...currentPlanning } : p
-            );
+            const updatedPlannings = plannings
+                .map((p) => (p.id === formattedPlanning.id ? { ...currentPlanning } : p))
+                .sort((a, b) => a.id - b.id);
 
             setPlannings(updatedPlannings);
             updateSelect(updatedPlannings);
@@ -266,8 +273,9 @@ const Planning = () => {
             const response = await createPlanning(newPlanning);
             const createdPlanning = response.data.createdPlanning;
 
-            const updatedPlannings = [...plannings, createdPlanning];
+            const updatedPlannings = [...plannings, createdPlanning].sort((a, b) => a.id - b.id); // <-- Ordena aqui também
             setPlannings(updatedPlannings);
+
             updateSelect(updatedPlannings);
             setCurrentPlanning({
                 ...createdPlanning,
@@ -313,7 +321,7 @@ const Planning = () => {
 
     const handlePeriodDelete = () => {
         const lastPeriod = currentPlanning.periods[currentPlanning.periods.length - 1]
-        if (currentPlanning.periods.length > 1){
+        if (currentPlanning.periods.length > 1) {
             setCurrentPlanning(prevPlanning => {
                 return {
                     ...prevPlanning,
