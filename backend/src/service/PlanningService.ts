@@ -40,11 +40,6 @@ export class PlanningService implements PlanningServiceInterface {
                 throw new HttpError("O campo 'periods' deve ser uma lista.", 400);
             }
 
-            const existingPlanning = await this.planningRepository.getOneByName(planningData.name);
-            if (existingPlanning) {
-                throw new HttpError("Planning with the given 'name' already exists", 409);
-            }
-
             for (const period of planningData.periods) {
                 if (!period.name || typeof period.name !== "string") {
                     throw new HttpError("Cada período deve ter um 'name' do tipo string.", 400);

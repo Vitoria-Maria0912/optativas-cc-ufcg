@@ -83,7 +83,7 @@ app.put("/planning", asyncHandler(
     (req: Request, res: Response, next: NextFunction) =>
         planningController.updatePlanning(req, res)
 ));
-app.get("/planning", asyncHandler(
+app.get("/planning", verifyTokenMiddleware, asyncHandler(
     (req: Request, res: Response, next: NextFunction) =>
         planningController.getPlanning(req, res)
 ));

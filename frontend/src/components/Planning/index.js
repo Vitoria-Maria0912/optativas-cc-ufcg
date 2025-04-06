@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
 import Card from "../Card";
 import DropZone from "../DropZone";
@@ -12,6 +12,7 @@ import { useNotificationApi } from "../Alert";
 import { useNavigate } from "react-router-dom";
 import { createPlanning, putPlanning } from "../../routes/PlanningRoutes";
 import { v4 as uuidv4 } from 'uuid';
+import { defaultPeriodStructure } from "../util";
 
 const Planning = () => {
     const notification = useNotificationApi();
@@ -24,6 +25,8 @@ const Planning = () => {
     const [select, setSelect] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const hasFetched = useRef(false);
+
     const updateSelect = (plannings) => {
         const items = plannings.map((planning, index) => ({
             key: planning.id,
@@ -32,10 +35,10 @@ const Planning = () => {
                 <a
                     onClick={() => {
                         setCurrentPlanning({
-                        ...planning,
-                        name: `Planejamento ${index + 1}`,
-                        periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
-                    });
+                            ...planning,
+                            name: `Planejamento ${index + 1}`,
+                            periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                        });
                     }}
                     rel="noopener noreferrer"
                     href="#"
@@ -48,6 +51,8 @@ const Planning = () => {
     };
 
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
         const getData = async () => {
             try {
                 const planningResponse = await getDefaultPlanning();
@@ -63,33 +68,27 @@ const Planning = () => {
                         ...p,
                         name: `Planejamento ${index + 1}`
                     }));
-                
+
                     setPlannings(renamedPlannings);
-                
+
                     setCurrentPlanning({
                         ...renamedPlannings[0],
                         periods: [...renamedPlannings[0].periods].sort((a, b) => Number(a.name) - Number(b.name)),
                     });
-                
+
+                    console.log(renamedPlannings[0])
+
                     updateSelect(renamedPlannings);
                 } else {
-                    const defaultPeriodStructure = {
-                        1: ["P1", "LP1", "FMCC1", "IC", "D&C"],
-                        2: ["P2", "LP2", "FMCC2", "C1", "EC"],
-                        3: ["C2", "EDA", "LEDA", "LPC", "Linear"],
-                        4: ["TC", "OAC", "BD1", "PLP", "Grafos", "Prob"],
-                        5: ["IA", "SO", "ES", "PSoft", "Redes", "Estatística"],
-                        6: ["AS", "ATAL", "PC"],
-                        7: ["Compiladores", "Metodologia"],
-                        8: ["PJ1", "PT"],
-                        9: ["PJ2", "TCC"],
-                    };
-
                     const buildInitialPeriods = () => {
                         return Object.entries(defaultPeriodStructure).map(([periodNumber, disciplineNames]) => {
-                            const foundDisciplines = disciplineNames.map((name) =>
-                                allDisciplines.find((d) => d.acronym === name)
-                            ).filter(Boolean);
+
+                            const normalize = str => str.toLowerCase().trim();
+                            const foundDisciplines = disciplineNames.map((name) => {
+                                const found = allDisciplines.find((d) => normalize(d.acronym) === normalize(name));
+                                if (!found) console.warn(`Disciplina com acrônimo "${name}" não encontrada.`);
+                                return found;
+                            }).filter(Boolean);
 
                             return {
                                 name: periodNumber,
@@ -99,7 +98,7 @@ const Planning = () => {
                     };
 
                     const newPlanning = {
-                        name: `${Date.now()}`,
+                        name: `Planejamento 1`,
                         periods: buildInitialPeriods(),
                     };
 
@@ -114,7 +113,7 @@ const Planning = () => {
                             ...createdPlanning,
                             periods: [...createdPlanning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
                         });
-    
+
                         updateSelect([createdPlanning]);
 
                         notification.success({
@@ -133,7 +132,7 @@ const Planning = () => {
                     }
                 }
             } catch (e) {
-                console.log(e)
+
                 if (e.status === 401) {
                     notification.error({
                         message: "Erro!",
@@ -243,7 +242,7 @@ const Planning = () => {
         try {
             const maxId = plannings.reduce((max, p) => Math.max(max, p.id), 0);
             const newPlanning = {
-                name: `Planning ${maxId + 1}`,
+                name: `Planejamento ${maxId + 1}`,
                 periods: currentPlanning.periods.map((period, i) => ({
                     name: `${i + 1}`,
                     disciplines: period.disciplines.map(d => d.id),
@@ -291,7 +290,7 @@ const Planning = () => {
                     {disciplines.map((discipline) => (
                         <Card
                             key={discipline.id}
-                            card={discipline.acronym}
+                            card={discipline}
                             handleAddDiscipline={() => handleAddDiscipline(discipline.id)}
                         />
                     ))}
@@ -314,16 +313,16 @@ const Planning = () => {
                 {
                     currentPlanning?.periods?.map((period) => (
                         <div key={period.id} className="period" id={period.id}>
-                            <DropZone targetPeriod={period.id} index={0} setCards={setSelect} />
+                            <DropZone targetPeriod={period.id} index={0} setCurrentPlanning={setCurrentPlanning} />
                             {period.disciplines.map((card, index) => (
                                 <React.Fragment key={card.id}>
                                     <Card
-                                        card={card.acronym}
+                                        card={card}
                                         period={period.id}
                                         canDelete
                                         handleCardDelete={() => handleCardDelete(period.id, card.id)}
                                     />
-                                    <DropZone targetPeriod={period.id} index={index + 1} setCards={setSelect} />
+                                    <DropZone targetPeriod={period.id} index={index + 1} setCurrentPlanning={setCurrentPlanning} />
                                 </React.Fragment>
                             ))}
                             <div className="plus-icon plus-icon-discipline">
