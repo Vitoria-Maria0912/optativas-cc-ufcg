@@ -324,7 +324,7 @@ const Planning = () => {
                 return {
                     ...prevPlanning,
                     periods: prevPlanning.periods.filter(period => {
-                        return period.id != lastPeriod.id
+                        return period.id !== lastPeriod.id
                     })
                 }
             })
