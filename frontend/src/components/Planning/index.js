@@ -21,6 +21,7 @@ const Planning = () => {
     const [plannings, setPlannings] = useState([]);
     const [currentPlanning, setCurrentPlanning] = useState(null);
     const [disciplines, setDisciplines] = useState([]);
+    const [modalDisciplines, setModalDisciplines] = useState([]);
     const [currentPeriod, setCurrentPeriod] = useState(null);
     const [select, setSelect] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,12 +149,22 @@ const Planning = () => {
     }, []);
 
     const onSearch = (value, _e, info) => {
-        console.log(info?.source, value);
+        if (!modalDisciplines) return;
+
+        const searchValue = value.trim().toLowerCase();
+
+        const filteredDisciplines = disciplines.filter(discipline =>
+            discipline.acronym.trim().toLowerCase().includes(searchValue)
+        );
+
+        setModalDisciplines(filteredDisciplines);
     };
+
 
     const showModal = (periodId) => {
         setCurrentPeriod(periodId);
         setIsModalOpen(true);
+        setModalDisciplines(disciplines)
     };
 
     const handleOk = () => setIsModalOpen(false);
@@ -190,6 +201,7 @@ const Planning = () => {
     };
 
     const handleAddPeriod = () => {
+        console.log(disciplines)
         const maxId = currentPlanning.periods.reduce((max, p) => Math.max(max, p.id), 0);
         const newPeriod = {
             id: maxId + 1,
@@ -202,6 +214,7 @@ const Planning = () => {
             ...prevPlanning,
             periods: [...prevPlanning.periods, newPeriod],
         }));
+
     };
 
     const handleEditPlanning = async (_) => {
@@ -290,11 +303,11 @@ const Planning = () => {
             disc.pre_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
             disc.post_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
         };
-    
+
         findRelated(discipline);
 
         console.log(related)
-    
+
         setHighlightedDisciplines([...related]);
     };
 
@@ -311,13 +324,14 @@ const Planning = () => {
                     <Search placeholder="Disciplina" onSearch={onSearch} style={{ width: 200 }} />
                 </Space>
                 <div className="select-cards">
-                    {disciplines.map((discipline) => (
-                        <Card
-                            key={discipline.id}
-                            card={discipline}
-                            handleAddDiscipline={() => handleAddDiscipline(discipline.id)}
-                        />
-                    ))}
+                    {Array.isArray(modalDisciplines) &&
+                        modalDisciplines.map((discipline) => (
+                            <Card
+                                key={discipline.id}
+                                card={discipline}
+                                handleAddDiscipline={() => handleAddDiscipline(discipline.id)}
+                            />
+                        ))}
                 </div>
             </Modal>
 

@@ -23,7 +23,7 @@ const Flowchart = () => {
                     <DropZone targetPeriod={period} index={0} setCards={setCards} />
                     {cards[period].map((card, index) => (
                         <React.Fragment>
-                            <Card card={card} period={period} />
+                            <Card isFlow={true} card={card} period={period} />
                             <DropZone targetPeriod={period} index={index + 1} setCards={setCards} />
                         </React.Fragment>
                 ))}
