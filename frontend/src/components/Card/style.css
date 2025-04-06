@@ -25,3 +25,8 @@
     font-weight: bold;
 }
 
+.highlighted {
+    background-color: red !important;
+}
+
+
