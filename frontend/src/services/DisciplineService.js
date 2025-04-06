@@ -18,7 +18,7 @@ const DisciplineService = () => {
             <Route path="/create" element={ <DisciplineCreateForm/> }/> 
             <Route path="/delete" element={ <></> }/>
             <Route path="/update" element={ <DisciplinePatchForm/> }/> 
-            <Route path="/getOne" element={ <ShowOneDiscipline/> }/>
+            <Route path="/getOne" element={ <></> }/>
             <Route path="/getAll" element={ <ShowAllDisciplinesForm/> }/>
         </Routes>
         <Outlet/>
