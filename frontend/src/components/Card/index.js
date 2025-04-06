@@ -11,6 +11,7 @@ const Card = ({card, period, isFlow=false, highlight=false, canDelete=false, onH
     return (
         
         <div className={`card ${highlight ? "highlighted" : ""}`}
+            title={isFlow? "" : card.name}
             onMouseEnter={onHover}
             onClick={handleAddDiscipline}
             draggable onDragStart={e => handleDragStart(e)}>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
 import Card from "../Card";
 import DropZone from "../DropZone";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Breadcrumb, Modal, Space } from "antd";
 import Search from "antd/es/input/Search";
 import Select from "../Select";
@@ -311,6 +311,20 @@ const Planning = () => {
         setHighlightedDisciplines([...related]);
     };
 
+    const handlePeriodDelete = () => {
+        const lastPeriod = currentPlanning.periods[currentPlanning.periods.length - 1]
+        if (currentPlanning.periods.length > 1){
+            setCurrentPlanning(prevPlanning => {
+                return {
+                    ...prevPlanning,
+                    periods: prevPlanning.periods.filter(period => {
+                        return period.id != lastPeriod.id
+                    })
+                }
+            })
+        }
+    }
+
     return (
         <div className="planning-wrapper">
             <Modal
@@ -349,29 +363,39 @@ const Planning = () => {
 
             <div className="planning">
                 {
-                    currentPlanning?.periods?.map((period) => (
-                        <div key={period.id} className="period" id={period.id}>
-                            <DropZone targetPeriod={period.id} index={0} setCurrentPlanning={setCurrentPlanning} />
-                            {period.disciplines.map((card, index) => (
-                                <React.Fragment key={card.id}>
-                                    <Card
-                                        onHover={() => handleCardHover(card)}
-                                        highlight={highlightedDisciplines.includes(card.id)}
-                                        card={card}
-                                        period={period.id}
-                                        canDelete
-                                        handleCardDelete={() => handleCardDelete(period.id, card.id)}
-                                    />
-                                    <DropZone targetPeriod={period.id} index={index + 1} setCurrentPlanning={setCurrentPlanning} />
-                                </React.Fragment>
-                            ))}
-                            <div className="plus-icon plus-icon-discipline">
-                                <button className="button-show-modal" onClick={() => showModal(period.id)}>
-                                    <PlusCircleOutlined />
-                                </button>
+                    currentPlanning?.periods?.map((period, index) => {
+                        const isLast = index === currentPlanning.periods.length - 1;
+
+                        return (
+                            <div key={period.id} className="period" id={period.id}>
+                                <DropZone targetPeriod={period.id} index={0} setCurrentPlanning={setCurrentPlanning} />
+                                {isLast &&
+                                    <div className="delete-last-period">
+                                        <DeleteOutlined onClick={handlePeriodDelete} />
+                                    </div>
+                                }
+                                {period.disciplines.map((card, index) => (
+                                    <React.Fragment key={card.id}>
+                                        <Card
+                                            onHover={() => handleCardHover(card)}
+                                            highlight={highlightedDisciplines.includes(card.id)}
+                                            card={card}
+                                            period={period.id}
+                                            canDelete
+                                            handleCardDelete={() => handleCardDelete(period.id, card.id)}
+                                        />
+                                        <DropZone targetPeriod={period.id} index={index + 1} setCurrentPlanning={setCurrentPlanning} />
+                                    </React.Fragment>
+                                ))}
+                                <div className="plus-icon plus-icon-discipline">
+                                    <button className="button-show-modal" onClick={() => showModal(period.id)}>
+                                        <PlusCircleOutlined />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })
+                }
 
                 <div className="plus-icon">
                     <PlusCircleOutlined onClick={handleAddPeriod} />
