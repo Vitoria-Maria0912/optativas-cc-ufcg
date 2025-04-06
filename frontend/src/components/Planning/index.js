@@ -25,15 +25,15 @@ const Planning = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const updateSelect = (plannings) => {
-        console.log(plannings)
-        const items = plannings.map((planning) => ({
+        const items = plannings.map((planning, index) => ({
             key: planning.id,
-            name: planning.name,
+            name: `Planejamento ${index + 1}`,
             label: (
                 <a
                     onClick={() => {
                         setCurrentPlanning({
                         ...planning,
+                        name: `Planejamento ${index + 1}`,
                         periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
                     });
                     }}
@@ -59,15 +59,19 @@ const Planning = () => {
                 setDisciplines(allDisciplines);
 
                 if (allPlannings.length > 0) {
-                    setPlannings(allPlannings);
-
+                    const renamedPlannings = allPlannings.map((p, index) => ({
+                        ...p,
+                        name: `Planejamento ${index + 1}`
+                    }));
+                
+                    setPlannings(renamedPlannings);
+                
                     setCurrentPlanning({
-                        ...allPlannings[0],
-                        periods: [...allPlannings[0].periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                        ...renamedPlannings[0],
+                        periods: [...renamedPlannings[0].periods].sort((a, b) => Number(a.name) - Number(b.name)),
                     });
-
-                    updateSelect(allPlannings);
-                    console.log(currentPlanning)
+                
+                    updateSelect(renamedPlannings);
                 } else {
                     const defaultPeriodStructure = {
                         1: ["P1", "LP1", "FMCC1", "IC", "D&C"],
