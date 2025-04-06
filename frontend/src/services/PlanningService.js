@@ -7,10 +7,6 @@ const PlanningService = () => {
 
   return (
     <div>
-        <Breadcrumb>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-          <Breadcrumb.Item>Planejamento</Breadcrumb.Item>
-        </Breadcrumb>
         <Routes>
             <Route path="/" element={ <Planning/> }/> 
             <Route path="/delete" element={ <Planning/> }/>

@@ -7,8 +7,8 @@ export interface PlanningRepositoryInterface {
     addPeriods(planningId: number, periodIds: number[]): Promise<Planning>;
     updateName(planningId: number, newName: string): Promise<Planning>;
     getAll(): Promise<Planning[]>;
+    getAllByEmail(email: string): Promise<Planning[]>;
     getOneById(id: number): Promise<Planning>;
-    getOneByName(name: string): Promise<Planning | null>;
 }
 
 export class PlanningRepository implements PlanningRepositoryInterface {
@@ -71,6 +71,31 @@ export class PlanningRepository implements PlanningRepositoryInterface {
         return new Planning(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
     }
     
+    async getAllByEmail(email: string): Promise<Planning[]> {
+        const user = await prismaClient.user.findUnique({
+            where: { email },
+            include: {
+                plannings: {
+                    include: {
+                        periods: { include: { disciplines: true } },
+                    },
+                },
+            },
+        });
+    
+        if (!user) {
+            throw new Error("Usuário não encontrado");
+        }
+    
+        return user.plannings.map(planning => {
+            const periodsDTO = planning.periods.map(period =>
+                new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
+            );
+            return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
+        });
+    }
+    
+    
     async getAll(): Promise<Planning[]> {
         const allPlannings = await prismaClient.planning.findMany({
             include: {
@@ -84,7 +109,7 @@ export class PlanningRepository implements PlanningRepositoryInterface {
             );
             return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
         });
-    }    
+    }
     
     async getOneById(planningId: number): Promise<Planning> {
         const planning = await prismaClient.planning.findUnique({
@@ -96,25 +121,6 @@ export class PlanningRepository implements PlanningRepositoryInterface {
         
         if (!planning) {
             throw new Error(`Planning with ID ${planningId} not found.`);
-        }
-    
-        const periodsDTO = planning.periods.map(period =>
-            new PeriodDTO(period.id, period.name, period.planningId ?? 0, period.disciplines || [])
-        );
-    
-        return new Planning(planning.id, planning.userId, planning.name, periodsDTO);
-    }
-    
-    async getOneByName(name: string): Promise<Planning | null> {
-        const planning = await prismaClient.planning.findUnique({
-            where: { name: name },
-            include: {
-                periods: { include: { disciplines: true } },
-            },
-        });
-        
-        if (!planning) {
-            return null;
         }
     
         const periodsDTO = planning.periods.map(period =>
