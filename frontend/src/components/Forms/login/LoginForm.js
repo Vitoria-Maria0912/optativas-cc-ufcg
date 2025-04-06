@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { createLoginRoute, getTokenByUserEmailRoute } from '../../../routes/LoginRoutes';
+import { getTokenByUserEmailRoute } from '../../../routes/LoginRoutes';
 import Input from "../../Input"
 import { useNotificationApi } from '../../Alert';
 import './style.css';
