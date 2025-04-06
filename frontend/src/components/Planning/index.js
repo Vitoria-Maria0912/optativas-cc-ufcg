@@ -275,6 +275,29 @@ const Planning = () => {
         }
     };
 
+    const [highlightedDisciplines, setHighlightedDisciplines] = useState([]);
+
+
+    const getDisciplineIdByName = (name) => {
+        const discipline = disciplines.find(discipline => discipline.name == name)
+        return discipline.id
+    }
+
+    const handleCardHover = (discipline) => {
+        const related = new Set();
+
+        const findRelated = (disc) => {
+            disc.pre_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
+            disc.post_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
+        };
+    
+        findRelated(discipline);
+
+        console.log(related)
+    
+        setHighlightedDisciplines([...related]);
+    };
+
     return (
         <div className="planning-wrapper">
             <Modal
@@ -318,6 +341,8 @@ const Planning = () => {
                             {period.disciplines.map((card, index) => (
                                 <React.Fragment key={card.id}>
                                     <Card
+                                        onHover={() => handleCardHover(card)}
+                                        highlight={highlightedDisciplines.includes(card.id)}
                                         card={card}
                                         period={period.id}
                                         canDelete
