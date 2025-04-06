@@ -76,7 +76,7 @@ const Register = () => {
                             label={"Email"}
                             inputType={"text"}
                             placeholder={"e-mail"}
-                            icon={<UserOutlined className='input-icon' />}
+                            icon={<MailOutlined className='input-icon' />}
                             data={email}
                             setData={setEmail}
                         />
