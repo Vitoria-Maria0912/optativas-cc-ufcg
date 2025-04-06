@@ -11,7 +11,6 @@ import { getAllDisciplinesRoute } from "../../routes/DisciplineRoutes";
 import { useNotificationApi } from "../Alert";
 import { useNavigate } from "react-router-dom";
 import { createPlanning, putPlanning } from "../../routes/PlanningRoutes";
-import { v4 as uuidv4 } from 'uuid';
 import { defaultPeriodStructure } from "../util";
 
 const Planning = () => {
@@ -122,7 +121,7 @@ const Planning = () => {
                             description: "Criamos um planejamento inicial para você começar.",
                         });
                     } catch (err) {
-                        if (err.status == 409) {
+                        if (err.status === 409) {
                             return
                         }
                         console.error(err);
@@ -277,9 +276,8 @@ const Planning = () => {
 
     const [highlightedDisciplines, setHighlightedDisciplines] = useState([]);
 
-
     const getDisciplineIdByName = (name) => {
-        const discipline = disciplines.find(discipline => discipline.name == name)
+        const discipline = disciplines.find(discipline => discipline.name === name)
         return discipline.id
     }
 

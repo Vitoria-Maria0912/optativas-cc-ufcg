@@ -1,16 +1,17 @@
 .register-wrapper {
     width: 100%;
-    height: 500px;
+    height: 100%;
     display: flex;
     justify-content: center;
 }
 
 .register {
-    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 .register h1{
-    font-size: 50px;
+    text-align: center;
+    font-size: 30px;
 }
 
 .register .form-group button {
@@ -26,7 +27,7 @@
 }
 
 .input-error {
-    color: rgb(221, 1, 1);
+    color: rgb(254, 56, 56);
     font-size: 15px;
     font-style: italic;
     font-weight: bold;

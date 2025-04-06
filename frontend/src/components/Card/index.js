@@ -1,6 +1,6 @@
 import React from "react";
 import "./style.css"
-import Icon, { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const Card = ({card, period, highlight=false, canDelete=false, onHover=() => null, handleCardDelete=() => null, handleAddDiscipline=() => null}) => {
     const handleDragStart = e => {

@@ -3,7 +3,7 @@ import { Breadcrumb } from 'antd';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import DisciplineCreateForm from '../components/Forms/discipline/DisciplineCreateForm.js';
 import DisciplinePatchForm from '../components/Forms/discipline/DisciplinePatchForm.js';
-import ShowOneDiscipline from '../components/Forms/discipline/ShowOneDisciplineForm.js';
+// import ShowOneDiscipline from '../components/Forms/discipline/ShowOneDisciplineForm.js';
 import ShowAllDisciplinesForm from '../components/Forms/discipline/ShowAllDisciplinesForm.js';
 
 const DisciplineService = () => {

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { createLoginRoute, getTokenByUserEmailRoute } from '../../../routes/LoginRoutes';
-import './style.css';
 import Input from "../../Input"
 import { useNotificationApi } from '../../Alert';
+import './style.css';
 
 const CreateLogin = () => {
     const notification = useNotificationApi();

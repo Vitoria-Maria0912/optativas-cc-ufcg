@@ -168,7 +168,7 @@ const DisciplineCreateForm = () => {
           </div>
         ))}
       </div>
-      <button style={{ margin: 17 }} type="submit">Save discipline</button>
+      <button style={{ margin: 17, display: 'flex', marginTop: 100, justifyContent: 'center' }} type="submit">Save discipline</button>
     </form>
   );
 };
