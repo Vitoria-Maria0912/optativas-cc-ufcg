@@ -10,7 +10,7 @@ const Card = ({card, period, isFlow=false, highlight=false, canDelete=false, onH
 
     return (
         
-        <div className={`card ${highlight ? "highlighted" : ""}`}
+        <div className={`card ${highlight ? "highlighted" : ""} ${isFlow ? "" : card.type}`}
             title={isFlow? "" : card.name}
             onMouseEnter={onHover}
             onClick={handleAddDiscipline}
