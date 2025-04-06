@@ -62,6 +62,7 @@ const Planning = () => {
                 const allDisciplines = disciplineResponse.data.disciplines;
 
                 setDisciplines(allDisciplines);
+                console.log(allPlannings)
 
                 if (allPlannings.length > 0) {
                     const renamedPlannings = allPlannings.map((p, index) => ({
@@ -240,9 +241,9 @@ const Planning = () => {
 
     const handleCreatePlanning = async () => {
         try {
-            const maxId = plannings.reduce((max, p) => Math.max(max, p.id), 0);
+            const maxId = plannings.length + 1;
             const newPlanning = {
-                name: `Planejamento ${maxId + 1}`,
+                name: `Planejamento ${maxId}`,
                 periods: currentPlanning.periods.map((period, i) => ({
                     name: `${i + 1}`,
                     disciplines: period.disciplines.map(d => d.id),
