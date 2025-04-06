@@ -171,3 +171,8 @@
     min-height: 700px;
 }
 
+.delete-last-period {
+    position: relative;
+    top: -30px;
+    right: -50px;
+}

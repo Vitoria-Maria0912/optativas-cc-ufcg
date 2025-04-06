@@ -4,9 +4,14 @@ import prismaClient from "../util/util";
 export interface PeriodRepositoryInterface {
     createPeriod(period: Period): Promise<Period>;
     updatePeriod(period: Period): Promise<Period>;
+    deletePeriodById(id: number): Promise<void>; 
 }
 
 export class PeriodRepository implements PeriodRepositoryInterface {
+
+    async deletePeriodById(id: number): Promise<void> {
+        await prismaClient.period.delete({ where: { id } });
+    }    
 
     async createPeriod(period: any): Promise<Period> {
 

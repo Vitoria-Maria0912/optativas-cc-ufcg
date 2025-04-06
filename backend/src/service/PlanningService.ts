@@ -107,65 +107,75 @@ export class PlanningService implements PlanningServiceInterface {
         if (!planningData || typeof planningData !== "object") {
             throw new Error("Invalid request format.");
         }
-
+    
         if (!planningData.id || typeof planningData.id !== "number") {
             throw new Error("the id need be a number");
         }
-
-        if (!planningData.name || typeof planningData.name !== "string" || planningData.name.length == 0) {
+    
+        if (!planningData.name || typeof planningData.name !== "string" || planningData.name.length === 0) {
             throw new Error("the name must be string and not empty");
         }
-
+    
         if (!Array.isArray(planningData.periods)) {
             throw new Error("The 'periods' field must be an array.");
         }
-
+    
         const existingPlanning = await this.planningRepository.getOneById(planningData.id);
         if (!existingPlanning) {
             throw new Error("Planning with the given ID does not exist.");
         }
-
+    
         try {
-            await planningData.periods.forEach((period: any) => {
-                if (!period.id || typeof period.id !== "number") {
-                    throw new Error("Each period must have a valid 'id' field (number).");
-                }
-
-                if (!period.name || typeof period.name !== "string") {
-                    throw new Error("Each period must have a valid 'name' field (string).");
-                }
-
-                if (!Array.isArray(period.disciplines)) {
-                    throw new Error("The 'disciplines' field in each period must be an array.");
-                }
-
-                this.periodRepository.updatePeriod(period);
-            });
+            // 1. Deleta todos os períodos existentes do planejamento
+            const oldPeriods = existingPlanning.periods ?? [];
+            await Promise.all(oldPeriods.map(p => this.periodRepository.deletePeriodById(p.id!)));
+    
+            // 2. Cria os novos períodos
+            const newPeriodIds = await Promise.all(
+                planningData.periods.map(async (period: any) => {
+                    if (!period.name || typeof period.name !== "string") {
+                        throw new Error("Each period must have a valid 'name' field (string).");
+                    }
+    
+                    if (!Array.isArray(period.disciplines)) {
+                        throw new Error("The 'disciplines' field in each period must be an array.");
+                    }
+    
+                    const created = await this.periodRepository.createPeriod({
+                        name: period.name,
+                        disciplines: period.disciplines,
+                    });
+    
+                    if (!created || !created.id) {
+                        throw new Error("Failed to create period.");
+                    }
+    
+                    return created.id;
+                })
+            );
+    
+            // 3. Atualiza o nome do planejamento
+            const updatedPlanning = await this.planningRepository.updateName(planningData.id, planningData.name);
+    
+            // 4. Associa os novos períodos ao planejamento
+            const finalPlanning = await this.planningRepository.addPeriods(updatedPlanning.id!, newPeriodIds);
+    
+            const periodsDTO = finalPlanning.periods.map(period =>
+                new PeriodDTO(
+                    period.id ?? 0,
+                    period.name,
+                    period.planningId ?? 0,
+                    period.disciplines || []
+                )
+            );
+    
+            return new PlanningDTO(finalPlanning.id!, finalPlanning.userId, finalPlanning.name, periodsDTO);
         } catch (error: any) {
-            throw new Error(`Error updating periods: ${error.message}`);
+            console.error("Erro ao atualizar planejamento:", error);
+            throw new Error(`Erro ao atualizar planejamento: ${error.message}`);
         }
-
-        const updatedPlanning = await this.planningRepository.updateName(planningData.id, planningData.name);
-
-        if (updatedPlanning.id === undefined) {
-            throw new Error("Planning ID is undefined.");
-        }
-
-        if (!Array.isArray(updatedPlanning.periods)) {
-            throw new Error("The 'periods' field in the updated planning is invalid.");
-        }
-
-        const periodsDTO = updatedPlanning.periods.map(period =>
-            new PeriodDTO(
-                period.id ?? 0,
-                period.name,
-                period.planningId ?? 0,
-                period.disciplines || []
-            )
-        );
-
-        return new PlanningDTO(updatedPlanning.id, updatedPlanning.userId, updatedPlanning.name, periodsDTO);
     }
+    
 
     async getPlanning(): Promise<PlanningDTO[]> {
         const plannings = await this.planningRepository.getAll();

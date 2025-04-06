@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
 import Card from "../Card";
 import DropZone from "../DropZone";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Breadcrumb, Modal, Space } from "antd";
 import Search from "antd/es/input/Search";
 import Select from "../Select";
@@ -20,6 +20,7 @@ const Planning = () => {
     const [plannings, setPlannings] = useState([]);
     const [currentPlanning, setCurrentPlanning] = useState(null);
     const [disciplines, setDisciplines] = useState([]);
+    const [modalDisciplines, setModalDisciplines] = useState([]);
     const [currentPeriod, setCurrentPeriod] = useState(null);
     const [select, setSelect] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,27 +28,31 @@ const Planning = () => {
     const hasFetched = useRef(false);
 
     const updateSelect = (plannings) => {
-        const items = plannings.map((planning, index) => ({
-            key: planning.id,
-            name: `Planejamento ${index + 1}`,
-            label: (
-                <a
-                    onClick={() => {
-                        setCurrentPlanning({
-                            ...planning,
-                            name: `Planejamento ${index + 1}`,
-                            periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
-                        });
-                    }}
-                    rel="noopener noreferrer"
-                    href="#"
-                >
-                    {planning.name}
-                </a>
-            ),
-        }));
+        const items = [...plannings]
+            .sort((a, b) => a.id - b.id) // <-- Ordena só por garantia
+            .map((planning, index) => ({
+                key: planning.id,
+                name: `Planejamento ${index + 1}`,
+                label: (
+                    <a
+                        onClick={() => {
+                            setCurrentPlanning({
+                                ...planning,
+                                name: `Planejamento ${index + 1}`,
+                                periods: [...planning.periods].sort((a, b) => Number(a.name) - Number(b.name)),
+                            });
+                        }}
+                        rel="noopener noreferrer"
+                        href="#"
+                    >
+                        {planning.name}
+                    </a>
+                ),
+            }));
+
         setSelect(items);
     };
+
 
     useEffect(() => {
         if (hasFetched.current) return;
@@ -64,10 +69,13 @@ const Planning = () => {
                 console.log(allPlannings)
 
                 if (allPlannings.length > 0) {
-                    const renamedPlannings = allPlannings.map((p, index) => ({
-                        ...p,
-                        name: `Planejamento ${index + 1}`
-                    }));
+                    const renamedPlannings = allPlannings
+                        .map((p, index) => ({
+                            ...p,
+                            name: `Planejamento ${index + 1}`
+                        }))
+                        .sort((a, b) => a.id - b.id);
+
 
                     setPlannings(renamedPlannings);
 
@@ -147,12 +155,22 @@ const Planning = () => {
     }, []);
 
     const onSearch = (value, _e, info) => {
-        console.log(info?.source, value);
+        if (!modalDisciplines) return;
+
+        const searchValue = value.trim().toLowerCase();
+
+        const filteredDisciplines = disciplines.filter(discipline =>
+            discipline.acronym.trim().toLowerCase().includes(searchValue)
+        );
+
+        setModalDisciplines(filteredDisciplines);
     };
+
 
     const showModal = (periodId) => {
         setCurrentPeriod(periodId);
         setIsModalOpen(true);
+        setModalDisciplines(disciplines)
     };
 
     const handleOk = () => setIsModalOpen(false);
@@ -189,6 +207,7 @@ const Planning = () => {
     };
 
     const handleAddPeriod = () => {
+        console.log(disciplines)
         const maxId = currentPlanning.periods.reduce((max, p) => Math.max(max, p.id), 0);
         const newPeriod = {
             id: maxId + 1,
@@ -201,6 +220,7 @@ const Planning = () => {
             ...prevPlanning,
             periods: [...prevPlanning.periods, newPeriod],
         }));
+
     };
 
     const handleEditPlanning = async (_) => {
@@ -217,9 +237,9 @@ const Planning = () => {
 
             await putPlanning(formattedPlanning);
 
-            const updatedPlannings = plannings.map((p) =>
-                p.id === formattedPlanning.id ? { ...currentPlanning } : p
-            );
+            const updatedPlannings = plannings
+                .map((p) => (p.id === formattedPlanning.id ? { ...currentPlanning } : p))
+                .sort((a, b) => a.id - b.id);
 
             setPlannings(updatedPlannings);
             updateSelect(updatedPlannings);
@@ -252,8 +272,9 @@ const Planning = () => {
             const response = await createPlanning(newPlanning);
             const createdPlanning = response.data.createdPlanning;
 
-            const updatedPlannings = [...plannings, createdPlanning];
+            const updatedPlannings = [...plannings, createdPlanning].sort((a, b) => a.id - b.id); // <-- Ordena aqui também
             setPlannings(updatedPlannings);
+
             updateSelect(updatedPlannings);
             setCurrentPlanning({
                 ...createdPlanning,
@@ -288,13 +309,27 @@ const Planning = () => {
             disc.pre_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
             disc.post_requisites?.forEach((name) => related.add(getDisciplineIdByName(name)));
         };
-    
+
         findRelated(discipline);
 
         console.log(related)
-    
+
         setHighlightedDisciplines([...related]);
     };
+
+    const handlePeriodDelete = () => {
+        const lastPeriod = currentPlanning.periods[currentPlanning.periods.length - 1]
+        if (currentPlanning.periods.length > 1) {
+            setCurrentPlanning(prevPlanning => {
+                return {
+                    ...prevPlanning,
+                    periods: prevPlanning.periods.filter(period => {
+                        return period.id != lastPeriod.id
+                    })
+                }
+            })
+        }
+    }
 
     return (
         <div className="planning-wrapper">
@@ -309,13 +344,14 @@ const Planning = () => {
                     <Search placeholder="Disciplina" onSearch={onSearch} style={{ width: 200 }} />
                 </Space>
                 <div className="select-cards">
-                    {disciplines.map((discipline) => (
-                        <Card
-                            key={discipline.id}
-                            card={discipline}
-                            handleAddDiscipline={() => handleAddDiscipline(discipline.id)}
-                        />
-                    ))}
+                    {Array.isArray(modalDisciplines) &&
+                        modalDisciplines.map((discipline) => (
+                            <Card
+                                key={discipline.id}
+                                card={discipline}
+                                handleAddDiscipline={() => handleAddDiscipline(discipline.id)}
+                            />
+                        ))}
                 </div>
             </Modal>
 
@@ -333,29 +369,39 @@ const Planning = () => {
 
             <div className="planning">
                 {
-                    currentPlanning?.periods?.map((period) => (
-                        <div key={period.id} className="period" id={period.id}>
-                            <DropZone targetPeriod={period.id} index={0} setCurrentPlanning={setCurrentPlanning} />
-                            {period.disciplines.map((card, index) => (
-                                <React.Fragment key={card.id}>
-                                    <Card
-                                        onHover={() => handleCardHover(card)}
-                                        highlight={highlightedDisciplines.includes(card.id)}
-                                        card={card}
-                                        period={period.id}
-                                        canDelete
-                                        handleCardDelete={() => handleCardDelete(period.id, card.id)}
-                                    />
-                                    <DropZone targetPeriod={period.id} index={index + 1} setCurrentPlanning={setCurrentPlanning} />
-                                </React.Fragment>
-                            ))}
-                            <div className="plus-icon plus-icon-discipline">
-                                <button className="button-show-modal" onClick={() => showModal(period.id)}>
-                                    <PlusCircleOutlined />
-                                </button>
+                    currentPlanning?.periods?.map((period, index) => {
+                        const isLast = index === currentPlanning.periods.length - 1;
+
+                        return (
+                            <div key={period.id} className="period" id={period.id}>
+                                <DropZone targetPeriod={period.id} index={0} setCurrentPlanning={setCurrentPlanning} />
+                                {isLast &&
+                                    <div className="delete-last-period">
+                                        <DeleteOutlined onClick={handlePeriodDelete} />
+                                    </div>
+                                }
+                                {period.disciplines.map((card, index) => (
+                                    <React.Fragment key={card.id}>
+                                        <Card
+                                            onHover={() => handleCardHover(card)}
+                                            highlight={highlightedDisciplines.includes(card.id)}
+                                            card={card}
+                                            period={period.id}
+                                            canDelete
+                                            handleCardDelete={() => handleCardDelete(period.id, card.id)}
+                                        />
+                                        <DropZone targetPeriod={period.id} index={index + 1} setCurrentPlanning={setCurrentPlanning} />
+                                    </React.Fragment>
+                                ))}
+                                <div className="plus-icon plus-icon-discipline">
+                                    <button className="button-show-modal" onClick={() => showModal(period.id)}>
+                                        <PlusCircleOutlined />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })
+                }
 
                 <div className="plus-icon">
                     <PlusCircleOutlined onClick={handleAddPeriod} />
